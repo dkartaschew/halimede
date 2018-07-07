@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension id="certmgrext.core" point="org.eclipse.e4.workbench.model">
+	    <fragment apply="notexists" uri="net.sourceforge.dkartaschew.halimede.core.e4xmi" />
+     <processor
+           apply="always"
+           beforefragment="true"
+           class="net.sourceforge.dkartaschew.halimede.ui.lifecycle.CAManagerProcessor">
+     </processor>
+	</extension>
+</plugin>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ASCII"?>
+<fragment:ModelFragments xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:commands="http://www.eclipse.org/ui/2010/UIModel/application/commands" xmlns:fragment="http://www.eclipse.org/ui/2010/UIModel/fragment" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_xnJxEBTjEeesS_J4eXEb-w">
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_-RE3QBTpEeeFn-nuzLWtfw" featurename="menuContributions" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="menu:MenuContribution" xmi:id="_Tm50ABWoEeeewY6cgdCoIg" elementId="net.sourceforge.dkartaschew.halimede.menucontribution.show" positionInParent="after=additions" parentId="window">
+      <children xsi:type="menu:HandledMenuItem" xmi:id="_aZbtMBWnEeeewY6cgdCoIg" elementId="net.sourceforge.dkartaschew.halimede.handledmenuitem.camanager" label="Halimede CA" iconURI="platform:/plugin/net.sourceforge.dkartaschew.halimede.core/icons/menu-icon.png" command="_kuQzABWnEeeewY6cgdCoIg"/>
+      <children xsi:type="menu:Menu" xmi:id="_PHy6UBhEEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menu.open" label="Halimede Utilities" iconURI="platform:/plugin/net.sourceforge.dkartaschew.halimede.core/icons/application-certificate.png">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_kDWzoBhXEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.handledmenuitem.camanager.create.certificate" label="Create Self Signed Certificate" command="_b_IegBhXEeildZwTX7bfQQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_UleD8BhEEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.handledmenuitem.camanager.open.certificate" label="Open Certificate" tooltip="Open a Certificate" command="_bGeS0BhEEeildZwTX7bfQQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_LDiroBhNEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.handledmenuitem.camanager.open.pkcs12" label="Open PKCS#12 File" command="_D12V4BhNEeildZwTX7bfQQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_L61nYBhKEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.handledmenuitem.camanager.open.csr" label="Open Certificate Request" tooltip="Open a Certificate Request" command="_FojxABhKEeildZwTX7bfQQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_BYB3UBhHEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.handledmenuitem.camanager.open.crl" label="Open CRL" tooltip="Open a CRL" command="_7g-kYBhGEeildZwTX7bfQQ"/>
+      </children>
+    </elements>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_hTxpIBWnEeeewY6cgdCoIg" featurename="commands" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Command" xmi:id="_kuQzABWnEeeewY6cgdCoIg" elementId="net.sourceforge.dkartaschew.halimede.command.open.camanager" commandName="Open Halimede CA Manager"/>
+    <elements xsi:type="commands:Command" xmi:id="_bGeS0BhEEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.command.open.certificate" commandName="Open Certificate"/>
+    <elements xsi:type="commands:Command" xmi:id="_7g-kYBhGEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.command.open.crl" commandName="Open CRL"/>
+    <elements xsi:type="commands:Command" xmi:id="_FojxABhKEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.command.open.csr" commandName="Open Certificate Request"/>
+    <elements xsi:type="commands:Command" xmi:id="_D12V4BhNEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.command.open.pkcs12" commandName="Open PKCS12" description=""/>
+    <elements xsi:type="commands:Command" xmi:id="_b_IegBhXEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.command.create.certificate" commandName="Create Self Signed Certificate"/>
+  </fragments>
+  <fragments xsi:type="fragment:StringModelFragment" xmi:id="_nyAQ0BWnEeeewY6cgdCoIg" featurename="handlers" parentElementId="org.eclipse.e4.legacy.ide.application">
+    <elements xsi:type="commands:Handler" xmi:id="_qqb2gBWnEeeewY6cgdCoIg" elementId="net.sourceforge.dkartaschew.halimede.handler.show" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4ide/net.sourceforge.dkartaschew.halimede.command.ShowCertifcateManager" command="_kuQzABWnEeeewY6cgdCoIg"/>
+    <elements xsi:type="commands:Handler" xmi:id="_dyHZsBhEEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.handler.show.certificate" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4ide/net.sourceforge.dkartaschew.halimede.command.ShowCertificate" command="_bGeS0BhEEeildZwTX7bfQQ"/>
+    <elements xsi:type="commands:Handler" xmi:id="__RnkcBhGEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.handler.show.crl" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4ide/net.sourceforge.dkartaschew.halimede.command.ShowCRL" command="_7g-kYBhGEeildZwTX7bfQQ"/>
+    <elements xsi:type="commands:Handler" xmi:id="_KBHssBhKEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.handler.show.csr" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4ide/net.sourceforge.dkartaschew.halimede.command.ShowCSR" command="_FojxABhKEeildZwTX7bfQQ"/>
+    <elements xsi:type="commands:Handler" xmi:id="_HlFnwBhNEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.handler.show.pkcs12" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4ide/net.sourceforge.dkartaschew.halimede.command.ShowPKCS12" command="_D12V4BhNEeildZwTX7bfQQ"/>
+    <elements xsi:type="commands:Handler" xmi:id="_ff5PgBhXEeildZwTX7bfQQ" elementId="net.sourceforge.dkartaschew.halimede.handler.create.certificate" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4ide/net.sourceforge.dkartaschew.halimede.command.CreateCertifcate" command="_b_IegBhXEeildZwTX7bfQQ"/>
+  </fragments>
+</fragment:ModelFragments>

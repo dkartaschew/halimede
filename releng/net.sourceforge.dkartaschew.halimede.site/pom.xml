@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>net.sourceforge.dkartaschew</groupId>
+		<artifactId>net.sourceforge.dkartaschew.halimede.root</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../../</relativePath>
+	</parent>
+
+	<artifactId>net.sourceforge.dkartaschew.halimede.site</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+  <distributionManagement>
+    <site>
+      <id>halimede.sf.net</id>
+      <url>scp://shell.sourceforge.net/home/project-web/halimede/htdocs</url>
+    </site>
+  </distributionManagement>
+
+	<url>https://halimede.sf.net/</url>
+
+	<build>
+		<plugins>
+			<plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-site-plugin</artifactId>
+        <version>${site.plugin.version}</version>
+				<configuration>
+					<skip>false</skip>
+					<templateFile>${basedir}/src/site/default-site.vm</templateFile>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.apache.maven.doxia</groupId>
+            <artifactId>doxia-module-markdown</artifactId>
+            <version>${site.markdown.plugin.version}</version>
+          </dependency>
+        </dependencies>
+     </plugin>
+	 </plugins>
+	</build>
+
+	<reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <version>${site.reports.plugin.version}</version>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>license</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+</project>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.8.0_131" class="java.beans.XMLDecoder">
+ <object class="net.sourceforge.dkartaschew.halimede.data.CertificateAuthoritySettings">
+  <void property="description">
+   <string>My CA</string>
+  </void>
+  <void property="pkcs12Filename">
+   <string>ca.p12</string>
+  </void>
+  <void property="serial">
+   <long>1497931630849</long>
+  </void>
+  <void property="uuid">
+   <object class="java.util.UUID" method="fromString">
+    <string>7779894e-226f-4230-81ab-612c4387abff</string>
+   </object>
+  </void>
+ </object>
+</java>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <bundle id="net.sourceforge.dkartaschew.halimede.core" version="1.0.0.qualifier">
+      <category name="net.sourceforge.dkartaschew.halimede.update"/>
+   </bundle>
+   <bundle id="net.sourceforge.dkartaschew.halimede.e4ide" version="1.0.0.qualifier">
+      <category name="net.sourceforge.dkartaschew.halimede.update"/>
+   </bundle>
+   <category-def name="net.sourceforge.dkartaschew.halimede.update" label="Halimede CA Manager">
+      <description>
+         Halimede Certificate Authority Manager
+      </description>
+   </category-def>
+   <repository-reference location="http://download.eclipse.org/nebula/releases/1.4.0" enabled="true" />
+</site>

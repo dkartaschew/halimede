@@ -1,0 +1,22 @@
+[ req ]
+distinguished_name     = req_distinguished_name
+req_extensions         = v3_req
+prompt                 = no
+
+[ v3_req ]
+keyUsage               = nonRepudiation, digitalSignature, keyEncipherment
+extendedKeyUsage       = clientAuth,emailProtection
+subjectAltName         = @alt_names
+nsComment              = "Email S/MIME Certificate"
+
+[alt_names]
+email                  = user@domain.com
+
+[ req_distinguished_name ]
+C                      = AU
+ST                     = QLD
+L                      = Gold Coast
+O                      = Internet Widgits Pty Ltd
+OU                     = Development
+CN                     = user@domain.com
+emailAddress           = user@domain.com

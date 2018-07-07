@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2010/UIModel/application" xmlns:basic="http://www.eclipse.org/ui/2010/UIModel/application/ui/basic" xmlns:menu="http://www.eclipse.org/ui/2010/UIModel/application/ui/menu" xmi:id="_E01GkBkREeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.application">
+  <children xsi:type="basic:TrimmedWindow" xmi:id="_TrIkwBkXEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.window" label="Halimede Certificate Authority" iconURI="platform:/plugin/net.sourceforge.dkartaschew.halimede.core/icons/application-icon.png">
+    <children xsi:type="basic:PartStack" xmi:id="_9G2qEBkXEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.primary">
+      <children xsi:type="basic:Part" xmi:id="_BSKM4BkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.part.main" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.core/net.sourceforge.dkartaschew.halimede.ui.CertificateManagerView" label="Halimede CA">
+        <persistedState key="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
+      </children>
+    </children>
+    <mainMenu xmi:id="_ZZJQcBkXEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menu.0">
+      <children xsi:type="menu:Menu" xmi:id="_bZTKUBkXEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menu.file" label="File">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_dcIkwBkXEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.quit" label="Quit" command="_-cxscBkdEeiXffmC_tm0rw"/>
+      </children>
+      <children xsi:type="menu:Menu" xmi:id="_hPg6UBkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menu.utility" label="Utilities">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_cz1jwBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.createcert" label="Create Self Signed Certificate" command="_0TF48BkYEeiXffmC_tm0rw">
+          <parameters xmi:id="_i2JrgBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.0" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_l7r5EBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.viewcert" label="Open Certificate" command="_5Ov6oBkYEeiXffmC_tm0rw">
+          <parameters xmi:id="_7tKoYBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.1" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_w69qEBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.viewpkcs12" label="Open PKCS#12 File" command="_HwcCcBkZEeiXffmC_tm0rw">
+          <parameters xmi:id="_9aVU0BkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.2" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_uqmxABkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.viewcsr" label="Open CSR" command="_CG8DUBkZEeiXffmC_tm0rw">
+          <parameters xmi:id="_ARr8cBkaEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.3" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
+        </children>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_rqjgYBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.viewcrl" label="Open CRL" command="_-9BsEBkYEeiXffmC_tm0rw">
+          <parameters xmi:id="_BrGmcBkaEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.4" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
+        </children>
+      </children>
+      <children xsi:type="menu:Menu" xmi:id="_liUzUBkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menu.Help" label="Help">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_qeLpgBk9Eei8Q6UTeYzyjA" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.about" label="About" command="_h1vNABk9Eei8Q6UTeYzyjA"/>
+      </children>
+    </mainMenu>
+    <trimBars xmi:id="_AyOf0BntEeiyk-m9meRZbg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.trimbar.status" side="Bottom">
+      <children xsi:type="menu:ToolControl" xmi:id="_B_bSwBntEeiyk-m9meRZbg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.toolcontrol.progress" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.ui.ProgressMonitorControl"/>
+    </trimBars>
+  </children>
+  <handlers xmi:id="_LScJkBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.createcert" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.command.CreateCertifcate" command="_0TF48BkYEeiXffmC_tm0rw"/>
+  <handlers xmi:id="_SPjFoBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.viewcert" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.command.ShowCertificate" command="_5Ov6oBkYEeiXffmC_tm0rw"/>
+  <handlers xmi:id="_Uq_0YBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.viewcrl" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.command.ShowCRL" command="_-9BsEBkYEeiXffmC_tm0rw"/>
+  <handlers xmi:id="_XGC6gBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.viewcsr" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.command.ShowCSR" command="_CG8DUBkZEeiXffmC_tm0rw"/>
+  <handlers xmi:id="_ZFaKMBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.viewpkcs12" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.command.ShowPKCS12" command="_HwcCcBkZEeiXffmC_tm0rw"/>
+  <handlers xmi:id="_ZWmOkBkeEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.quit" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.command.ExitHandler" command="_-cxscBkdEeiXffmC_tm0rw"/>
+  <handlers xmi:id="_jTdvQBk9Eei8Q6UTeYzyjA" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.about" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.command.ShowAbout" command="_h1vNABk9Eei8Q6UTeYzyjA"/>
+  <commands xmi:id="_0TF48BkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.command.createCert" commandName="Create Certificate">
+    <parameters xmi:id="_28lDsBkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" name="EditorID"/>
+  </commands>
+  <commands xmi:id="_5Ov6oBkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.command.viewcertificate" commandName="View Certificate">
+    <parameters xmi:id="_7aUaUBkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" name="EditorID"/>
+  </commands>
+  <commands xmi:id="_-9BsEBkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.command.showcrl" commandName="Show CRL">
+    <parameters xmi:id="_AhOpwBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" name="EditorID"/>
+  </commands>
+  <commands xmi:id="_CG8DUBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.command.showCSR" commandName="Show CSR">
+    <parameters xmi:id="_Dgf3QBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" name="EditorID"/>
+  </commands>
+  <commands xmi:id="_HwcCcBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.command.showpkcs12" commandName="Show PKCS12">
+    <parameters xmi:id="_JWdlEBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" name="EditorID"/>
+  </commands>
+  <commands xmi:id="_-cxscBkdEeiXffmC_tm0rw" elementId="org.eclipse.ui.file.exit" commandName="Quit"/>
+  <commands xmi:id="_h1vNABk9Eei8Q6UTeYzyjA" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.command.about" commandName="About"/>
+  <addons xmi:id="_E01GkRkREeiXffmC_tm0rw" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
+  <addons xmi:id="_E01GkhkREeiXffmC_tm0rw" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
+  <addons xmi:id="_E01GkxkREeiXffmC_tm0rw" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
+  <addons xmi:id="_E01GlBkREeiXffmC_tm0rw" elementId="org.eclipse.e4.ui.workbench.commands.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.CommandProcessingAddon"/>
+  <addons xmi:id="_E01GlRkREeiXffmC_tm0rw" elementId="org.eclipse.e4.ui.workbench.contexts.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.ContextProcessingAddon"/>
+  <addons xmi:id="_E01GlhkREeiXffmC_tm0rw" elementId="org.eclipse.e4.ui.workbench.bindings.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench.swt/org.eclipse.e4.ui.workbench.swt.util.BindingProcessingAddon"/>
+  <addons xmi:id="_E01GlxkREeiXffmC_tm0rw" elementId="org.eclipse.e4.ui.workbench.handler.model" contributionURI="bundleclass://org.eclipse.e4.ui.workbench/org.eclipse.e4.ui.internal.workbench.addons.HandlerProcessingAddon"/>
+</application:Application>

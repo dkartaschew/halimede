@@ -1,0 +1,13 @@
+#IssuedCertificateProperties
+#Wed Apr 11 15:00:48 AEST 2018
+revokeCode=KEY_COMPROMISE
+filename=0000015cc3aec906.prop
+revokeDate=2018-04-11T05\:00\:48.446Z
+startDate=2018-04-11T04\:59\:54.912Z
+creationDate=2018-04-11T04\:59\:54.912Z
+endDate=2019-04-11T04\:59\:54.912Z
+keyType=EC_prime192v1
+pkcs12store=0000015cc3aec906.p12
+certificateSerialNumber=1497931630854
+subject=CN\=Adhoc
+description=Adhoc

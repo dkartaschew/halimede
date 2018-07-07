@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?><target name="Eclipse Oxygen" sequenceNumber="10">
+<locations>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.eclipse.nebula.widgets.cdatetime.feature.feature.group" version="1.1.0.201711021145"/>
+<repository location="http://download.eclipse.org/nebula/releases/1.4.0"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+<unit id="org.eclipse.rcp.sdk.id" version="4.7.2.M20171130-0510"/>
+<repository location="http://download.eclipse.org/releases/oxygen"/>
+</location>
+</locations>
+</target>
