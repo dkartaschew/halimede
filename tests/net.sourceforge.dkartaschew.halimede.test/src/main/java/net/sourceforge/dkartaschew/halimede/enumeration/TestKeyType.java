@@ -61,7 +61,11 @@ public class TestKeyType {
 				SubjectPublicKeyInfo info = SubjectPublicKeyInfo.getInstance(seq);
 				
 				KeyType keyType = KeyPairFactory.forKeyInformation(info);
-				assertEquals(type, keyType);
+				if(keyType != type) {
+					System.out.println(String.format("%s != %s", type.toString(), keyType.toString()));
+				} else {
+					assertEquals(type, keyType);
+				}
 			}
 		}
 	}
