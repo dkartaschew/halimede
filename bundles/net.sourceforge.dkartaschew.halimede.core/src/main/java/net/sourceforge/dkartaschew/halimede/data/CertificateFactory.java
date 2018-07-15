@@ -84,6 +84,11 @@ import net.sourceforge.dkartaschew.halimede.util.DateTimeUtil;
 public class CertificateFactory {
 
 	/**
+	 * RND Generator for keying material.
+	 */
+	private final static SecureRandom random = new SecureRandom();
+	
+	/**
 	 * Generate a self signed certificate
 	 * 
 	 * @param subject The subject
@@ -489,7 +494,7 @@ public class CertificateFactory {
 	private static ContentSigner getContentSigner(PrivateKey privKey, SignatureAlgorithm signatureAlgorithm)
 			throws OperatorCreationException {
 		// GOST3411withDSTU4145 is missing from the BC DefaultSignatureAlgorithmIdentifierFinder
-		if (signatureAlgorithm != SignatureAlgorithm.GOST3411withDSTU4145) {
+		if (signatureAlgorithm.isInBCCentralDirectory()) {
 			return new JcaContentSignerBuilder(signatureAlgorithm.getAlgID())
 					.setProvider(BouncyCastleProvider.PROVIDER_NAME)//
 					.build(privKey);
@@ -499,7 +504,7 @@ public class CertificateFactory {
 				final Signature sig = Signature.getInstance(signatureAlgorithm.getAlgID(),
 						BouncyCastleProvider.PROVIDER_NAME);
 				final AlgorithmIdentifier signatureAlgId = new AlgorithmIdentifier(signatureAlgorithm.getOID());
-				sig.initSign(privKey, new SecureRandom());
+				sig.initSign(privKey, random);
 
 				return new ContentSigner() {
 					private SignatureOutputStream stream = new SignatureOutputStream(sig);

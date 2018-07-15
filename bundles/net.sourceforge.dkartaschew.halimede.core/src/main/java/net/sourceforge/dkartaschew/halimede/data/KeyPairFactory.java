@@ -52,6 +52,11 @@ import net.sourceforge.dkartaschew.halimede.exceptions.UnknownKeyTypeException;
  */
 public class KeyPairFactory {
 
+	/**
+	 * RND Generator for keying material.
+	 */
+	private final static SecureRandom random = new SecureRandom();
+	
 	/*
 	 * Setup BC crypto provider.
 	 */
@@ -77,23 +82,23 @@ public class KeyPairFactory {
 		switch (type.getType()) {
 		case "DSA":
 		case "RSA":
-			keyGen.initialize(type.getBitLength(), new SecureRandom());
+			keyGen.initialize(type.getBitLength(), random);
 			break;
 		case "ECDSA":
-			keyGen.initialize(ECNamedCurveTable.getParameterSpec(type.getParameters()), new SecureRandom());
+			keyGen.initialize(ECNamedCurveTable.getParameterSpec(type.getParameters()), random);
 			break;
 		case "ECGOST3410":
 		case "ECGOST3410-2012":
-			keyGen.initialize(ECGOST3410NamedCurveTable.getParameterSpec(type.getParameters()), new SecureRandom());
+			keyGen.initialize(ECGOST3410NamedCurveTable.getParameterSpec(type.getParameters()), random);
 			break;
 		case "GOST3410":
-			keyGen.initialize(new GOST3410ParameterSpec(type.getParameters()), new SecureRandom());
+			keyGen.initialize(new GOST3410ParameterSpec(type.getParameters()), random);
 			break;
 		case "DSTU4145":
 			ECDomainParameters params = DSTU4145NamedCurves.getByOID(new ASN1ObjectIdentifier(type.getParameters()));
 			ECNamedCurveParameterSpec ecParams = new ECNamedCurveParameterSpec(type.getParameters(), params.getCurve(),
 					params.getG(), params.getN(), params.getH(), params.getSeed());
-			keyGen.initialize(ecParams, new SecureRandom());
+			keyGen.initialize(ecParams, random);
 			break;
 		}
 		return keyGen.generateKeyPair();

@@ -17,7 +17,6 @@
 
 package net.sourceforge.dkartaschew.halimede.enumeration;
 
-import java.security.KeyPair;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
@@ -664,7 +663,7 @@ public enum KeyType {
 	public static KeyType forKey(PublicKey publicKey) throws UnknownKeyTypeException {
 		Objects.requireNonNull(publicKey, "Public Key was null");
 		String algorithm = publicKey.getAlgorithm();
-		int length = KeyPairFactory.getKeyLength(new KeyPair(publicKey, null));
+		int length = KeyPairFactory.getKeyLength(publicKey);
 		String curve = null;
 		if (publicKey instanceof ECPublicKey) {
 			ECPublicKey eckey = (ECPublicKey) publicKey;

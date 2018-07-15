@@ -17,23 +17,25 @@
 
 package net.sourceforge.dkartaschew.halimede.enumeration;
 
-import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
+import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
 import org.bouncycastle.asn1.teletrust.TeleTrusTObjectIdentifiers;
-import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
-import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
+import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 
 import net.sourceforge.dkartaschew.halimede.data.KeyPairFactory;
+import net.sourceforge.dkartaschew.halimede.exceptions.UnknownKeyTypeException;
 
 /**
  * Collection helper to get valid Certificate Signature algorithms for given key types.
@@ -43,72 +45,92 @@ public enum SignatureAlgorithm {
 	/*
 	 * EC
 	 */
-	SHA1withECDSA("SHA1withECDSA", X9ObjectIdentifiers.ecdsa_with_SHA1), //
-	SHA224withECDSA("SHA224withECDSA", X9ObjectIdentifiers.ecdsa_with_SHA224), //
-	SHA256withECDSA("SHA256withECDSA", X9ObjectIdentifiers.ecdsa_with_SHA256), //
-	SHA384withECDSA("SHA384withECDSA", X9ObjectIdentifiers.ecdsa_with_SHA384), //
-	SHA512withECDSA("SHA512withECDSA", X9ObjectIdentifiers.ecdsa_with_SHA512), //
-	SHA3_224withECDSA("SHA3-224withECDSA", NISTObjectIdentifiers.id_ecdsa_with_sha3_224), //
-	SHA3_256withECDSA("SHA3-256withECDSA", NISTObjectIdentifiers.id_ecdsa_with_sha3_256), //
-	SHA3_384withECDSA("SHA3-384withECDSA", NISTObjectIdentifiers.id_ecdsa_with_sha3_384), //
-	SHA3_512withECDSA("SHA3-512withECDSA", NISTObjectIdentifiers.id_ecdsa_with_sha3_512), //
+	SHA1withECDSA("SHA1withECDSA", X9ObjectIdentifiers.ecdsa_with_SHA1, true), //
+	SHA224withECDSA("SHA224withECDSA", X9ObjectIdentifiers.ecdsa_with_SHA224, true), //
+	SHA256withECDSA("SHA256withECDSA", X9ObjectIdentifiers.ecdsa_with_SHA256, true), //
+	SHA384withECDSA("SHA384withECDSA", X9ObjectIdentifiers.ecdsa_with_SHA384, true), //
+	SHA512withECDSA("SHA512withECDSA", X9ObjectIdentifiers.ecdsa_with_SHA512, true), //
+	SHA3_224withECDSA("SHA3-224withECDSA", NISTObjectIdentifiers.id_ecdsa_with_sha3_224, true), //
+	SHA3_256withECDSA("SHA3-256withECDSA", NISTObjectIdentifiers.id_ecdsa_with_sha3_256, true), //
+	SHA3_384withECDSA("SHA3-384withECDSA", NISTObjectIdentifiers.id_ecdsa_with_sha3_384, true), //
+	SHA3_512withECDSA("SHA3-512withECDSA", NISTObjectIdentifiers.id_ecdsa_with_sha3_512, true), //
+
+	/*
+	 * GM SM2
+	 */
+	SM3withSM2("SM3withSM2", GMObjectIdentifiers.sm2sign_with_sm3, true),
+	// Not implemented
+//	SHA1withSM2("SHA1withSM2", GMObjectIdentifiers.sm2sign_with_sha1, false),
+//	SHA256withSM2("SHA256withSM2", GMObjectIdentifiers.sm2sign_with_sha256, false),
+//	SHA512withSM2("SHA512withSM2", GMObjectIdentifiers.sm2sign_with_sha512, false),
+//	SHA224withSM2("SHA224withSM2", GMObjectIdentifiers.sm2sign_with_sha224, false),
+//	SHA384withSM2("SHA384withSM2", GMObjectIdentifiers.sm2sign_with_sha384, false),
+//	RIPEMD160withSM2("RIPEMD160withSM2", GMObjectIdentifiers.sm2sign_with_rmd160, false),
+//	WHIRLPOOLwithSM2("WHIRLPOOLwithSM2", GMObjectIdentifiers.sm2sign_with_whirlpool, false),
+//	BLAKE2B512withSM2("Blake2B-512withSM2", GMObjectIdentifiers.sm2sign_with_blake2b512, false),
+//	BLAKE2S256withSM2("Blake2S-256withSM2", GMObjectIdentifiers.sm2sign_with_blake2s256, false),
 
 	/*
 	 * DSA
 	 */
-	SHA1withDSA("SHA1withDSA", X9ObjectIdentifiers.id_dsa_with_sha1), //
-	SHA224withDSA("SHA224withDSA", NISTObjectIdentifiers.dsa_with_sha224), //
-	SHA256withDSA("SHA256withDSA", NISTObjectIdentifiers.dsa_with_sha256), //
-	SHA384withDSA("SHA384withDSA", NISTObjectIdentifiers.dsa_with_sha384), //
-	SHA512withDSA("SHA512withDSA", NISTObjectIdentifiers.dsa_with_sha512), //
-	SHA3_224withDSA("SHA3-224withDSA", NISTObjectIdentifiers.id_dsa_with_sha3_224), //
-	SHA3_256withDSA("SHA3-256withDSA", NISTObjectIdentifiers.id_dsa_with_sha3_256), //
-	SHA3_384withDSA("SHA3-384withDSA", NISTObjectIdentifiers.id_dsa_with_sha3_384), //
-	SHA3_512withDSA("SHA3-512withDSA", NISTObjectIdentifiers.id_dsa_with_sha3_512), //
+	SHA1withDSA("SHA1withDSA", X9ObjectIdentifiers.id_dsa_with_sha1, true), //
+	SHA224withDSA("SHA224withDSA", NISTObjectIdentifiers.dsa_with_sha224, true), //
+	SHA256withDSA("SHA256withDSA", NISTObjectIdentifiers.dsa_with_sha256, true), //
+	SHA384withDSA("SHA384withDSA", NISTObjectIdentifiers.dsa_with_sha384, true), //
+	SHA512withDSA("SHA512withDSA", NISTObjectIdentifiers.dsa_with_sha512, true), //
+	SHA3_224withDSA("SHA3-224withDSA", NISTObjectIdentifiers.id_dsa_with_sha3_224, true), //
+	SHA3_256withDSA("SHA3-256withDSA", NISTObjectIdentifiers.id_dsa_with_sha3_256, true), //
+	SHA3_384withDSA("SHA3-384withDSA", NISTObjectIdentifiers.id_dsa_with_sha3_384, true), //
+	SHA3_512withDSA("SHA3-512withDSA", NISTObjectIdentifiers.id_dsa_with_sha3_512, true), //
 
 	/*
 	 * RSA
 	 */
-	MD2withRSA("MD2withRSA", PKCSObjectIdentifiers.md2WithRSAEncryption), //
-	MD5withRSA("MD5withRSA", PKCSObjectIdentifiers.md5WithRSAEncryption), //
-	SHA1withRSA("SHA1withRSA", PKCSObjectIdentifiers.sha1WithRSAEncryption), //
-	SHA224withRSA("SHA224withRSA", PKCSObjectIdentifiers.sha224WithRSAEncryption), //
-	SHA256withRSA("SHA256withRSA", PKCSObjectIdentifiers.sha256WithRSAEncryption), //
-	SHA384withRSA("SHA384withRSA", PKCSObjectIdentifiers.sha384WithRSAEncryption), //
-	SHA512withRSA("SHA512withRSA", PKCSObjectIdentifiers.sha512WithRSAEncryption), //
-	SHA3_224withRSA("SHA3-224withRSA", NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_224), //
-	SHA3_256withRSA("SHA3-256withRSA", NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_256), //
-	SHA3_384withRSA("SHA3-384withRSA", NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_384), //
-	SHA3_512withRSA("SHA3-512withRSA", NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_512), //
-	RIPEMD128withRSA("RIPEMD128withRSA", TeleTrusTObjectIdentifiers.rsaSignatureWithripemd128), //
-	RIPEMD160withRSA("RIPEMD160withRSA", TeleTrusTObjectIdentifiers.rsaSignatureWithripemd160), //
-	RIPEMD256withRSA("RIPEMD256withRSA", TeleTrusTObjectIdentifiers.rsaSignatureWithripemd256), //
+	MD2withRSA("MD2withRSA", PKCSObjectIdentifiers.md2WithRSAEncryption, true), //
+	MD5withRSA("MD5withRSA", PKCSObjectIdentifiers.md5WithRSAEncryption, true), //
+	SHA1withRSA("SHA1withRSA", PKCSObjectIdentifiers.sha1WithRSAEncryption, true), //
+	SHA224withRSA("SHA224withRSA", PKCSObjectIdentifiers.sha224WithRSAEncryption, true), //
+	SHA256withRSA("SHA256withRSA", PKCSObjectIdentifiers.sha256WithRSAEncryption, true), //
+	SHA384withRSA("SHA384withRSA", PKCSObjectIdentifiers.sha384WithRSAEncryption, true), //
+	SHA512withRSA("SHA512withRSA", PKCSObjectIdentifiers.sha512WithRSAEncryption, true), //
+	SHA3_224withRSA("SHA3-224withRSA", NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_224, true), //
+	SHA3_256withRSA("SHA3-256withRSA", NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_256, true), //
+	SHA3_384withRSA("SHA3-384withRSA", NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_384, true), //
+	SHA3_512withRSA("SHA3-512withRSA", NISTObjectIdentifiers.id_rsassa_pkcs1_v1_5_with_sha3_512, true), //
+	RIPEMD128withRSA("RIPEMD128withRSA", TeleTrusTObjectIdentifiers.rsaSignatureWithripemd128, true), //
+	RIPEMD160withRSA("RIPEMD160withRSA", TeleTrusTObjectIdentifiers.rsaSignatureWithripemd160, true), //
+	RIPEMD256withRSA("RIPEMD256withRSA", TeleTrusTObjectIdentifiers.rsaSignatureWithripemd256, true), //
 
 	/*
 	 * GOST3410
 	 */
-	GOST3411withGOST3410("GOST3411withGOST3410", CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_94), //
-	GOST3411withECGOST3410("GOST3411withECGOST3410", CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_2001), //
-	GOST3411withECGOST3410_2012_256("GOST3411-2012-256WITHECGOST3410-2012-256",	RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_256), //
-	GOST3411withECGOST3410_2012_512("GOST3411-2012-512WITHECGOST3410-2012-512",	RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_512),
-	
+	GOST3411withGOST3410("GOST3411withGOST3410", CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_94, true), //
+	GOST3411withECGOST3410("GOST3411withECGOST3410", CryptoProObjectIdentifiers.gostR3411_94_with_gostR3410_2001, true), //
+	GOST3411withECGOST3410_2012_256("GOST3411-2012-256WITHECGOST3410-2012-256",
+			RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_256, true), //
+	GOST3411withECGOST3410_2012_512("GOST3411-2012-512WITHECGOST3410-2012-512",
+			RosstandartObjectIdentifiers.id_tc26_signwithdigest_gost_3410_12_512, true),
+
 	/**
 	 * DSTU4145
 	 */
-	GOST3411withDSTU4145("GOST3411withDSTU4145", UAObjectIdentifiers.dstu4145be);
-	
+	GOST3411withDSTU4145("GOST3411withDSTU4145", UAObjectIdentifiers.dstu4145be, false);
+
 	private final String algID;
 	private final ASN1ObjectIdentifier oid;
+	private final boolean inBCCentralDirectory;
 
 	/**
 	 * Create a signature type
 	 * 
-	 * @param algID The algorithm Name.
-	 * @param oid The ASN1 Object ID.
+	 * @param algID                The algorithm Name.
+	 * @param oid                  The ASN1 Object ID.
+	 * @param inBCCentralDirectory TRUE if this is in the BC central directory algorithm finder.
 	 */
-	private SignatureAlgorithm(String algID, ASN1ObjectIdentifier oid) {
+	private SignatureAlgorithm(String algID, ASN1ObjectIdentifier oid, boolean inBCCentralDirectory) {
 		this.algID = algID;
 		this.oid = oid;
+		this.inBCCentralDirectory = inBCCentralDirectory;
 	}
 
 	/**
@@ -129,6 +151,17 @@ public enum SignatureAlgorithm {
 		return oid;
 	}
 
+	/**
+	 * Is this algorithm in the BC central directory?
+	 * <p>
+	 * See {@link org.bouncycastle.operator.DefaultSignatureAlgorithmIdentifierFinder}
+	 * 
+	 * @return TRUE if this is in the Central Directory.
+	 */
+	public boolean isInBCCentralDirectory() {
+		return inBCCentralDirectory;
+	}
+
 	@Override
 	public String toString() {
 		return algID;
@@ -140,7 +173,7 @@ public enum SignatureAlgorithm {
 	 * @param value The algID obtained from the signature
 	 * @return The signature based on the named algID
 	 * @throws NoSuchElementException The description given doesn't match a known element.
-	 * @throws NullPointerException The description was null.
+	 * @throws NullPointerException   The description was null.
 	 */
 	public static Object forAlgID(String value) {
 		Objects.requireNonNull(value, "AlgorithmID was null");
@@ -153,7 +186,7 @@ public enum SignatureAlgorithm {
 	 * @param value The algID obtained from the signature
 	 * @return The signature based on the named algID
 	 * @throws NoSuchElementException The description given doesn't match a known element.
-	 * @throws NullPointerException The description was null.
+	 * @throws NullPointerException   The description was null.
 	 */
 	public static Object forOID(ASN1ObjectIdentifier value) {
 		Objects.requireNonNull(value, "ASN1ObjectIdentifier was null");
@@ -168,6 +201,20 @@ public enum SignatureAlgorithm {
 	 */
 	public static Collection<SignatureAlgorithm> forType(KeyType key) {
 		Objects.requireNonNull(key, "Key is null");
+		if (key == KeyType.EC_sm2p256v1) {
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					SM3withSM2, //
+//					SHA1withSM2, //
+//					SHA256withSM2, //
+//					SHA512withSM2, //
+//					SHA224withSM2, //
+//					SHA384withSM2, //
+//					RIPEMD160withSM2, //
+//					WHIRLPOOLwithSM2, //
+//					BLAKE2B512withSM2, //
+//					BLAKE2S256withSM2 
+					});
+		}
 		switch (key.getType()) {
 		case "ECDSA":
 		case "EC":
@@ -180,7 +227,7 @@ public enum SignatureAlgorithm {
 					SHA3_224withECDSA, //
 					SHA3_256withECDSA, //
 					SHA3_384withECDSA, //
-					SHA3_512withECDSA});
+					SHA3_512withECDSA });
 
 		case "DSA":
 			return Arrays.asList(new SignatureAlgorithm[] { //
@@ -197,7 +244,7 @@ public enum SignatureAlgorithm {
 		case "GOST3410":
 			return Arrays.asList(new SignatureAlgorithm[] { //
 					GOST3411withGOST3410 });
-			
+
 		case "DSTU4145":
 			return Arrays.asList(new SignatureAlgorithm[] { //
 					GOST3411withDSTU4145 });
@@ -277,7 +324,30 @@ public enum SignatureAlgorithm {
 					SHA3_224withECDSA, //
 					SHA3_256withECDSA, //
 					SHA3_384withECDSA, //
-					SHA3_512withECDSA});
+					SHA3_512withECDSA });
+
+		case SM3withSM2:
+//		case SHA1withSM2:
+//		case SHA256withSM2:
+//		case SHA512withSM2:
+//		case SHA224withSM2:
+//		case SHA384withSM2:
+//		case RIPEMD160withSM2:
+//		case WHIRLPOOLwithSM2:
+//		case BLAKE2B512withSM2:
+//		case BLAKE2S256withSM2:
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					SM3withSM2, //
+//					SHA1withSM2, //
+//					SHA256withSM2, //
+//					SHA512withSM2, //
+//					SHA224withSM2, //
+//					SHA384withSM2, //
+//					RIPEMD160withSM2, //
+//					WHIRLPOOLwithSM2, //
+//					BLAKE2B512withSM2, //
+//					BLAKE2S256withSM2 
+					});
 
 		case SHA1withDSA:
 		case SHA224withDSA:
@@ -301,8 +371,8 @@ public enum SignatureAlgorithm {
 
 		case GOST3411withDSTU4145:
 			return Arrays.asList(new SignatureAlgorithm[] { //
-					GOST3411withDSTU4145 });	
-			
+					GOST3411withDSTU4145 });
+
 		case GOST3411withGOST3410:
 			return Arrays.asList(new SignatureAlgorithm[] { //
 					GOST3411withGOST3410 });
@@ -363,13 +433,20 @@ public enum SignatureAlgorithm {
 		switch (key.getAlgorithm()) {
 		case "ECDSA":
 		case "EC":
+			try {
+				if (KeyType.forKey(key) == KeyType.EC_sm2p256v1) {
+					return SignatureAlgorithm.SM3withSM2;
+				}
+			} catch (UnknownKeyTypeException e) {
+				// Ignore and use default;
+			}
 			return SignatureAlgorithm.SHA512withECDSA;
 		case "GOST3410":
 			return SignatureAlgorithm.GOST3411withGOST3410;
 		case "ECGOST3410":
 			return SignatureAlgorithm.GOST3411withECGOST3410;
 		case "ECGOST3410-2012":
-			if (KeyPairFactory.getKeyLength(new KeyPair(key, null)) == 512) {
+			if (KeyPairFactory.getKeyLength(key) == 512) {
 				return SignatureAlgorithm.GOST3411withECGOST3410_2012_512;
 			} else {
 				return SignatureAlgorithm.GOST3411withECGOST3410_2012_256;
