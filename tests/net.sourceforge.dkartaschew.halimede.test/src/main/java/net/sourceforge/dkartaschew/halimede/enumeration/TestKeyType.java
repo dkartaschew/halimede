@@ -62,7 +62,8 @@ public class TestKeyType {
 				
 				KeyType keyType = KeyPairFactory.forKeyInformation(info);
 				if(keyType != type) {
-					System.out.println(String.format("%s != %s", type.toString(), keyType.toString()));
+					assertTrue(isEquivalent(type, keyType));
+					//System.out.println(String.format("if(type == KeyType.%s && keyType == KeyType.%s) return true;", type.toString(), keyType.toString()));
 				} else {
 					assertEquals(type, keyType);
 				}
@@ -70,6 +71,44 @@ public class TestKeyType {
 		}
 	}
 	
+	private boolean isEquivalent(KeyType type, KeyType keyType) {
+		if (type == KeyType.EC_secp192r1 && keyType == KeyType.EC_prime192v1)
+			return true;
+		if (type == KeyType.EC_secp256r1 && keyType == KeyType.EC_prime256v1)
+			return true;
+		if (type == KeyType.EC_B163 && keyType == KeyType.EC_sect163r2)
+			return true;
+		if (type == KeyType.EC_B233 && keyType == KeyType.EC_sect233r1)
+			return true;
+		if (type == KeyType.EC_B283 && keyType == KeyType.EC_sect283r1)
+			return true;
+		if (type == KeyType.EC_B409 && keyType == KeyType.EC_sect409r1)
+			return true;
+		if (type == KeyType.EC_B571 && keyType == KeyType.EC_sect571r1)
+			return true;
+		if (type == KeyType.EC_K163 && keyType == KeyType.EC_sect163k1)
+			return true;
+		if (type == KeyType.EC_K233 && keyType == KeyType.EC_sect233k1)
+			return true;
+		if (type == KeyType.EC_K283 && keyType == KeyType.EC_sect283k1)
+			return true;
+		if (type == KeyType.EC_K409 && keyType == KeyType.EC_sect409k1)
+			return true;
+		if (type == KeyType.EC_K571 && keyType == KeyType.EC_sect571k1)
+			return true;
+		if (type == KeyType.EC_P192 && keyType == KeyType.EC_prime192v1)
+			return true;
+		if (type == KeyType.EC_P224 && keyType == KeyType.EC_secp224r1)
+			return true;
+		if (type == KeyType.EC_P256 && keyType == KeyType.EC_prime256v1)
+			return true;
+		if (type == KeyType.EC_P384 && keyType == KeyType.EC_secp384r1)
+			return true;
+		if (type == KeyType.EC_P521 && keyType == KeyType.EC_secp521r1)
+			return true;
+		return false;
+	}
+
 	@Test
 	public void testEnum() {
 		for (KeyType t : KeyType.values()) {
