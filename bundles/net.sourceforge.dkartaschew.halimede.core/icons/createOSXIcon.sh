@@ -12,5 +12,5 @@ sips -z 512 512   Icon1024.png --out MyIcon.iconset/icon_512x512.png
 cp Icon1024.png MyIcon.iconset/icon_512x512@2x.png
 iconutil -c icns MyIcon.iconset
 rm -R MyIcon.iconset
-rm alt_launcher.icns
-mv MyIcon.icns alt_launcher.icns
+rm application-icon.icns
+mv MyIcon.icns application-icon.icns

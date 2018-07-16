@@ -3,29 +3,24 @@
 
 <product name="net.sourceforge.dkartaschew.halimede" uid="Halimede CA" id="net.sourceforge.dkartaschew.halimede.e4rcp.CAManager" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
+
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>
-      </programArgs>
       <programArgsLin>-data @user.home/.config/net.sourceforge.dkartaschew.halimede
       </programArgsLin>
       <programArgsMac>-data @user.home/.config/net.sourceforge.dkartaschew.halimede
       </programArgsMac>
-      <programArgsSol>-data @user.home/.config/net.sourceforge.dkartaschew.halimede
-      </programArgsSol>
       <programArgsWin>-data @user.home/AppData/Local/net.sourceforge.dkartaschew.halimede
       </programArgsWin>
       <vmArgs>-Dosgi.requiredJavaVersion=1.8 -XX:+UseG1GC -XX:MaxGCPauseMillis=400 -XX:ParallelGCThreads=4 -Dsun.jnu.encoding=UTF-8 -Dfile.encoding=UTF-8 -Xmx2G
       </vmArgs>
-      <vmArgsLin>-Dosgi.configuration.area=@user.home/.config/net.sourceforge.dkartaschew.halimede 
+      <vmArgsLin>-Dosgi.configuration.area=@user.home/.config/net.sourceforge.dkartaschew.halimede
       </vmArgsLin>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Dosgi.configuration.area=@user.home/.config/net.sourceforge.dkartaschew.halimede
       </vmArgsMac>
-      <vmArgsSol>-Dosgi.configuration.area=@user.home/.config/net.sourceforge.dkartaschew.halimede
-      </vmArgsSol>
-      <vmArgsWin>-Dosgi.configuration.area=@user.home/AppData/Local/net.sourceforge.dkartaschew.halimede -Dorg.osgi.framework.os.name=win32 
+      <vmArgsWin>-Dosgi.configuration.area=@user.home/AppData/Local/net.sourceforge.dkartaschew.halimede -Dorg.osgi.framework.os.name=win32
       </vmArgsWin>
    </launcherArgs>
 
@@ -34,23 +29,26 @@
    <splash
       location="net.sourceforge.dkartaschew.halimede.e4rcp" />
    <launcher name="halimede">
-      <linux />
-      <macosx />
-      <solaris/>
-      <win />
+      <linux icon="/net.sourceforge.dkartaschew.halimede.core/icons/application-icon.xpm"/>
+      <win useIco="true">
+         <ico path="/net.sourceforge.dkartaschew.halimede.core/icons/application-icon.ico"/>
+         <bmp/>
+      </win>
    </launcher>
+
 
    <vm>
    </vm>
 
+
    <plugins>
-      <plugin id="net.sourceforge.dkartaschew.halimede.core"/>
-      <plugin id="net.sourceforge.dkartaschew.halimede.e4rcp"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>
       <plugin id="javax.servlet"/>
       <plugin id="javax.xml"/>
+      <plugin id="net.sourceforge.dkartaschew.halimede.core"/>
+      <plugin id="net.sourceforge.dkartaschew.halimede.e4rcp"/>
       <plugin id="org.apache.batik.css"/>
       <plugin id="org.apache.batik.util"/>
       <plugin id="org.apache.commons.jxpath"/>
@@ -66,9 +64,9 @@
       <plugin id="org.eclipse.core.databinding.property"/>
       <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.filesystem"/>
-      <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true" ws="gtk" os="linux" arch="x86_64"/>
-      <plugin id="org.eclipse.core.filesystem.macosx" fragment="true" ws="cocoa" os="macosx" arch="x86_64"/>
-      <plugin id="org.eclipse.core.filesystem.win32.x86_64" fragment="true" ws="win32" os="win32" arch="x86_64"/>
+      <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.macosx" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.jobs"/>
       <plugin id="org.eclipse.core.resources"/>
       <plugin id="org.eclipse.core.runtime"/>
@@ -93,6 +91,7 @@
       <plugin id="org.eclipse.e4.ui.workbench"/>
       <plugin id="org.eclipse.e4.ui.workbench.addons.swt"/>
       <plugin id="org.eclipse.e4.ui.workbench.renderers.swt"/>
+      <plugin id="org.eclipse.e4.ui.workbench.renderers.swt.cocoa" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.workbench.swt"/>
       <plugin id="org.eclipse.e4.ui.workbench3"/>
       <plugin id="org.eclipse.emf.common"/>
@@ -121,14 +120,11 @@
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.osgi.util"/>
       <plugin id="org.eclipse.swt"/>
-      <!-- Platform specific dependencies -->
-      <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true" ws="gtk" os="linux" arch="x86_64"/>
-      <plugin id="org.eclipse.swt.win32.win32.x86_64" fragment="true" ws="win32" os="win32" arch="x86_64"/>
-      <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true" ws="cocoa" os="macosx" arch="x86_64"/>
-      <plugin id="org.eclipse.ui.cocoa" fragment="true" ws="cocoa" os="macosx" arch="x86_64"/>
-      <plugin id="org.eclipse.e4.ui.workbench.renderers.swt.cocoa" fragment="true" ws="cocoa" os="macosx" arch="x86_64"/>
-      <!-- End Platform specific dependencies -->
+      <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
+      <plugin id="org.eclipse.swt.win32.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.ui"/>
+      <plugin id="org.eclipse.ui.cocoa" fragment="true"/>
       <plugin id="org.eclipse.ui.workbench"/>
       <plugin id="org.w3c.css.sac"/>
       <plugin id="org.w3c.dom.events"/>

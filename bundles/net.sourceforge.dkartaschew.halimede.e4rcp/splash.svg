@@ -18,8 +18,8 @@
    inkscape:version="0.92.2 2405546, 2018-03-11"
    sodipodi:docname="splash.svg"
    inkscape:export-filename="/home/darran/git/net.sourceforge.dkartaschew.halimede/bundles/net.sourceforge.dkartaschew.halimede.e4rcp/splash.png"
-   inkscape:export-xdpi="24"
-   inkscape:export-ydpi="24">
+   inkscape:export-xdpi="57.599995"
+   inkscape:export-ydpi="57.599995">
   <defs
      id="defs2">
     <linearGradient
@@ -51,17 +51,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="174.45393"
+     inkscape:zoom="0.7071068"
+     inkscape:cx="473.0587"
      inkscape:cy="232.30688"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="false"
      units="px"
      inkscape:pagecheckerboard="true"
      inkscape:window-width="1680"
-     inkscape:window-height="1030"
-     inkscape:window-x="1680"
+     inkscape:window-height="1000"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
   <metadata
@@ -95,7 +95,8 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Stars"
-     sodipodi:insensitive="true">
+     sodipodi:insensitive="true"
+     style="display:none">
     <circle
        style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1.07949996;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path847"
@@ -12731,7 +12732,7 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Text"
-     style="opacity:0.85"
+     style="display:inline;opacity:0.85"
      sodipodi:insensitive="true">
     <flowRoot
        xml:space="preserve"
