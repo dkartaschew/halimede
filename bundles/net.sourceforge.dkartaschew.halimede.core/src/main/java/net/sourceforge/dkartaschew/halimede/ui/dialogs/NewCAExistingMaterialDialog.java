@@ -105,7 +105,7 @@ public class NewCAExistingMaterialDialog extends Dialog {
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
 
-		Group grpDescription = new Group(container, SWT.BORDER);
+		Group grpDescription = new Group(container, SWT.NONE);
 		grpDescription.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpDescription.setText("CA Details");
 		grpDescription.setLayout(new GridLayout(3, false));
