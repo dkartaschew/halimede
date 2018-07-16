@@ -65,7 +65,7 @@ public class CertificateHeaderComposite extends Composite {
 				.setHeight(fontHeight);
 		lblHeader.setFont(boldDescriptor.createFont(lblHeader.getDisplay()));
 
-		toolbar = new ToolBar(this, SWT.FLAT | SWT.BORDER);
+		toolbar = new ToolBar(this, SWT.FLAT);
 		ToolItem itemCreate = new ToolItem(toolbar, SWT.DROP_DOWN);
 		itemCreate.setToolTipText(model.getToolItem());
 		itemCreate.setImage(PluginDefaults.getResourceManager()
