@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.ui.validators;
 
 import java.net.URI;
 
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
@@ -28,8 +29,24 @@ import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
 public class URIValidator implements IValidator {
 
+	private final IObservableValue<Boolean> validate;
+
+	public URIValidator() {
+		this(null);
+	}
+
+	public URIValidator(IObservableValue<Boolean> validate) {
+		this.validate = validate;
+	}
+
 	@Override
 	public IStatus validate(Object value) {
+		if (validate != null) {
+			boolean v = validate.getValue();
+			if (!v) {
+				return ValidationStatus.ok();
+			}
+		}
 		if (value == null) {
 			return ValidationStatus.warning("Location URI is empty");
 		}

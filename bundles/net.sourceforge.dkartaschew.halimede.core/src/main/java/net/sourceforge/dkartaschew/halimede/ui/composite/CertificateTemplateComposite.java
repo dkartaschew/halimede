@@ -296,7 +296,13 @@ public class CertificateTemplateComposite extends Composite {
 
 		btnIsCertAuthority = new Button(grpCertificateProperties, SWT.CHECK);
 		btnIsCertAuthority.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 2, 1));
-		btnIsCertAuthority.setText("Construct as Intermediate Certificate Authority");
+		if (model.getCa() != null) {
+			// CA signed.
+			btnIsCertAuthority.setText("Construct as Intermediate Certificate Authority");
+		} else {
+			// Self signed
+			btnIsCertAuthority.setText("Construct as Certificate Authority");
+		}
 		btnIsCertAuthority.setSelection(model.isCARequest());
 
 		Composite grpCRLLocation = new Composite(grpCertificateProperties, SWT.NONE);
@@ -315,6 +321,7 @@ public class CertificateTemplateComposite extends Composite {
 		textCRLLocation.setEnabled(model.isCARequest());
 		btnIsCertAuthority.addListener(SWT.Selection, o -> {
 			textCRLLocation.setEnabled(btnIsCertAuthority.getSelection());
+			m_bindingContext.updateModels();
 		});
 
 		Group grpKeyUsage = new Group(grpCertificateProperties, SWT.NONE);
@@ -595,7 +602,7 @@ public class CertificateTemplateComposite extends Composite {
 		 */
 		IObservableValue<?> crlLocationWidget = WidgetProperties.text(SWT.Modify).observe(textCRLLocation);
 		IObservableValue<?> cRLLocationModel = PojoProperties.value("crlLocation").observe(model);
-		s = new UpdateValueStrategy().setAfterGetValidator(new URIValidator());
+		s = new UpdateValueStrategy().setAfterGetValidator(new URIValidator(caModel));
 		b = bindingContext.bindValue(crlLocationWidget, cRLLocationModel, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
