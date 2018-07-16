@@ -122,7 +122,7 @@ public class CADetailPane implements ISelectionChangedListener, PropertyChangeLi
 		tableViewerElement = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
 		Table table = tableViewerElement.getTable();
 		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
+		table.setLinesVisible(false);
 		comparator = new CADetailsComparator();
 		// set the content provider
 		createColumns();

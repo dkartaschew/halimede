@@ -61,10 +61,10 @@ public class CAListPane {
 	public CAListPane(Composite parent, CertificateManagerView certificateManagerView) {
 		this.view = certificateManagerView;
 
-		caList = new TreeViewer(parent, SWT.BORDER);
+		caList = new TreeViewer(parent, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		tree = caList.getTree();
 		tree.setHeaderVisible(true);
-		tree.setLinesVisible(true);
+		tree.setLinesVisible(false);
 
 		TreeViewerColumn viewerColumn = new TreeViewerColumn(caList, SWT.NONE);
 		TreeColumn column = viewerColumn.getColumn();
