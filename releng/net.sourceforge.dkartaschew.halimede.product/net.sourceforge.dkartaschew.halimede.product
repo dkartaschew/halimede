@@ -3,7 +3,6 @@
 
 <product name="net.sourceforge.dkartaschew.halimede" uid="Halimede CA" id="net.sourceforge.dkartaschew.halimede.e4rcp.CAManager" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -29,17 +28,16 @@
    <splash
       location="net.sourceforge.dkartaschew.halimede.e4rcp" />
    <launcher name="halimede">
-      <linux icon="/net.sourceforge.dkartaschew.halimede.core/icons/application-icon.xpm"/>
+      <linux icon="/icons/application-icon.xpm"/>
+      <macosx icon="/icons/application-icon.icns"/>
       <win useIco="true">
-         <ico path="/net.sourceforge.dkartaschew.halimede.core/icons/application-icon.ico"/>
+         <ico path="/icons/application-icon.ico"/>
          <bmp/>
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
       <plugin id="com.ibm.icu"/>
