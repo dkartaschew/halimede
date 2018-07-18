@@ -24,8 +24,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.equinox.ds,
  org.eclipse.equinox.event,
  org.eclipse.nebula.widgets.cdatetime;bundle-version="1.1.0",
- org.eclipse.nebula.jface.cdatetime;bundle-version="1.0.0",
- com.ibm.icu.base
+ org.eclipse.nebula.jface.cdatetime;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .,
  lib/bcpkix-jdk15on-1.60.jar,
