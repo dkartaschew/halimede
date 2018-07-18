@@ -14,3 +14,4 @@ iconutil -c icns MyIcon.iconset
 rm -R MyIcon.iconset
 rm application-icon.icns
 mv MyIcon.icns application-icon.icns
+cp application-icon.icns ../../../releng/net.sourceforge.dkartaschew.halimede.product/icons
