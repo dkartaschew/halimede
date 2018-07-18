@@ -22,9 +22,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.databinding.observable,
  org.eclipse.core.databinding.property,
  org.eclipse.jface.databinding,
- com.ibm.icu,
  org.eclipse.osgi.services,
  org.eclipse.equinox.ds,
  org.eclipse.equinox.event,
- net.sourceforge.dkartaschew.halimede.core;bundle-version="1.0.0"
+ net.sourceforge.dkartaschew.halimede.core;bundle-version="1.0.0",
+ com.ibm.icu.base
 Automatic-Module-Name: net.sourceforge.dkartaschew.halimede.e4rcp

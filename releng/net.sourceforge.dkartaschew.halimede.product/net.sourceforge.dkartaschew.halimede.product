@@ -48,7 +48,7 @@
    </vm>
 
    <plugins>
-      <plugin id="com.ibm.icu"/>
+      <plugin id="com.ibm.icu.base"/>
       <plugin id="javax.annotation"/>
       <plugin id="javax.inject"/>
       <plugin id="javax.servlet"/>
