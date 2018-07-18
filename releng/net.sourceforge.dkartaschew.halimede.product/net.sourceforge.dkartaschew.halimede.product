@@ -13,7 +13,15 @@
       </programArgsMac>
       <programArgsWin>-data @user.home/AppData/Local/net.sourceforge.dkartaschew.halimede
       </programArgsWin>
-      <vmArgs>-Dosgi.requiredJavaVersion=1.8 -XX:+UseG1GC -XX:MaxGCPauseMillis=400 -XX:ParallelGCThreads=4 -Dsun.jnu.encoding=UTF-8 -Dfile.encoding=UTF-8 -Xmx2G
+      <vmArgs>-Dosgi.requiredJavaVersion=1.8 
+-XX:+UseG1GC 
+-XX:MaxGCPauseMillis=400 
+-XX:ParallelGCThreads=4 
+-XX:+UseStringDeduplication
+-Dsun.jnu.encoding=UTF-8 
+-Dfile.encoding=UTF-8 
+-Xmx2G
+--add-modules=ALL-SYSTEM
       </vmArgs>
       <vmArgsLin>-Dosgi.configuration.area=@user.home/.config/net.sourceforge.dkartaschew.halimede
       </vmArgsLin>
