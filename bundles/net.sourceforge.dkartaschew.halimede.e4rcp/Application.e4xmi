@@ -42,6 +42,7 @@
   <handlers xmi:id="_ZFaKMBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.viewpkcs12" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.command.ShowPKCS12" command="_HwcCcBkZEeiXffmC_tm0rw"/>
   <handlers xmi:id="_ZWmOkBkeEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.quit" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.command.ExitHandler" command="_-cxscBkdEeiXffmC_tm0rw"/>
   <handlers xmi:id="_jTdvQBk9Eei8Q6UTeYzyjA" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.about" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.command.ShowAbout" command="_h1vNABk9Eei8Q6UTeYzyjA"/>
+  <handlers xmi:id="_QLyB0Iv-EeizKMQexdsaNg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.preferences" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.command.PreferencesHandler" command="_NzWK0Iv-EeizKMQexdsaNg"/>
   <commands xmi:id="_0TF48BkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.command.createCert" commandName="Create Certificate">
     <parameters xmi:id="_28lDsBkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" name="EditorID"/>
   </commands>
@@ -59,6 +60,7 @@
   </commands>
   <commands xmi:id="_-cxscBkdEeiXffmC_tm0rw" elementId="org.eclipse.ui.file.exit" commandName="Quit"/>
   <commands xmi:id="_h1vNABk9Eei8Q6UTeYzyjA" elementId="org.eclipse.ui.help.aboutAction" commandName="About"/>
+  <commands xmi:id="_NzWK0Iv-EeizKMQexdsaNg" elementId="org.eclipse.ui.window.preferences" commandName="Preferences"/>
   <addons xmi:id="_E01GkRkREeiXffmC_tm0rw" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_E01GkhkREeiXffmC_tm0rw" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_E01GkxkREeiXffmC_tm0rw" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>
