@@ -126,7 +126,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	@Override
 	public void addHeaderLine(String value) {
 		Label lbl = new Label(elements, SWT.WRAP);
-		lbl.setText(WordUtils.wrap(value, 100));
+		lbl.setText(value != null ? WordUtils.wrap(value, 100) : "");
 		lbl.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, COLUMNS, 1));
 		lbl.setBackground(bkgColor);
 		lbl.setForeground(fgColor);

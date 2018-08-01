@@ -483,7 +483,7 @@ public class CertificateRenderer {
 						Extension ext = exts.getExtension(objId);
 						if (ext != null) {
 							String header;
-							if ((header = CertificateExtensionUtil.getDescription(objId)) != null) {
+							if ((header = CertificateExtensionUtil.getDescription(objId)) == null) {
 								header = ext.getExtnId().getId();
 							}
 							r.addHeaderLine(header);
