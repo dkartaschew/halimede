@@ -124,7 +124,9 @@ public class NewCADialog extends Dialog {
 		Group grpDescription = new Group(container, SWT.NONE);
 		grpDescription.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		grpDescription.setText("CA Details");
-		grpDescription.setLayout(new GridLayout(3, false));
+		GridLayout layout = new GridLayout(3, false);
+		layout.horizontalSpacing = 10;
+		grpDescription.setLayout(layout);
 
 		Label lblDescription = new Label(grpDescription, SWT.NONE);
 		lblDescription.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -160,7 +162,9 @@ public class NewCADialog extends Dialog {
 		});
 
 		Group grpCertificateAndKeying = new Group(container, SWT.NONE);
-		grpCertificateAndKeying.setLayout(new GridLayout(4, false));
+		layout = new GridLayout(4, false);
+		layout.horizontalSpacing = 10;
+		grpCertificateAndKeying.setLayout(layout);
 		grpCertificateAndKeying.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpCertificateAndKeying.setText("Certificate and Keying Material");
 
@@ -249,7 +253,9 @@ public class NewCADialog extends Dialog {
 		Group grpPassword = new Group(container, SWT.NONE);
 		grpPassword.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		grpPassword.setText("Passphrase");
-		grpPassword.setLayout(new GridLayout(2, false));
+		layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 10;
+		grpPassword.setLayout(layout);
 
 		Label lblPassword = new Label(grpPassword, SWT.NONE);
 		lblPassword.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));

@@ -91,7 +91,9 @@ public class X500NameBuilder extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
-		container.setLayout(new GridLayout(2, false));
+		GridLayout layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 10;
+		container.setLayout(layout);
 		
 		Label lblCN = new Label(container, SWT.NONE);
 		lblCN.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));

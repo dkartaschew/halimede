@@ -88,6 +88,7 @@ public class GeneralNameDialog extends Dialog {
 		GridLayout gl_container = new GridLayout(2, false);
 		// Add additional right margin for the error indicator.
 		gl_container.marginRight = 10;
+		gl_container.horizontalSpacing = 10;
 		container.setLayout(gl_container);
 
 		comboViewerTag = new ComboViewer(container, SWT.READ_ONLY);

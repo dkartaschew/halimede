@@ -89,7 +89,9 @@ public class ExportInformationDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite container = (Composite) super.createDialogArea(parent);
-		container.setLayout(new GridLayout(3, false));
+		GridLayout layout = new GridLayout(3, false);
+		layout.horizontalSpacing = 10;
+		container.setLayout(layout);
 
 		Label lblFilename = new Label(container, SWT.NONE);
 		lblFilename.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));

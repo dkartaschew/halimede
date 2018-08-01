@@ -142,7 +142,9 @@ public class CertificateTemplateComposite extends Composite {
 		allSubComponents.setLayout(new GridLayout(1, false));
 
 		Group grpCertificateAndKeying = new Group(allSubComponents, SWT.NONE);
-		grpCertificateAndKeying.setLayout(new GridLayout(4, false));
+		GridLayout layout = new GridLayout(4, false);
+		layout.horizontalSpacing = 10;
+		grpCertificateAndKeying.setLayout(layout);
 		grpCertificateAndKeying.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpCertificateAndKeying.setText("Certificate and Keying Material");
 
@@ -165,6 +167,7 @@ public class CertificateTemplateComposite extends Composite {
 		gl_composite.verticalSpacing = 0;
 		gl_composite.marginWidth = 0;
 		gl_composite.marginHeight = 0;
+		gl_composite.horizontalSpacing = 10;
 		composite.setLayout(gl_composite);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 3, 1));
 
@@ -290,7 +293,9 @@ public class CertificateTemplateComposite extends Composite {
 		}
 
 		Group grpCertificateProperties = new Group(allSubComponents, SWT.NONE);
-		grpCertificateProperties.setLayout(new GridLayout(2, true));
+		layout = new GridLayout(2, true);
+		layout.horizontalSpacing = 10;
+		grpCertificateProperties.setLayout(layout);
 		grpCertificateProperties.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		grpCertificateProperties.setText("Certificate Properties");
 
@@ -306,7 +311,9 @@ public class CertificateTemplateComposite extends Composite {
 		btnIsCertAuthority.setSelection(model.isCARequest());
 
 		Composite grpCRLLocation = new Composite(grpCertificateProperties, SWT.NONE);
-		grpCRLLocation.setLayout(new GridLayout(2, false));
+		layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 10;
+		grpCRLLocation.setLayout(layout);
 		grpCRLLocation.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 
 		Label lblCRLLocation = new Label(grpCRLLocation, SWT.NONE);
@@ -441,7 +448,9 @@ public class CertificateTemplateComposite extends Composite {
 
 			Group grpPassword = new Group(allSubComponents, SWT.NONE);
 			grpPassword.setText("Passphrase Details");
-			grpPassword.setLayout(new GridLayout(2, false));
+			layout = new GridLayout(2, false);
+			layout.horizontalSpacing = 10;
+			grpPassword.setLayout(layout);
 			grpPassword.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 
 			btnUseCAPassword = new Button(grpPassword, SWT.CHECK);

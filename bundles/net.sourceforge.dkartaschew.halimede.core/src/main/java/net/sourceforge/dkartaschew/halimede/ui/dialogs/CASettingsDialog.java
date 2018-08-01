@@ -93,7 +93,9 @@ public class CASettingsDialog extends Dialog {
 		gd.minimumWidth = 450;
 		container.setLayoutData(gd);
 		
-		container.setLayout(new GridLayout(2, false));
+		GridLayout layout = new GridLayout(2, false);
+		layout.horizontalSpacing = 10;
+		container.setLayout(layout);
 
 		Label lblDescription = new Label(container, SWT.NONE);
 		lblDescription.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
