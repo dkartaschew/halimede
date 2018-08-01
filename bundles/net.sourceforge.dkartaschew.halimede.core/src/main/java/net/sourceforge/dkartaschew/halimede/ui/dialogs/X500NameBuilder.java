@@ -189,8 +189,7 @@ public class X500NameBuilder extends Dialog {
 		});
 		Binding b = bindingContext.bindValue(observeTextTextCNObserveWidget, commonNameModelObserveValue, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
-		
-		bindingContext.bindValue(observeTextTextCNObserveWidget, commonNameModelObserveValue, null, null);
+
 		//
 		IObservableValue<String> observeTextTextEObserveWidget = WidgetProperties.text(SWT.Modify).observe(textE);
 		IObservableValue<String> emailAddressModelObserveValue = PojoProperties.value("emailAddress").observe(model);
