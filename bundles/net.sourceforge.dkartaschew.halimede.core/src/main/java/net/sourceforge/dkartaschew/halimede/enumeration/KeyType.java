@@ -77,10 +77,10 @@ public enum KeyType {
 	 * DSA 3072bit key
 	 */
 	DSA_3072("DSA 3072", "DSA", 3072, null),
-	///**
+	/// **
 	// * DSA 4096bit key - not implemented.
 	// */
-	//DSA_4096("DSA 4096", "DSA", 4096, null),
+	// DSA_4096("DSA 4096", "DSA", 4096, null),
 
 	/**
 	 * SEC curve secp112r1
@@ -537,7 +537,198 @@ public enum KeyType {
 	/**
 	 * DSTU 4145
 	 */
-	DSTU4145_9("DSTU 4145-2002-9", "DSTU4145", 431, "1.2.804.2.1.1.1.1.3.1.1.2.9");
+	DSTU4145_9("DSTU 4145-2002-9", "DSTU4145", 431, "1.2.804.2.1.1.1.1.3.1.1.2.9"),
+	/**
+	 * PQC Rainbow
+	 */
+	Rainbow("Rainbow", "Rainbow", 1024, null),
+	/**
+	 * SPHINCS 256 with SHA512-256
+	 */
+	SPHINCS_SHA512_256("SPHINCS256 SHA512-256", "SPHINCS256", 256, "SHA512-256"),
+	/**
+	 * SPHINCS 256 with SHA3-256
+	 */
+	SPHINCS_SHA3_256("SPHINCS256 SHA3-256", "SPHINCS256", 256, "SHA3-256"),
+	/*
+	 * XMSS + XMSST heights/layers from RFC 8391
+	 */
+	/**
+	 * XMSS 10 SHA256
+	 */
+	XMSS_SHA2_10_256("XMSS 10 SHA256", "XMSS", 256, "SHA256", 10, 0),
+	/**
+	 * XMSS 16 SHA256
+	 */
+	XMSS_SHA2_16_256("XMSS 16 SHA256", "XMSS", 256, "SHA256", 16, 0),
+	/**
+	 * XMSS 16 SHA256
+	 */
+	XMSS_SHA2_20_256("XMSS 20 SHA256", "XMSS", 256, "SHA256", 20, 0),
+	/**
+	 * XMSS 10 SHA512
+	 */
+	XMSS_SHA2_10_512("XMSS 10 SHA512", "XMSS", 512, "SHA512", 10, 0),
+	/**
+	 * XMSS 16 SHA512
+	 */
+	XMSS_SHA2_16_512("XMSS 16 SHA512", "XMSS", 512, "SHA512", 16, 0),
+	/**
+	 * XMSS 20 SHA512
+	 */
+	XMSS_SHA2_20_512("XMSS 20 SHA512", "XMSS", 512, "SHA512", 20, 0),
+	/**
+	 * XMSS 10 SHAKE128
+	 */
+	XMSS_SHAKE_10_256("XMSS 10 SHAKE128", "XMSS", 256, "SHAKE128", 10, 0),
+	/**
+	 * XMSS 16 SHAKE128
+	 */
+	XMSS_SHAKE_16_256("XMSS 16 SHAKE128", "XMSS", 256, "SHAKE128", 16, 0),
+	/**
+	 * XMSS 20 SHAKE128
+	 */
+	XMSS_SHAKE_20_256("XMSS 20 SHAKE128", "XMSS", 256, "SHAKE128", 20, 0),
+	/**
+	 * XMSS 10 SHAKE256
+	 */
+	XMSS_SHAKE_10_512("XMSS 10 SHAKE256", "XMSS", 256, "SHAKE256", 10, 0),
+	/**
+	 * XMSS 16 SHAKE256
+	 */
+	XMSS_SHAKE_16_512("XMSS 16 SHAKE256", "XMSS", 256, "SHAKE256", 16, 0),
+	/**
+	 * XMSS 20 SHAKE256
+	 */
+	XMSS_SHAKE_20_512("XMSS 20 SHAKE256", "XMSS", 256, "SHAKE256", 20, 0),
+	/**
+	 * XMSST 20/2 SHA256
+	 */
+	XMSST_SHA2_20_2_256("XMSST 20/2 SHA256", "XMSST", 256, "SHA256", 20, 2),
+	/**
+	 * XMSST 20/4 SHA256
+	 */
+	XMSST_SHA2_20_4_256("XMSST 20/4 SHA256", "XMSST", 256, "SHA256", 20, 4),
+	/**
+	 * XMSST 40/2 SHA256
+	 */
+	XMSST_SHA2_40_2_256("XMSST 40/2 SHA256", "XMSST", 256, "SHA256", 40, 2),
+	/**
+	 * XMSST 40/4 SHA256
+	 */
+	XMSST_SHA2_40_4_256("XMSST 40/4 SHA256", "XMSST", 256, "SHA256", 40, 4),
+	/**
+	 * XMSST 40/8 SHA256
+	 */
+	XMSST_SHA2_20_8_256("XMSST 40/8 SHA256", "XMSST", 256, "SHA256", 40, 8),
+	/**
+	 * XMSST 60/3 SHA256
+	 */
+	XMSST_SHA2_60_3_256("XMSST 60/3 SHA256", "XMSST", 256, "SHA256", 60, 3),
+	/**
+	 * XMSST 60/6 SHA256
+	 */
+	XMSST_SHA2_60_6_256("XMSST 60/6 SHA256", "XMSST", 256, "SHA256", 60, 6),
+	/**
+	 * XMSST 60/12 SHA256
+	 */
+	XMSST_SHA2_60_12_256("XMSST 60/12 SHA256", "XMSST", 256, "SHA256", 60, 12),
+	/**
+	 * XMSST 20/2 SHA512
+	 */
+	XMSST_SHA2_20_2_512("XMSST 20/2 SHA512", "XMSST", 512, "SHA512", 20, 2),
+	/**
+	 * XMSST 20/4 SHA512
+	 */
+	XMSST_SHA2_20_4_512("XMSST 20/4 SHA512", "XMSST", 512, "SHA512", 20, 4),
+	/**
+	 * XMSST 40/2 SHA512
+	 */
+	XMSST_SHA2_40_2_512("XMSST 40/2 SHA512", "XMSST", 512, "SHA512", 40, 2),
+	/**
+	 * XMSST 40/4 SHA512
+	 */
+	XMSST_SHA2_40_4_512("XMSST 40/4 SHA512", "XMSST", 512, "SHA512", 40, 4),
+	/**
+	 * XMSST 40/8 SHA512
+	 */
+	XMSST_SHA2_20_8_512("XMSST 40/8 SHA512", "XMSST", 512, "SHA512", 40, 8),
+	/**
+	 * XMSST 60/3 SHA512
+	 */
+	XMSST_SHA2_60_3_512("XMSST 60/3 SHA512", "XMSST", 512, "SHA512", 60, 3),
+	/**
+	 * XMSST 60/6 SHA512
+	 */
+	XMSST_SHA2_60_6_512("XMSST 60/6 SHA512", "XMSST", 512, "SHA512", 60, 6),
+	/**
+	 * XMSST 60/12 SHA512
+	 */
+	XMSST_SHA2_60_12_512("XMSST 60/12 SHA512", "XMSST", 512, "SHA512", 60, 12),
+	/**
+	 * XMSST 20/2 SHAKE128
+	 */
+	XMSST_SHAKE_20_2_256("XMSST 20/2 SHAKE128", "XMSST", 256, "SHAKE128", 20, 2),
+	/**
+	 * XMSST 20/4 SHAKE128
+	 */
+	XMSST_SHAKE_20_4_256("XMSST 20/4 SHAKE128", "XMSST", 256, "SHAKE128", 20, 4),
+	/**
+	 * XMSST 40/2 SHAKE128
+	 */
+	XMSST_SHAKE_40_2_256("XMSST 40/2 SHAKE128", "XMSST", 256, "SHAKE128", 40, 2),
+	/**
+	 * XMSST 40/4 SHAKE128
+	 */
+	XMSST_SHAKE_40_4_256("XMSST 40/4 SHAKE128", "XMSST", 256, "SHAKE128", 40, 4),
+	/**
+	 * XMSST 40/8 SHAKE128
+	 */
+	XMSST_SHAKE_20_8_256("XMSST 40/8 SHAKE128", "XMSST", 256, "SHAKE128", 40, 8),
+	/**
+	 * XMSST 60/3 SHAKE128
+	 */
+	XMSST_SHAKE_60_3_256("XMSST 60/3 SHAKE128", "XMSST", 256, "SHAKE128", 60, 3),
+	/**
+	 * XMSST 60/6 SHAKE128
+	 */
+	XMSST_SHAKE_60_6_256("XMSST 60/6 SHAKE128", "XMSST", 256, "SHAKE128", 60, 6),
+	/**
+	 * XMSST 60/12 SHAKE128
+	 */
+	XMSST_SHAKE_60_12_256("XMSST 60/12 SHAKE128", "XMSST", 256, "SHAKE128", 60, 12),
+	/**
+	 * XMSST 20/2 SHAKE256
+	 */
+	XMSST_SHAKE_20_2_512("XMSST 20/2 SHAKE256", "XMSST", 512, "SHAKE256", 20, 2),
+	/**
+	 * XMSST 20/4 SHAKE256
+	 */
+	XMSST_SHAKE_20_4_512("XMSST 20/4 SHAKE256", "XMSST", 512, "SHAKE256", 20, 4),
+	/**
+	 * XMSST 40/2 SHAKE256
+	 */
+	XMSST_SHAKE_40_2_512("XMSST 40/2 SHAKE256", "XMSST", 512, "SHAKE256", 40, 2),
+	/**
+	 * XMSST 40/4 SHAKE256
+	 */
+	XMSST_SHAKE_40_4_512("XMSST 40/4 SHAKE256", "XMSST", 512, "SHAKE256", 40, 4),
+	/**
+	 * XMSST 40/8 SHAKE256
+	 */
+	XMSST_SHAKE_20_8_512("XMSST 40/8 SHAKE256", "XMSST", 512, "SHAKE256", 40, 8),
+	/**
+	 * XMSST 60/3 SHAKE256
+	 */
+	XMSST_SHAKE_60_3_512("XMSST 60/3 SHAKE256", "XMSST", 512, "SHAKE256", 60, 3),
+	/**
+	 * XMSST 60/6 SHAKE256
+	 */
+	XMSST_SHAKE_60_6_512("XMSST 60/6 SHAKE256", "XMSST", 512, "SHAKE256", 60, 6),
+	/**
+	 * XMSST 60/12 SHAKE256
+	 */
+	XMSST_SHAKE_60_12_512("XMSST 60/12 SHAKE256", "XMSST", 512, "SHAKE256", 60, 12);
 
 	/**
 	 * Plain text user friendly description
@@ -552,23 +743,49 @@ public enum KeyType {
 	 */
 	private final int bitLength;
 	/**
-	 * The curve name for EC
+	 * The curve name for EC or Digest
 	 */
-	private final String curve;
+	private final String parameter;
+
+	/**
+	 * The height of the tree
+	 */
+	private final int height;
+
+	/**
+	 * The number of layers in the tree
+	 */
+	private final int layers;
 
 	/**
 	 * Create a new key type
 	 * 
 	 * @param description Plain text user friendly description
-	 * @param type Key pair type
-	 * @param bitLength The number of bits for RSA/DSA
-	 * @param curve The curve name for EC
+	 * @param type        Key pair type
+	 * @param bitLength   The number of bits for RSA/DSA
+	 * @param parameter   The curve name for EC or digest
 	 */
-	private KeyType(String description, String type, int bitLength, String curve) {
+	private KeyType(String description, String type, int bitLength, String parameter) {
+		this(description, type, bitLength, parameter, 0, 0);
+	}
+
+	/**
+	 * Create a new key type
+	 * 
+	 * @param description Plain text user friendly description
+	 * @param type        Key pair type
+	 * @param bitLength   The number of bits for RSA/DSA
+	 * @param parameter   The digest type
+	 * @param height      The height of the tree
+	 * @param layers      The number of layers (XMSSMT only).
+	 */
+	private KeyType(String description, String type, int bitLength, String parameter, int height, int layers) {
 		this.description = description;
 		this.type = type;
 		this.bitLength = bitLength;
-		this.curve = curve;
+		this.parameter = parameter;
+		this.height = height;
+		this.layers = layers;
 	}
 
 	/**
@@ -590,12 +807,12 @@ public enum KeyType {
 	}
 
 	/**
-	 * Get the EC Curve name or OID for keying material parameters
+	 * Get the EC Curve name or OID or digest for keying material parameters
 	 * 
 	 * @return The EC Curve or OID of parameters
 	 */
 	public String getParameters() {
-		return curve;
+		return parameter;
 	}
 
 	/**
@@ -608,12 +825,30 @@ public enum KeyType {
 	}
 
 	/**
+	 * Get the height of the tree structure.
+	 * 
+	 * @return The height of the tree structure.
+	 */
+	public int getHeight() {
+		return height;
+	}
+
+	/**
+	 * Get the number of layers of the structure.
+	 * 
+	 * @return The number of layer of the structure.
+	 */
+	public int getLayers() {
+		return layers;
+	}
+
+	/**
 	 * Get the keytype based on the given description
 	 * 
 	 * @param value The description obtained from the keytype
 	 * @return The key type based on the given description. NULL will returned if no description
 	 * @throws NoSuchElementException The description doesn't match a known element.
-	 * @throws NullPointerException The description was null.
+	 * @throws NullPointerException   The description was null.
 	 */
 	public static Object forDescription(String value) {
 		Objects.requireNonNull(value, "Description was null");
@@ -646,7 +881,7 @@ public enum KeyType {
 	 * @param name The name of the enum
 	 * @return The plain description.
 	 * @throws NoSuchElementException The name doesn't match a known element.
-	 * @throws NullPointerException The name was null.
+	 * @throws NullPointerException   The name was null.
 	 */
 	public static String getKeyTypeDescription(String name) {
 		Objects.requireNonNull(name, "Name was null");
@@ -696,7 +931,7 @@ public enum KeyType {
 		case "DSTU4145":
 			// use the curve name...
 			for (KeyType t : values()) {
-				if (t.curve != null && t.curve.equals(curve)) {
+				if (t.parameter != null && t.parameter.equals(curve)) {
 					return t;
 				}
 			}
@@ -727,7 +962,16 @@ public enum KeyType {
 		if (rc != 0) {
 			return rc;
 		}
-		return Integer.compare(bitLength, element.bitLength);
+		rc = Integer.compare(bitLength, element.bitLength);
+		if (rc != 0) {
+			return rc;
+		}
+		rc = Integer.compare(height, element.height);
+		if (rc != 0) {
+			return rc;
+		}
+		rc = Integer.compare(layers, element.layers);
+		return rc;
 	}
 
 }

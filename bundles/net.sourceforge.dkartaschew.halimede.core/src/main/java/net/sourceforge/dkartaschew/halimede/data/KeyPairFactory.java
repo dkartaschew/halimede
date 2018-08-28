@@ -43,6 +43,10 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.JCEECPublicKey;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.GOST3410ParameterSpec;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.bouncycastle.pqc.jcajce.spec.SPHINCS256KeyGenParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec;
+import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.exceptions.UnknownKeyTypeException;
@@ -64,6 +68,9 @@ public class KeyPairFactory {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
 		}
+		if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(new BouncyCastlePQCProvider());
+		}
 	}
 
 	/**
@@ -78,7 +85,15 @@ public class KeyPairFactory {
 	public static KeyPair generateKeyPair(KeyType type)
 			throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
 		Objects.requireNonNull(type, "KeyType was null");
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance(type.getType(), BouncyCastleProvider.PROVIDER_NAME);
+		String provider = BouncyCastleProvider.PROVIDER_NAME;
+		switch (type.getType()) {
+		case "Rainbow":
+		case "XMSS":
+		case "XMMST":
+		case "SPHINCS256":
+			provider = BouncyCastlePQCProvider.PROVIDER_NAME;
+		}
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance(type.getType(), provider);
 		switch (type.getType()) {
 		case "DSA":
 		case "RSA":
@@ -100,6 +115,19 @@ public class KeyPairFactory {
 					params.getG(), params.getN(), params.getH(), params.getSeed());
 			keyGen.initialize(ecParams, random);
 			break;
+		case "Rainbow":
+			keyGen.initialize(type.getBitLength(), random);
+			break;
+		case "SPHINCS256":
+			keyGen.initialize(new SPHINCS256KeyGenParameterSpec(type.getParameters()), random);
+			break;
+		case "XMSS":
+			keyGen.initialize(new XMSSParameterSpec(type.getHeight(), type.getParameters()), random);
+			break;
+		case "XMSST":
+			keyGen.initialize(new XMSSMTParameterSpec(type.getHeight(), type.getLayers(), type.getParameters()), random);
+			break;
+			
 		}
 		return keyGen.generateKeyPair();
 	}
