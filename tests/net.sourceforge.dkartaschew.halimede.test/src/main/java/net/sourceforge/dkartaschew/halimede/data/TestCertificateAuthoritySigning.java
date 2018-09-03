@@ -77,6 +77,7 @@ public class TestCertificateAuthoritySigning {
 	@BeforeClass
 	public static void setup() {
 		Security.addProvider(new BouncyCastleProvider());
+		Security.addProvider(new BouncyCastlePQCProvider());
 	}
 
 	@Parameters(name = "{0}")

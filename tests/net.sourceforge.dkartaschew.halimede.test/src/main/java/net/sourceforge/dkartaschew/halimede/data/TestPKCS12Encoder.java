@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -64,6 +65,7 @@ public class TestPKCS12Encoder {
 	@BeforeClass
 	public static void setup() {
 		Security.addProvider(new BouncyCastleProvider());
+		Security.addProvider(new BouncyCastlePQCProvider());
 	}
 
 	/*

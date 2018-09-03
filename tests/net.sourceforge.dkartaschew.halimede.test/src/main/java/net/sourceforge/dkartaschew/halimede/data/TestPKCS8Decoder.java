@@ -28,6 +28,7 @@ import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -45,6 +46,7 @@ public class TestPKCS8Decoder {
 	@BeforeClass
 	public static void setup() {
 		Security.addProvider(new BouncyCastleProvider());
+		Security.addProvider(new BouncyCastlePQCProvider());
 	}
 
 	@Test

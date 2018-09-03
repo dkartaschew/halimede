@@ -206,6 +206,8 @@ public class CertificateRenderer {
 					}
 				}
 			}
+			
+			// TODO: Implement Rainbow, SPHINCS, XMSS and XMSS-MT
 
 			r.addContentLine("SHA1 Fingerprint:", //
 					Strings.toHexString(Digest.sha1(keys.getPrivate().getEncoded()), " ", WRAP), true);
@@ -299,6 +301,9 @@ public class CertificateRenderer {
 				}
 			}
 		}
+		
+		// TODO: Implement Rainbow, SPHINCS, XMSS and XMSS-MT
+		
 		r.addContentLine("Public Key:", Strings.prettyPrint(pkey), true);
 
 		/*

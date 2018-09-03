@@ -53,6 +53,7 @@ import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.junit.After;
 import org.junit.Before;
@@ -100,6 +101,7 @@ public class TestCertificateChainPKCS {
 	@BeforeClass
 	public static void setupClass() {
 		Security.addProvider(new BouncyCastleProvider());
+		Security.addProvider(new BouncyCastlePQCProvider());
 	}
 
 	// @Parameters(name = "{0}")

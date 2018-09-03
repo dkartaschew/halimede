@@ -74,7 +74,7 @@ public class PublicKeyDecoder {
 	 * Create a new public key
 	 * 
 	 * @param filename The filename of the public key
-	 * @return A CertificateRequest instance, with certificate and signing information available.
+	 * @return A PublicKey instance
 	 * @throws IOException The file was unable to be read.
 	 */
 	public static PublicKey open(Path filename) throws IOException {
@@ -107,7 +107,7 @@ public class PublicKeyDecoder {
 	 * Attempt to read the file as straight DER
 	 * 
 	 * @param file The file to read
-	 * @return A CertificateRequest instance, with certificate and signing information available.
+	 * @return A PublicKey instance
 	 * @throws IOException The file was unable to be read.
 	 */
 	private static PublicKey attemptDER(Path file) throws IOException {
