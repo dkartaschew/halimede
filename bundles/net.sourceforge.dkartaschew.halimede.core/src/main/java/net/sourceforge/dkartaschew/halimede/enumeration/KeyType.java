@@ -769,9 +769,9 @@ public enum KeyType {
 	 * Create a new key type
 	 * 
 	 * @param description Plain text user friendly description
-	 * @param type        Key pair type
-	 * @param bitLength   The number of bits for RSA/DSA
-	 * @param parameter   The curve name for EC or digest
+	 * @param type Key pair type
+	 * @param bitLength The number of bits for RSA/DSA
+	 * @param parameter The curve name for EC or digest
 	 */
 	private KeyType(String description, String type, int bitLength, String parameter) {
 		this(description, type, bitLength, parameter, 0, 0);
@@ -781,11 +781,11 @@ public enum KeyType {
 	 * Create a new key type
 	 * 
 	 * @param description Plain text user friendly description
-	 * @param type        Key pair type
-	 * @param bitLength   The number of bits for RSA/DSA
-	 * @param parameter   The digest type
-	 * @param height      The height of the tree
-	 * @param layers      The number of layers (XMSSMT only).
+	 * @param type Key pair type
+	 * @param bitLength The number of bits for RSA/DSA
+	 * @param parameter The digest type
+	 * @param height The height of the tree
+	 * @param layers The number of layers (XMSSMT only).
 	 */
 	private KeyType(String description, String type, int bitLength, String parameter, int height, int layers) {
 		this.description = description;
@@ -849,9 +849,10 @@ public enum KeyType {
 	public int getLayers() {
 		return layers;
 	}
-	
+
 	/**
 	 * Get the provider required to generate the keying material for this keytype
+	 * 
 	 * @return The provider.
 	 */
 	public String getProvider() {
@@ -871,7 +872,7 @@ public enum KeyType {
 	 * @param value The description obtained from the keytype
 	 * @return The key type based on the given description. NULL will returned if no description
 	 * @throws NoSuchElementException The description doesn't match a known element.
-	 * @throws NullPointerException   The description was null.
+	 * @throws NullPointerException The description was null.
 	 */
 	public static Object forDescription(String value) {
 		Objects.requireNonNull(value, "Description was null");
@@ -904,7 +905,7 @@ public enum KeyType {
 	 * @param name The name of the enum
 	 * @return The plain description.
 	 * @throws NoSuchElementException The name doesn't match a known element.
-	 * @throws NullPointerException   The name was null.
+	 * @throws NullPointerException The name was null.
 	 */
 	public static String getKeyTypeDescription(String name) {
 		Objects.requireNonNull(name, "Name was null");
@@ -968,9 +969,9 @@ public enum KeyType {
 				}
 			}
 
-		case "RAINBOW":
+		case "Rainbow":
 			return KeyType.Rainbow;
-			
+
 		case "SPHINCS-256":
 			if (publicKey instanceof BCSphincs256PublicKey) {
 				BCSphincs256PublicKey pkey = (BCSphincs256PublicKey) publicKey;
@@ -981,10 +982,10 @@ public enum KeyType {
 					Field f = pkey.getClass().getDeclaredField("treeDigest");
 					f.setAccessible(true);
 					ASN1ObjectIdentifier digest = (ASN1ObjectIdentifier) f.get(pkey);
-					if(digest.equals(NISTObjectIdentifiers.id_sha512_256)){
+					if (digest.equals(NISTObjectIdentifiers.id_sha512_256)) {
 						return KeyType.SPHINCS_SHA512_256;
 					}
-					if(digest.equals(NISTObjectIdentifiers.id_sha3_256)){
+					if (digest.equals(NISTObjectIdentifiers.id_sha3_256)) {
 						return KeyType.SPHINCS_SHA3_256;
 					}
 				} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
@@ -993,19 +994,22 @@ public enum KeyType {
 
 			}
 		case "XMSS":
-			if(publicKey instanceof BCXMSSPublicKey) {
-				BCXMSSPublicKey pkey = (BCXMSSPublicKey)publicKey;
+			if (publicKey instanceof BCXMSSPublicKey) {
+				BCXMSSPublicKey pkey = (BCXMSSPublicKey) publicKey;
+				String digest = pkey.getTreeDigest();
 				for (KeyType t : values()) {
-					if (t.type.equals(algorithm) && t.height == pkey.getHeight()) {
+					if (t.type.equals(algorithm) && t.height == pkey.getHeight() && t.parameter.equals(digest)) {
 						return t;
 					}
 				}
 			}
 		case "XMSSMT":
-			if(publicKey instanceof BCXMSSMTPublicKey) {
-				BCXMSSMTPublicKey pkey = (BCXMSSMTPublicKey)publicKey;
+			if (publicKey instanceof BCXMSSMTPublicKey) {
+				BCXMSSMTPublicKey pkey = (BCXMSSMTPublicKey) publicKey;
+				String digest = pkey.getTreeDigest();
 				for (KeyType t : values()) {
-					if (t.type.equals(algorithm) && t.height == pkey.getHeight() && t.layers == pkey.getLayers()) {
+					if (t.type.equals(algorithm) && t.height == pkey.getHeight() && t.layers == pkey.getLayers()
+							&& t.parameter.equals(digest)) {
 						return t;
 					}
 				}
