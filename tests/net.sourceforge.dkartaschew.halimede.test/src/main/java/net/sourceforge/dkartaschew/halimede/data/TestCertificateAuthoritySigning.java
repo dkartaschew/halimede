@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -44,6 +45,8 @@ import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -59,6 +62,7 @@ import net.sourceforge.dkartaschew.halimede.enumeration.ExtendedKeyUsageEnum;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyUsageEnum;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
+import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(Parameterized.class)
@@ -77,9 +81,11 @@ public class TestCertificateAuthoritySigning {
 
 	@Parameters(name = "{0}")
 	public static Collection<KeyType> data() {
+		KeyTypeWarningValidator v = new KeyTypeWarningValidator();
+		
 		// Only do for keying material of 2048 bits or less.
 		Collection<KeyType> data = Arrays.stream(KeyType.values())//
-				.filter(key -> (key.getBitLength() <= TestUtilities.TEST_MAX_KEY_LENGTH))//
+				.filter(key -> (v.validate(key) == ValidationStatus.ok()))//
 				.collect(Collectors.toList());
 		return data;
 	}
@@ -163,8 +169,11 @@ public class TestCertificateAuthoritySigning {
 					ZonedDateTime.now().plusSeconds(360));
 
 			assertNotNull(c);
-
-			c.verify(key.getPublic(), BouncyCastleProvider.PROVIDER_NAME);
+			try {
+				c.verify(key.getPublic(), BouncyCastleProvider.PROVIDER_NAME);
+			} catch (NoSuchAlgorithmException e) {
+				c.verify(key.getPublic(), BouncyCastlePQCProvider.PROVIDER_NAME);
+			}
 
 			TestUtilities.displayCertificate(new Certificate[] { c });
 

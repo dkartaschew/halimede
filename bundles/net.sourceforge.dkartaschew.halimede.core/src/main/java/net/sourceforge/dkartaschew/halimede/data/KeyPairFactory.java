@@ -35,6 +35,7 @@ import java.util.Objects;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ua.DSTU4145NamedCurves;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.bouncycastle.crypto.params.ECDomainParameters;
 import org.bouncycastle.jce.ECGOST3410NamedCurveTable;
 import org.bouncycastle.jce.ECNamedCurveTable;
@@ -43,7 +44,14 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.JCEECPublicKey;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.GOST3410ParameterSpec;
+import org.bouncycastle.pqc.asn1.RainbowPublicKey;
+import org.bouncycastle.pqc.asn1.XMSSMTPublicKey;
+import org.bouncycastle.pqc.asn1.XMSSPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.bouncycastle.pqc.jcajce.provider.rainbow.BCRainbowPublicKey;
+import org.bouncycastle.pqc.jcajce.provider.sphincs.BCSphincs256PublicKey;
+import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSMTPublicKey;
+import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSPublicKey;
 import org.bouncycastle.pqc.jcajce.spec.SPHINCS256KeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
@@ -59,7 +67,7 @@ public class KeyPairFactory {
 	/**
 	 * RND Generator for keying material.
 	 */
-	private final static SecureRandom random = new SecureRandom();
+	private final static SecureRandom random = CryptoServicesRegistrar.getSecureRandom();
 	
 	/*
 	 * Setup BC crypto provider.
@@ -85,15 +93,7 @@ public class KeyPairFactory {
 	public static KeyPair generateKeyPair(KeyType type)
 			throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
 		Objects.requireNonNull(type, "KeyType was null");
-		String provider = BouncyCastleProvider.PROVIDER_NAME;
-		switch (type.getType()) {
-		case "Rainbow":
-		case "XMSS":
-		case "XMMST":
-		case "SPHINCS256":
-			provider = BouncyCastlePQCProvider.PROVIDER_NAME;
-		}
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance(type.getType(), provider);
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance(type.getType(), type.getProvider());
 		switch (type.getType()) {
 		case "DSA":
 		case "RSA":
@@ -124,7 +124,7 @@ public class KeyPairFactory {
 		case "XMSS":
 			keyGen.initialize(new XMSSParameterSpec(type.getHeight(), type.getParameters()), random);
 			break;
-		case "XMSST":
+		case "XMSSMT":
 			keyGen.initialize(new XMSSMTParameterSpec(type.getHeight(), type.getLayers(), type.getParameters()), random);
 			break;
 			
@@ -200,6 +200,41 @@ public class KeyPairFactory {
 			GOST3410PublicKey gost = (GOST3410PublicKey) publicKey;
 			int length = gost.getY().bitLength();
 			return ((length + 127) / 128) * 128;
+		}
+		if(publicKey instanceof RainbowPublicKey || publicKey instanceof BCRainbowPublicKey) {
+			return 1024;
+		}
+		if(publicKey instanceof BCSphincs256PublicKey) {
+			return 256;
+		}
+		if(publicKey instanceof XMSSPublicKey || publicKey instanceof BCXMSSPublicKey) {
+			//XMSSPublicKey pkey = (XMSSPublicKey)publicKey;
+			if(publicKey instanceof BCXMSSPublicKey) {
+				switch(((BCXMSSPublicKey) publicKey).getTreeDigest()) {
+				case "SHAKE128":
+				case "SHA256":
+					return 256;
+				case "SHAKE256":
+				case "SHA512":
+					return 512;
+				}
+			}
+			return 256;
+		}
+		if(publicKey instanceof XMSSMTPublicKey || publicKey instanceof BCXMSSMTPublicKey) {
+			//XMSSMTPublicKey pkey = (XMSSMTPublicKey)publicKey;
+			//XMSSPublicKey pkey = (XMSSPublicKey)publicKey;
+			if(publicKey instanceof BCXMSSMTPublicKey) {
+				switch(((BCXMSSMTPublicKey) publicKey).getTreeDigest()) {
+				case "SHAKE128":
+				case "SHA256":
+					return 256;
+				case "SHAKE256":
+				case "SHA512":
+					return 512;
+				}
+			}
+			return 256;
 		}
 		return 0;
 	}

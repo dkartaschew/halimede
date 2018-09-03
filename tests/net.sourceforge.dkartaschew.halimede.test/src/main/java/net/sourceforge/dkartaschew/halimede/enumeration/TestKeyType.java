@@ -19,7 +19,8 @@ package net.sourceforge.dkartaschew.halimede.enumeration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,11 +37,12 @@ import java.util.stream.Collectors;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.junit.Test;
 
-import net.sourceforge.dkartaschew.halimede.TestUtilities;
 import net.sourceforge.dkartaschew.halimede.data.KeyPairFactory;
 import net.sourceforge.dkartaschew.halimede.exceptions.UnknownKeyTypeException;
+import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
 
 public class TestKeyType {
 
@@ -49,8 +51,11 @@ public class TestKeyType {
 	 */
 	@Test
 	public void testKeyToKeyType() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, IOException {
+		KeyTypeWarningValidator v = new KeyTypeWarningValidator();
+		
+		// Only do for keying material of 2048 bits or less.
 		Collection<KeyType> data = Arrays.stream(KeyType.values())//
-				.filter(key -> (key.getBitLength() <= TestUtilities.TEST_MAX_KEY_LENGTH))//
+				.filter(key -> (v.validate(key) == ValidationStatus.ok()))//
 				.collect(Collectors.toList());
 		
 		for(KeyType type : data) {

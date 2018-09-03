@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.GeneralNamesBuilder;
+import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,7 +47,9 @@ import net.sourceforge.dkartaschew.halimede.enumeration.ExtendedKeyUsageEnum;
 import net.sourceforge.dkartaschew.halimede.enumeration.GeneralNameTag;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyUsageEnum;
+import net.sourceforge.dkartaschew.halimede.enumeration.PKCS12Cipher;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
+import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(Parameterized.class)
@@ -57,10 +61,12 @@ public class TestSelfSignedCertificates {
 	 */
 	@Parameters(name = "{0} {1}")
 	public static Collection<Object[]> data() {
+		KeyTypeWarningValidator v = new KeyTypeWarningValidator();
+		
 		Collection<Object[]> data = new ArrayList<>();
 		for (KeyType key : KeyType.values()) {
 			// Only do for keying material of 2048 bits or less.
-			if (key.getBitLength() <= TestUtilities.TEST_MAX_KEY_LENGTH) {
+			if (v.validate(key) == ValidationStatus.ok()) {
 				for (SignatureAlgorithm alg : SignatureAlgorithm.forType(key)) {
 					data.add(new Object[] { key, alg });
 				}
@@ -70,8 +76,10 @@ public class TestSelfSignedCertificates {
 	}
 
 	private final Path fn = Paths.get(TestUtilities.TMP, "cert.cer");
+	private final Path fnp12 = Paths.get(TestUtilities.TMP, "cert.p12");
 	private final KeyType type;
 	private final SignatureAlgorithm signatureAlg;
+	private final String password = "changeme";
 	private final X500Name issuer = new X500Name("CN=MyCert");
 	private final GeneralName CRLLocation = GeneralNameTag.uniformResourceIdentifier
 			.asGeneralName("http://www.host.local/cgi?crl");
@@ -254,11 +262,63 @@ public class TestSelfSignedCertificates {
 		ic.createCertificate(fn, EncodingType.PEM);
 		reloadAndCompare(fn, ic);
 	}
+	
+	/*
+	 * Key Generation in DER (no alias defined).
+	 */
+	@Test
+	public void testKeyGeneratePKCS12() throws Throwable {
+		KeyPair key = KeyPairFactory.generateKeyPair(type);
+		X509Certificate cert = CertificateFactory.generateSelfSignedCertificate(issuer, //
+				ZonedDateTime.now().plusSeconds(3600), key, signatureAlg);
+		IssuedCertificate ic = new IssuedCertificate(key, new X509Certificate[] { cert }, null, null, null);
+		ic.createPKCS12(fnp12, null);
+		reloadPKCS12AndCompare(fnp12, ic, null);
+	}
+	
+	@Test
+	public void testKeyGeneratePKCS12Password3DES() throws Throwable {
+		KeyPair key = KeyPairFactory.generateKeyPair(type);
+		X509Certificate cert = CertificateFactory.generateSelfSignedCertificate(issuer, //
+				ZonedDateTime.now().plusSeconds(3600), key, signatureAlg);
+		IssuedCertificate ic = new IssuedCertificate(key, new X509Certificate[] { cert }, null, null, null);
+		ic.createPKCS12(fnp12, password, "1", PKCS12Cipher.DES3);
+		reloadPKCS12AndCompare(fnp12, ic, password);
+	}
 
+	@Test
+	public void testKeyGeneratePKCS12PasswordAES128() throws Throwable {
+		KeyPair key = KeyPairFactory.generateKeyPair(type);
+		X509Certificate cert = CertificateFactory.generateSelfSignedCertificate(issuer, //
+				ZonedDateTime.now().plusSeconds(3600), key, signatureAlg);
+		IssuedCertificate ic = new IssuedCertificate(key, new X509Certificate[] { cert }, null, null, null);
+		ic.createPKCS12(fnp12, password, "1", PKCS12Cipher.AES128);
+		reloadPKCS12AndCompare(fnp12, ic, password);
+	}
+	
+	@Test
+	public void testKeyGeneratePKCS12PasswordAES192() throws Throwable {
+		KeyPair key = KeyPairFactory.generateKeyPair(type);
+		X509Certificate cert = CertificateFactory.generateSelfSignedCertificate(issuer, //
+				ZonedDateTime.now().plusSeconds(3600), key, signatureAlg);
+		IssuedCertificate ic = new IssuedCertificate(key, new X509Certificate[] { cert }, null, null, null);
+		ic.createPKCS12(fnp12, password, "1", PKCS12Cipher.AES192);
+		reloadPKCS12AndCompare(fnp12, ic, password);
+	}
+	
+	@Test
+	public void testKeyGeneratePKCS12PasswordAES256() throws Throwable {
+		KeyPair key = KeyPairFactory.generateKeyPair(type);
+		X509Certificate cert = CertificateFactory.generateSelfSignedCertificate(issuer, //
+				ZonedDateTime.now().plusSeconds(3600), key, signatureAlg);
+		IssuedCertificate ic = new IssuedCertificate(key, new X509Certificate[] { cert }, null, null, null);
+		ic.createPKCS12(fnp12, password, "1", PKCS12Cipher.AES256);
+		reloadPKCS12AndCompare(fnp12, ic, password);
+	}
+	
 	/**
 	 * Save and reload the keying material
 	 * 
-	 * @param key The key to save/restore
 	 * @param fn The filename to use
 	 * @param ic The IssuedCertificate Instance.
 	 * @throws InvalidPasswordException Bad Password
@@ -274,6 +334,33 @@ public class TestSelfSignedCertificates {
 			assertEquals(ic.getPublicKey(), cert.getPublicKey());
 			cert.verify(ic.getPublicKey());
 			cert.verify(cert.getPublicKey());
+		} finally {
+			TestUtilities.delete(fn);
+		}
+	}
+	
+	/**
+	 * Save and reload the keying material
+	 * 
+	 * @param fn The filename to use
+	 * @param ic The IssuedCertificate Instance.
+	 * @param password The password
+	 * @throws InvalidPasswordException Bad Password
+	 * @throws IOException Unable to save/restore.
+	 */
+	private void reloadPKCS12AndCompare(Path fn, IssuedCertificate ic, String password) throws Throwable {
+		// reload
+		try {
+			PKCS12Decoder p12 = PKCS12Decoder.open(fn, password);
+			X509Certificate cert = (X509Certificate) p12.getCertificateChain()[0];
+			// System.out.println(cert);
+			assertEquals(ic.getCertificateChain()[0], cert);
+			assertEquals(ic.getPublicKey(), cert.getPublicKey());
+			cert.verify(ic.getPublicKey());
+			cert.verify(cert.getPublicKey());
+			
+			PrivateKey key = p12.getKeyPair().getPrivate();
+			assertEquals(ic.getPrivateKey(), key);
 		} finally {
 			TestUtilities.delete(fn);
 		}

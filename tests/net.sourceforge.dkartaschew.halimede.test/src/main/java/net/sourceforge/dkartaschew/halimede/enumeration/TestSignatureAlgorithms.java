@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.NoSuchElementException;
 
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
-import org.bouncycastle.pqc.jcajce.provider.rainbow.BCRainbowPublicKey;
+import org.bouncycastle.pqc.jcajce.provider.gmss.BCGMSSPublicKey;
 import org.junit.Test;
 
 import net.sourceforge.dkartaschew.halimede.data.KeyPairFactory;
@@ -99,6 +99,22 @@ public class TestSignatureAlgorithms {
 		
 		assertEquals(SignatureAlgorithm.GOST3411withDSTU4145, SignatureAlgorithm
 				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.DSTU4145_0).getPublic()));
+		
+		assertEquals(SignatureAlgorithm.RAINBOWwithSHA512, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.Rainbow).getPublic()));
+		
+		assertEquals(SignatureAlgorithm.XMSSwithSHA512, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.XMSS_SHA2_10_256).getPublic()));
+		
+		assertEquals(SignatureAlgorithm.XMSSMTwithSHA512, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.XMSSMT_SHA2_20_4_256).getPublic()));
+		
+		assertEquals(SignatureAlgorithm.SPHINCS256withSHA3_512, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.SPHINCS_SHA3_256).getPublic()));
+		
+		assertEquals(SignatureAlgorithm.SPHICS256withSHA512, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.SPHINCS_SHA512_256).getPublic()));
+
 	}
 
 	@Test
@@ -106,7 +122,7 @@ public class TestSignatureAlgorithms {
 		/*
 		 * THIS KEY IS NON-FUNCTIONAL
 		 */
-		BCRainbowPublicKey publicKey = new BCRainbowPublicKey(0, null, null, null);
+		BCGMSSPublicKey publicKey = new BCGMSSPublicKey(null, null);
 		assertEquals(null, SignatureAlgorithm.getDefaultSignature(publicKey));
 	}
 	

@@ -33,6 +33,9 @@ import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
 import org.bouncycastle.asn1.teletrust.TeleTrusTObjectIdentifiers;
 import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 import net.sourceforge.dkartaschew.halimede.data.KeyPairFactory;
 import net.sourceforge.dkartaschew.halimede.exceptions.UnknownKeyTypeException;
@@ -114,7 +117,37 @@ public enum SignatureAlgorithm {
 	/**
 	 * DSTU4145
 	 */
-	GOST3411withDSTU4145("GOST3411withDSTU4145", UAObjectIdentifiers.dstu4145be, false);
+	GOST3411withDSTU4145("GOST3411withDSTU4145", UAObjectIdentifiers.dstu4145be, false),
+
+	/*
+	 * Rainbow PQC
+	 */
+	RAINBOWwithSHA224("SHA224withRAINBOW", PQCObjectIdentifiers.rainbowWithSha224, false),
+	RAINBOWwithSHA256("SHA256withRAINBOW", PQCObjectIdentifiers.rainbowWithSha256, false),
+	RAINBOWwithSHA384("SHA384withRAINBOW", PQCObjectIdentifiers.rainbowWithSha384, false),
+	RAINBOWwithSHA512("SHA512withRAINBOW", PQCObjectIdentifiers.rainbowWithSha512, false),
+
+	/*
+	 * SPHINCS 256
+	 */
+	SPHICS256withSHA512("SHA512withSPHINCS256", PQCObjectIdentifiers.sphincs256_with_SHA512, true),
+	SPHINCS256withSHA3_512("SHA3-512withSPHINCS256", PQCObjectIdentifiers.sphincs256_with_SHA3_512, true),
+
+	/*
+	 * XMSS PQC
+	 */
+	XMSSwithSHA256("SHA256WITHXMSS", PQCObjectIdentifiers.xmss_with_SHA256, true),
+	XMSSwithSHA512("SHA512WITHXMSS", PQCObjectIdentifiers.xmss_with_SHA512, true),
+	XMSSwithSHAKE128("SHAKE128WITHXMSS", PQCObjectIdentifiers.xmss_with_SHAKE128, true),
+	XMSSwithSHAKE256("SHAKE256WITHXMSS", PQCObjectIdentifiers.xmss_with_SHAKE256, true),
+
+	/*
+	 * XMSSMT PQC
+	 */
+	XMSSMTwithSHA256("SHA256WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_with_SHA256, true),
+	XMSSMTwithSHA512("SHA512WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_with_SHA512, true),
+	XMSSMTwithSHAKE128("SHAKE128WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_with_SHAKE128, true),
+	XMSSMTwithSHAKE256("SHAKE256WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_with_SHAKE256, true);
 
 	private final String algID;
 	private final ASN1ObjectIdentifier oid;
@@ -123,8 +156,8 @@ public enum SignatureAlgorithm {
 	/**
 	 * Create a signature type
 	 * 
-	 * @param algID                The algorithm Name.
-	 * @param oid                  The ASN1 Object ID.
+	 * @param algID The algorithm Name.
+	 * @param oid The ASN1 Object ID.
 	 * @param inBCCentralDirectory TRUE if this is in the BC central directory algorithm finder.
 	 */
 	private SignatureAlgorithm(String algID, ASN1ObjectIdentifier oid, boolean inBCCentralDirectory) {
@@ -168,12 +201,24 @@ public enum SignatureAlgorithm {
 	}
 
 	/**
+	 * Get the provider required to generate the keying material for this keytype
+	 * 
+	 * @return The provider.
+	 */
+	public String getProvider() {
+		if (algID.contains("RAINBOW") || algID.contains("XMSS") || algID.contains("SPHINCS256")) {
+			return BouncyCastlePQCProvider.PROVIDER_NAME;
+		}
+		return BouncyCastleProvider.PROVIDER_NAME;
+	}
+
+	/**
 	 * Get the signature based on the given description
 	 * 
 	 * @param value The algID obtained from the signature
 	 * @return The signature based on the named algID
 	 * @throws NoSuchElementException The description given doesn't match a known element.
-	 * @throws NullPointerException   The description was null.
+	 * @throws NullPointerException The description was null.
 	 */
 	public static Object forAlgID(String value) {
 		Objects.requireNonNull(value, "AlgorithmID was null");
@@ -186,7 +231,7 @@ public enum SignatureAlgorithm {
 	 * @param value The algID obtained from the signature
 	 * @return The signature based on the named algID
 	 * @throws NoSuchElementException The description given doesn't match a known element.
-	 * @throws NullPointerException   The description was null.
+	 * @throws NullPointerException The description was null.
 	 */
 	public static Object forOID(ASN1ObjectIdentifier value) {
 		Objects.requireNonNull(value, "ASN1ObjectIdentifier was null");
@@ -213,7 +258,7 @@ public enum SignatureAlgorithm {
 //					WHIRLPOOLwithSM2, //
 //					BLAKE2B512withSM2, //
 //					BLAKE2S256withSM2 
-					});
+			});
 		}
 		switch (key.getType()) {
 		case "ECDSA":
@@ -292,6 +337,34 @@ public enum SignatureAlgorithm {
 						RIPEMD160withRSA, //
 						RIPEMD256withRSA });
 			}
+		case "Rainbow":
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					RAINBOWwithSHA224, //
+					RAINBOWwithSHA256, //
+					RAINBOWwithSHA384, //
+					RAINBOWwithSHA512 });
+
+		case "SPHINCS256":
+			if (key == KeyType.SPHINCS_SHA512_256) {
+				return Arrays.asList(new SignatureAlgorithm[] { //
+						SPHICS256withSHA512 });
+			}
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					SPHINCS256withSHA3_512 });
+
+		case "XMSS":
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					XMSSwithSHA256, //
+					XMSSwithSHA512, //
+					XMSSwithSHAKE128, //
+					XMSSwithSHAKE256 });
+
+		case "XMSSMT":
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					XMSSMTwithSHA256, //
+					XMSSMTwithSHA512, //
+					XMSSMTwithSHAKE128, //
+					XMSSMTwithSHAKE256 });
 		}
 		return Collections.emptyList();
 	}
@@ -301,7 +374,7 @@ public enum SignatureAlgorithm {
 	 * 
 	 * @param key The key type
 	 * @return A collection of application algorithms for Certificates. (Collection will be empty if key was is
-	 *         unknown).
+	 * unknown).
 	 */
 	public static Collection<SignatureAlgorithm> forType(SignatureAlgorithm key) {
 		Objects.requireNonNull(key, "Signature is null");
@@ -347,7 +420,7 @@ public enum SignatureAlgorithm {
 //					WHIRLPOOLwithSM2, //
 //					BLAKE2B512withSM2, //
 //					BLAKE2S256withSM2 
-					});
+			});
 
 		case SHA1withDSA:
 		case SHA224withDSA:
@@ -418,6 +491,43 @@ public enum SignatureAlgorithm {
 					RIPEMD128withRSA, //
 					RIPEMD160withRSA, //
 					RIPEMD256withRSA });
+
+		case RAINBOWwithSHA224:
+		case RAINBOWwithSHA256:
+		case RAINBOWwithSHA384:
+		case RAINBOWwithSHA512:
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					RAINBOWwithSHA224, //
+					RAINBOWwithSHA256, //
+					RAINBOWwithSHA384, //
+					RAINBOWwithSHA512 });
+
+		case SPHICS256withSHA512:
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					SPHICS256withSHA512 });
+		case SPHINCS256withSHA3_512:
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					SPHINCS256withSHA3_512 });
+
+		case XMSSwithSHA256:
+		case XMSSwithSHA512:
+		case XMSSwithSHAKE128:
+		case XMSSwithSHAKE256:
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					XMSSwithSHA256, //
+					XMSSwithSHA512, //
+					XMSSwithSHAKE128, //
+					XMSSwithSHAKE256 });
+
+		case XMSSMTwithSHA256:
+		case XMSSMTwithSHA512:
+		case XMSSMTwithSHAKE128:
+		case XMSSMTwithSHAKE256:
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					XMSSMTwithSHA256, //
+					XMSSMTwithSHA512, //
+					XMSSMTwithSHAKE128, //
+					XMSSMTwithSHAKE256 });
 		}
 		return Collections.emptyList();
 	}
@@ -457,6 +567,21 @@ public enum SignatureAlgorithm {
 			return SignatureAlgorithm.SHA1withDSA;
 		case "RSA":
 			return SignatureAlgorithm.SHA256withRSA;
+		case "Rainbow":
+			return SignatureAlgorithm.RAINBOWwithSHA512;
+		case "SPHINCS-256":
+			try {
+				if (KeyType.forKey(key) == KeyType.SPHINCS_SHA512_256) {
+					return SignatureAlgorithm.SPHICS256withSHA512;
+				}
+			} catch (UnknownKeyTypeException e) {
+				// Ignore and use default;
+			}
+			return SignatureAlgorithm.SPHINCS256withSHA3_512;
+		case "XMSS":
+			return SignatureAlgorithm.XMSSwithSHA512;
+		case "XMSSMT":
+			return SignatureAlgorithm.XMSSMTwithSHA512;
 		}
 		return null;
 	}

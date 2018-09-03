@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 /**
  * Manager class for handling Certificate Authourities.
@@ -42,6 +43,9 @@ public class CertificateAuthourityManager implements PropertyChangeListener {
 	static {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
+		}
+		if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(new BouncyCastlePQCProvider());
 		}
 	}
 

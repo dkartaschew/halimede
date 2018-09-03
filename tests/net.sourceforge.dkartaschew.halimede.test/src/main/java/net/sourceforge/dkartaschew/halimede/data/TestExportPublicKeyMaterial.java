@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,6 +46,7 @@ import net.sourceforge.dkartaschew.halimede.data.impl.IssuedCertificate;
 import net.sourceforge.dkartaschew.halimede.enumeration.EncodingType;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.exceptions.InvalidPasswordException;
+import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(Parameterized.class)
@@ -52,9 +54,11 @@ public class TestExportPublicKeyMaterial {
 
 	@Parameters(name = "{0}")
 	public static Collection<KeyType> data() {
+		KeyTypeWarningValidator v = new KeyTypeWarningValidator();
+		
 		// Only do for keying material of 2048 bits or less.
 		Collection<KeyType> data = Arrays.stream(KeyType.values())//
-				.filter(key -> (key.getBitLength() <= TestUtilities.TEST_MAX_KEY_LENGTH))//
+				.filter(key -> (v.validate(key) == ValidationStatus.ok()))//
 				.collect(Collectors.toList());
 		return data;
 	}

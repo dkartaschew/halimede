@@ -44,6 +44,7 @@ import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMDecryptorProvider;
 import org.bouncycastle.openssl.PEMEncryptedKeyPair;
+import org.bouncycastle.openssl.PEMException;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -52,6 +53,7 @@ import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 import org.bouncycastle.pkcs.PKCSException;
 import org.bouncycastle.pkcs.PKCSIOException;
 import org.bouncycastle.pkcs.jcajce.JcePKCSPBEInputDecryptorProviderBuilder;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 import net.sourceforge.dkartaschew.halimede.exceptions.InvalidPasswordException;
 
@@ -74,8 +76,11 @@ public class PKCS8Decoder {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
 		}
+		if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(new BouncyCastlePQCProvider());
+		}
 	}
-	
+
 	/**
 	 * The keypair.
 	 */
@@ -92,15 +97,14 @@ public class PKCS8Decoder {
 	 */
 	public static PKCS8Decoder open(Path filename, String password) throws InvalidPasswordException, IOException {
 		char[] pass = (password != null) ? password.toCharArray() : new char[0];
-		try (PEMParser pemParser = new PEMParser(new InputStreamReader(
-				new FileInputStream(filename.toFile()), StandardCharsets.UTF_8))) {
+		try (PEMParser pemParser = new PEMParser(
+				new InputStreamReader(new FileInputStream(filename.toFile()), StandardCharsets.UTF_8))) {
 			Object object = pemParser.readObject();
 			if (object == null) {
 				// May be plain DER without enough info for PEMParser
 				return attemptDER(filename, pass);
 			}
-			JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(BouncyCastleProvider.PROVIDER_NAME);
-			KeyPair kp;
+
 			if (object instanceof ASN1ObjectIdentifier) {
 				// OpenSSL will emit EC Parameters, which can be ignored.
 				ASN1ObjectIdentifier obj = (ASN1ObjectIdentifier) object;
@@ -111,27 +115,37 @@ public class PKCS8Decoder {
 			if (object instanceof PEMEncryptedKeyPair) {
 				// Encrypted key - we will use provided password
 				PEMEncryptedKeyPair ckp = (PEMEncryptedKeyPair) object;
-				PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(pass);
-				kp = converter.getKeyPair(ckp.decryptKeyPair(decProv));
+				try {
+					return tryEncryptedPEMKeyPair(ckp, pass, BouncyCastleProvider.PROVIDER_NAME);
+				} catch (PEMException e) {
+					return tryEncryptedPEMKeyPair(ckp, pass, BouncyCastlePQCProvider.PROVIDER_NAME);
+				}
+
 			} else if (object instanceof PrivateKeyInfo) {
 				PrivateKeyInfo privKeyInfo = (PrivateKeyInfo) object;
-				kp = new KeyPair(null, converter.getPrivateKey(privKeyInfo));
+				try {
+					return tryPEMPrivateKey(privKeyInfo, BouncyCastleProvider.PROVIDER_NAME);
+				} catch (PEMException e) {
+					return tryPEMPrivateKey(privKeyInfo, BouncyCastlePQCProvider.PROVIDER_NAME);
+				}
 			} else if (object instanceof PEMKeyPair) {
-				// Unencrypted key - no password needed
 				PEMKeyPair ukp = (PEMKeyPair) object;
-				kp = converter.getKeyPair(ukp);
+				try {
+					return tryPEMKeyPair(ukp, BouncyCastleProvider.PROVIDER_NAME);
+				} catch (PEMException e) {
+					return tryPEMKeyPair(ukp, BouncyCastlePQCProvider.PROVIDER_NAME);
+				}
+
 			} else if (object instanceof PKCS8EncryptedPrivateKeyInfo) {
 				PKCS8EncryptedPrivateKeyInfo pkcs8 = (PKCS8EncryptedPrivateKeyInfo) object;
-				// JceOpenSSLPKCS8DecryptorProviderBuilder jce = new JceOpenSSLPKCS8DecryptorProviderBuilder();
-				JcePKCSPBEInputDecryptorProviderBuilder jce = new JcePKCSPBEInputDecryptorProviderBuilder();
-				jce.setProvider(BouncyCastleProvider.PROVIDER_NAME);
-				PrivateKeyInfo privKeyInfo = pkcs8.decryptPrivateKeyInfo(jce.build(pass));
-				kp = new KeyPair(null, converter.getPrivateKey(privKeyInfo));
+				try {
+					return tryEncryptedPEMPrivateKey(pkcs8, pass, BouncyCastleProvider.PROVIDER_NAME);
+				} catch (PEMException | PKCSException e) {
+					return tryEncryptedPEMPrivateKey(pkcs8, pass, BouncyCastlePQCProvider.PROVIDER_NAME);
+				}
 			} else {
 				throw new UnsupportedEncodingException("Unhandled class: " + object.getClass().getName());
 			}
-
-			return new PKCS8Decoder(kp);
 
 		} catch (Throwable e) {
 			if (e instanceof IOException || e instanceof PKCSException) {
@@ -153,6 +167,70 @@ public class PKCS8Decoder {
 	}
 
 	/**
+	 * Attempt to decode PEM Encrypted Private Key
+	 * 
+	 * @param pkcs8 The encrypted private key
+	 * @param pass The password
+	 * @param providerName The provider
+	 * @return A PKCS8 Decoder if valid
+	 * @throws PEMException PEM Exception
+	 * @throws PKCSException PKCS Exception
+	 */
+	private static PKCS8Decoder tryEncryptedPEMPrivateKey(PKCS8EncryptedPrivateKeyInfo pkcs8, char[] pass,
+			String providerName) throws PKCSException, PEMException {
+		JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(providerName);
+		JcePKCSPBEInputDecryptorProviderBuilder jce = new JcePKCSPBEInputDecryptorProviderBuilder();
+		jce.setProvider(BouncyCastleProvider.PROVIDER_NAME);
+		PrivateKeyInfo privKeyInfo = pkcs8.decryptPrivateKeyInfo(jce.build(pass));
+		KeyPair kp = new KeyPair(null, converter.getPrivateKey(privKeyInfo));
+		return new PKCS8Decoder(kp);
+	}
+
+	/**
+	 * Attempt to decode PEM Private/Public Key Pair
+	 * 
+	 * @param ukp The key info
+	 * @param providerName The provider
+	 * @return A PKCS8 Decoder if valid
+	 * @throws PEMException PEM Exception
+	 */
+	private static PKCS8Decoder tryPEMKeyPair(PEMKeyPair ukp, String providerName) throws PEMException {
+		JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(providerName);
+		return new PKCS8Decoder(converter.getKeyPair(ukp));
+	}
+
+	/**
+	 * Attempt to decode PEM Private Key
+	 * 
+	 * @param privKeyInfo The key info
+	 * @param providerName The provider
+	 * @return A PKCS8 Decoder if valid
+	 * @throws PEMException PEM Exception
+	 */
+	private static PKCS8Decoder tryPEMPrivateKey(PrivateKeyInfo privKeyInfo, String providerName) throws PEMException {
+		JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(providerName);
+		return new PKCS8Decoder(new KeyPair(null, converter.getPrivateKey(privKeyInfo)));
+	}
+
+	/**
+	 * Attempt to decode PEM Encrypted Key Pair
+	 * 
+	 * @param ckp The encrypted key pair
+	 * @param pass The password
+	 * @param providerName The provider
+	 * @return A PKCS8 Decoder if valid
+	 * @throws PEMException PEM Exception
+	 * @throws IOException IO Exception
+	 */
+	private static PKCS8Decoder tryEncryptedPEMKeyPair(PEMEncryptedKeyPair ckp, char[] pass, String providerName)
+			throws PEMException, IOException {
+		JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(providerName);
+		PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder()
+				.setProvider(BouncyCastleProvider.PROVIDER_NAME).build(pass);
+		return new PKCS8Decoder(converter.getKeyPair(ckp.decryptKeyPair(decProv)));
+	}
+
+	/**
 	 * Attempt to read the file as straight DER
 	 * 
 	 * @param file The file to read
@@ -169,22 +247,29 @@ public class PKCS8Decoder {
 				// Simple Private Key
 				try {
 					PrivateKeyInfo info = PrivateKeyInfo.getInstance(ASN1Sequence.getInstance(p));
-					JcaPEMKeyConverter converter = new JcaPEMKeyConverter()
-							.setProvider(BouncyCastleProvider.PROVIDER_NAME);
-					return new PKCS8Decoder(new KeyPair(null, converter.getPrivateKey(info)));
+					return tryPEMPrivateKey(info, BouncyCastleProvider.PROVIDER_NAME);
 				} catch (Throwable e) {
 					// NOP
+					try {
+						PrivateKeyInfo info = PrivateKeyInfo.getInstance(ASN1Sequence.getInstance(p));
+						return tryPEMPrivateKey(info, BouncyCastlePQCProvider.PROVIDER_NAME);
+					} catch (Throwable e2) {
+						// NOP
+					}
 				}
 				// Encrypted PKCS8
 				try {
-					JcaPEMKeyConverter converter = new JcaPEMKeyConverter()
-							.setProvider(BouncyCastleProvider.PROVIDER_NAME);
 					PKCS8EncryptedPrivateKeyInfo info = new PKCS8EncryptedPrivateKeyInfo(p.getEncoded());
-					// JceOpenSSLPKCS8DecryptorProviderBuilder jce = new JceOpenSSLPKCS8DecryptorProviderBuilder();
 					JcePKCSPBEInputDecryptorProviderBuilder jce = new JcePKCSPBEInputDecryptorProviderBuilder();
 					jce.setProvider(BouncyCastleProvider.PROVIDER_NAME);
 					PrivateKeyInfo privKeyInfo = info.decryptPrivateKeyInfo(jce.build(pass));
-					return new PKCS8Decoder(new KeyPair(null, converter.getPrivateKey(privKeyInfo)));
+					try {
+						JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(BouncyCastleProvider.PROVIDER_NAME);
+						return new PKCS8Decoder(new KeyPair(null, converter.getPrivateKey(privKeyInfo)));
+					} catch (Throwable e) {
+						JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(BouncyCastlePQCProvider.PROVIDER_NAME);
+						return new PKCS8Decoder(new KeyPair(null, converter.getPrivateKey(privKeyInfo)));
+					}
 				} catch (Throwable e) {
 					if (e instanceof IOException || e instanceof PKCSException) {
 						String m = e.getMessage();
@@ -322,9 +407,9 @@ public class PKCS8Decoder {
 	}
 
 	/**
-	 * Get the found keypair
+	 * Get the found key pair
 	 * 
-	 * @return The found keypair.
+	 * @return The found key pair.
 	 */
 	public KeyPair getKeyPair() {
 		return keypair;

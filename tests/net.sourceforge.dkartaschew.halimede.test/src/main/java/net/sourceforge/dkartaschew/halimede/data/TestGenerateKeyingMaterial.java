@@ -28,12 +28,17 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.interfaces.ECPrivateKey;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
+import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,16 +51,40 @@ import net.sourceforge.dkartaschew.halimede.data.impl.IssuedCertificate;
 import net.sourceforge.dkartaschew.halimede.enumeration.EncodingType;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.enumeration.PKCS8Cipher;
+import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
 import net.sourceforge.dkartaschew.halimede.util.Strings;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(Parameterized.class)
 public class TestGenerateKeyingMaterial {
 
+	/*
+	 * TRUE to only run those ciphers that are quick to generate.
+	 */
+	public final static boolean SHORT = true;
+	
+	@BeforeClass
+	public static void setup() throws NoSuchAlgorithmException {
+		CryptoServicesRegistrar.setSecureRandom(SecureRandom.getInstance("SHA1PRNG"));
+	}
+	
+	@AfterClass
+	public static void teardown() {
+		CryptoServicesRegistrar.setSecureRandom(null);
+	}
+	
 	@Parameters(name = "{0}")
 	public static Collection<KeyType> data() {
 		// Always do all key type here.
-		return Arrays.stream(KeyType.values()).collect(Collectors.toList());
+		if(!SHORT)
+			return Arrays.stream(KeyType.values()).collect(Collectors.toList());
+
+		// Only do for keying material of 2048 bits or less.
+		KeyTypeWarningValidator v = new KeyTypeWarningValidator();
+		Collection<KeyType> data = Arrays.stream(KeyType.values())//
+				.filter(key -> (v.validate(key) == ValidationStatus.ok()))//
+				.collect(Collectors.toList());
+		return data;
 	}
 
 	private final String PASSWORD = "changeme";
@@ -87,10 +116,36 @@ public class TestGenerateKeyingMaterial {
 	 * Key Generation in DER (no alias defined).
 	 */
 	@Test
+	public void testKeyGenerateDERPlain() throws Exception {
+		generateKeyPair();
+		IssuedCertificate ic = new IssuedCertificate(key, new Certificate[] { new MockCertificate("Mock") }, null, null, null);
+		ic.createPKCS8(fn, null, EncodingType.DER, PKCS8Cipher.AES_256_CBC);
+		reloadAndComparePrivate(key, fn);
+		ic.createPublicKey(fn2, EncodingType.DER);
+		reloadAndComparePublic(key, fn2);
+	}
+	
+	/*
+	 * Key Generation in PEM (no alias defined).
+	 */
+	@Test
 	public void testKeyGeneratePEM() throws Exception {
 		generateKeyPair();
 		IssuedCertificate ic = new IssuedCertificate(key, new Certificate[] { new MockCertificate("Mock") }, null, null, null);
 		ic.createPKCS8(fn, PASSWORD, EncodingType.PEM, PKCS8Cipher.AES_256_CBC);
+		reloadAndComparePrivate(key, fn);
+		ic.createPublicKey(fn2, EncodingType.PEM);
+		reloadAndComparePublic(key, fn2);
+	}
+	
+	/*
+	 * Key Generation in PEM (no alias defined).
+	 */
+	@Test
+	public void testKeyGeneratePEMPLain() throws Exception {
+		generateKeyPair();
+		IssuedCertificate ic = new IssuedCertificate(key, new Certificate[] { new MockCertificate("Mock") }, null, null, null);
+		ic.createPKCS8(fn, null, EncodingType.PEM, PKCS8Cipher.AES_256_CBC);
 		reloadAndComparePrivate(key, fn);
 		ic.createPublicKey(fn2, EncodingType.PEM);
 		reloadAndComparePublic(key, fn2);
@@ -129,7 +184,6 @@ public class TestGenerateKeyingMaterial {
 		try {
 			PKCS8Decoder pkcs8 = PKCS8Decoder.open(fn, PASSWORD);
 			PrivateKey key2 = pkcs8.getKeyPair().getPrivate();
-			// System.out.println(key2);
 			if (key.getPrivate() instanceof ECPrivateKey) {
 				ECPrivateKey k = (ECPrivateKey) key.getPrivate();
 				assertEquals(k.getS(), ((ECPrivateKey) key2).getS());

@@ -65,6 +65,7 @@ import org.bouncycastle.cert.bc.BcX509ExtensionUtils;
 import org.bouncycastle.cert.jcajce.JcaX509CRLConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
@@ -86,7 +87,7 @@ public class CertificateFactory {
 	/**
 	 * RND Generator for keying material.
 	 */
-	private final static SecureRandom random = new SecureRandom();
+	private final static SecureRandom random = CryptoServicesRegistrar.getSecureRandom();
 	
 	/**
 	 * Generate a self signed certificate
@@ -493,16 +494,16 @@ public class CertificateFactory {
 	 */
 	private static ContentSigner getContentSigner(PrivateKey privKey, SignatureAlgorithm signatureAlgorithm)
 			throws OperatorCreationException {
-		// GOST3411withDSTU4145 is missing from the BC DefaultSignatureAlgorithmIdentifierFinder
+		// GOST3411withDSTU4145 + Rainbow is missing from the BC DefaultSignatureAlgorithmIdentifierFinder
 		if (signatureAlgorithm.isInBCCentralDirectory()) {
-			return new JcaContentSignerBuilder(signatureAlgorithm.getAlgID())
-					.setProvider(BouncyCastleProvider.PROVIDER_NAME)//
-					.build(privKey);
+				return new JcaContentSignerBuilder(signatureAlgorithm.getAlgID())
+						.setProvider(signatureAlgorithm.getProvider())//
+						.build(privKey);
 		} else {
 			// Manually create the content signer.
 			try {
 				final Signature sig = Signature.getInstance(signatureAlgorithm.getAlgID(),
-						BouncyCastleProvider.PROVIDER_NAME);
+						signatureAlgorithm.getProvider());
 				final AlgorithmIdentifier signatureAlgId = new AlgorithmIdentifier(signatureAlgorithm.getOID());
 				sig.initSign(privKey, random);
 

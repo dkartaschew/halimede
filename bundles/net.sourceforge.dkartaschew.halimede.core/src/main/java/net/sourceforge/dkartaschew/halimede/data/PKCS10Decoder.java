@@ -31,6 +31,7 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 import net.sourceforge.dkartaschew.halimede.data.impl.CertificateRequestPKCS10;
 
@@ -42,6 +43,9 @@ public class PKCS10Decoder {
 	static {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
+		}
+		if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(new BouncyCastlePQCProvider());
 		}
 	}
 	

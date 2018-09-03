@@ -45,6 +45,7 @@ import org.bouncycastle.jcajce.util.DefaultJcaJceHelper;
 import org.bouncycastle.jcajce.util.JcaJceHelper;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
@@ -58,6 +59,9 @@ public class PublicKeyDecoder {
 	static {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
+		}
+		if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(new BouncyCastlePQCProvider());
 		}
 		//
 		// key types

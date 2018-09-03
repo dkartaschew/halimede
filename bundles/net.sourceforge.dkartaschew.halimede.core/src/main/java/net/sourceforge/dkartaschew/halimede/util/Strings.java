@@ -17,14 +17,21 @@
 
 package net.sourceforge.dkartaschew.halimede.util;
 
+import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.PublicKey;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.jce.interfaces.GOST3410PublicKey;
 import org.bouncycastle.jce.provider.JCEECPublicKey;
+import org.bouncycastle.pqc.jcajce.provider.rainbow.BCRainbowPublicKey;
+import org.bouncycastle.pqc.jcajce.provider.sphincs.BCSphincs256PublicKey;
+import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSMTPublicKey;
+import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSPublicKey;
 import org.bouncycastle.util.encoders.Hex;
 
 public class Strings {
@@ -103,6 +110,97 @@ public class Strings {
 	}
 
 	/**
+	 * Encode the given data as a String with the given separator between each short value
+	 * 
+	 * @param data The data to encode
+	 * @param separator The separator to use (NULL will be transformed to "")
+	 * @param wrap The number of bytes per line. (zero or negative is no wrap).
+	 * @param wrapPrefix The prefix to apply for each wrapped line. (NULL will be transformed to "")
+	 * @return The data as hex encoded string
+	 */
+	private static String toHexString(short[] data, String separator, int wrap, String wrapPrefix) {
+		if (wrap <= 0) {
+			wrap = Integer.MAX_VALUE;
+		}
+		if (separator == null) {
+			separator = "";
+		}
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < data.length; i++) {
+			sb.append(String.format("%04x", toUnsignedInt(data[i])));
+			if (((i + 1) % wrap == 0) && (i + 1 != data.length)) {
+				sb.append(System.lineSeparator());
+				if (wrapPrefix != null) {
+					sb.append(wrapPrefix);
+				}
+			} else if (i + 1 != data.length) {
+				sb.append(separator);
+			}
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * Encode the given data as a String with the given separator between each short value
+	 * 
+	 * @param data The data to encode
+	 * @param separator The separator to use (NULL will be transformed to "")
+	 * @param wrap The number of bytes per line. (zero or negative is no wrap).
+	 * @param wrapPrefix The prefix to apply for each wrapped line. (NULL will be transformed to "")
+	 * @return The data as hex encoded string
+	 */
+	private static String toHexString(short[][] data, String separator, int wrap, String wrapPrefix) {
+		if (wrap <= 0) {
+			wrap = Integer.MAX_VALUE;
+		}
+		if (separator == null) {
+			separator = "";
+		}
+		StringBuilder sb = new StringBuilder();
+		for (int j = 0; j < data.length; j++) {
+			short[] line = data[j];
+			if (j != 0) {
+				sb.append(System.lineSeparator());
+				if (wrapPrefix != null) {
+					sb.append(wrapPrefix);
+				}
+			}
+			for (int i = 0; i < line.length; i++) {
+				sb.append(String.format("%04x", toUnsignedInt(line[i])));
+				if (((i + 1) % wrap == 0) && (i + 1 != line.length)) {
+					sb.append(System.lineSeparator());
+					if (wrapPrefix != null) {
+						sb.append(wrapPrefix);
+					}
+				} else if (i + 1 != line.length) {
+					sb.append(separator);
+				}
+			}
+		}
+		return sb.toString();
+	}
+	
+    /**
+     * Converts the argument to an {@code int} by an unsigned
+     * conversion.  In an unsigned conversion to an {@code int}, the
+     * high-order 24 bits of the {@code int} are zero and the
+     * low-order 8 bits are equal to the bits of the {@code byte} argument.
+     *
+     * Consequently, zero and positive {@code byte} values are mapped
+     * to a numerically equal {@code int} value and negative {@code
+     * byte} values are mapped to an {@code int} value equal to the
+     * input plus 2<sup>8</sup>.
+     *
+     * @param  x the value to convert to an unsigned {@code int}
+     * @return the argument converted to {@code int} by an unsigned
+     *         conversion
+     * @since 1.8
+     */
+    public static int toUnsignedInt(short x) {
+        return ((int) x) & 0xff;
+    }
+	
+	/**
 	 * Pretty format details of public key for display.
 	 * 
 	 * @param pkey The public key
@@ -154,6 +252,73 @@ public class Strings {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Y: ");
 			sb.append(toHexString(gost.getY().toByteArray(), " ", WRAP, "   "));
+			return sb.toString();
+		}
+		if (pkey instanceof BCRainbowPublicKey) {
+			BCRainbowPublicKey rainbow = (BCRainbowPublicKey) pkey;
+			// docLength, coeffquadratic, coeffsingular, coeffscalar
+			StringBuilder sb = new StringBuilder();
+			sb.append("DocLength: ");
+			sb.append(rainbow.getDocLength());
+			sb.append(System.lineSeparator());
+			sb.append("coeffquadratic: ");
+			sb.append(toHexString(rainbow.getCoeffQuadratic(), " ", WRAP / 2, "   "));
+			sb.append(System.lineSeparator());
+			sb.append("coeffsingular: ");
+			sb.append(toHexString(rainbow.getCoeffSingular(), " ", WRAP / 2, "   "));
+			sb.append(System.lineSeparator());
+			sb.append("coeffscalar: ");
+			sb.append(toHexString(rainbow.getCoeffScalar(), " ", WRAP / 2, "   "));
+			return sb.toString();
+		}
+		if (pkey instanceof BCSphincs256PublicKey) {
+			BCSphincs256PublicKey sphincs = (BCSphincs256PublicKey)pkey;
+			StringBuilder sb = new StringBuilder();
+			try {
+				/*
+				 * NASTY, but to determine the key, when need the digest.
+				 */
+				Field f = pkey.getClass().getDeclaredField("treeDigest");
+				f.setAccessible(true);
+				ASN1ObjectIdentifier digest = (ASN1ObjectIdentifier) f.get(pkey);
+				if(digest.equals(NISTObjectIdentifiers.id_sha512_256)){
+					sb.append("Tree Digest: SHA512-256");
+				}
+				if(digest.equals(NISTObjectIdentifiers.id_sha3_256)){
+					sb.append("Tree Digest: SHA3-256");
+				}
+			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+				//throw new RuntimeException("BC SPHINCS-256 modified", e);
+				// Ignore here...
+			}
+			
+			sb.append("Key Data: ");
+			sb.append(toHexString(sphincs.getKeyData(), " ", WRAP, "   "));
+			return sb.toString();
+		}
+		if (pkey instanceof BCXMSSPublicKey) {
+			BCXMSSPublicKey xmss = (BCXMSSPublicKey)pkey;
+			StringBuilder sb = new StringBuilder();
+			sb.append("Digest: ");
+			sb.append(xmss.getTreeDigest());
+			sb.append(System.lineSeparator());
+			sb.append("Height: ");
+			sb.append(xmss.getHeight());
+			// TODO: Get Root and PublicSeed
+			return sb.toString();
+		}
+		if (pkey instanceof BCXMSSMTPublicKey) {
+			BCXMSSMTPublicKey xmssmt = (BCXMSSMTPublicKey)pkey;
+			StringBuilder sb = new StringBuilder();
+			sb.append("Digest: ");
+			sb.append(xmssmt.getTreeDigest());
+			sb.append(System.lineSeparator());
+			sb.append("Height: ");
+			sb.append(xmssmt.getHeight());
+			sb.append(System.lineSeparator());
+			sb.append("Layers: ");
+			sb.append(xmssmt.getLayers());
+			// TODO: Get Root and PublicSeed
 			return sb.toString();
 		}
 		return "";

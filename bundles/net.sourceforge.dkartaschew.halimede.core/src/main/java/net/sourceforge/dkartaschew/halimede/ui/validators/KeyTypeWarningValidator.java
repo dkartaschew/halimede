@@ -37,6 +37,12 @@ public class KeyTypeWarningValidator implements IValidator {
 		if (key.getType().equals("RSA") && key.getBitLength() > 1024) {
 			return ValidationStatus.warning("RSA Keys greater than 1024 bits may take time to generate.");
 		}
+		if (key.getType().equals("XMSS") && key.getHeight() > 10) {
+			return ValidationStatus.warning("XMSS Keys with a height greater than 10 may take time to generate. (In some case key generation may take hours).");
+		}
+		if (key.getType().equals("XMSSMT") && key.getHeight() / key.getLayers() > 5) {
+			return ValidationStatus.warning("XMSS-MT Keys may take time to generate. (In some case key generation may take hours).");
+		}
 		return ValidationStatus.ok();
 	}
 

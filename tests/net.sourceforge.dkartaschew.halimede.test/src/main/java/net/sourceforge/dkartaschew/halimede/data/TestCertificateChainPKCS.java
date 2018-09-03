@@ -53,6 +53,7 @@ import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
+import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -72,6 +73,7 @@ import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyUsageEnum;
 import net.sourceforge.dkartaschew.halimede.enumeration.PKCS12Cipher;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
+import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
 
 /**
  * Tests for storage of PKCS#12 and PKCS#7 for completeness.
@@ -102,9 +104,11 @@ public class TestCertificateChainPKCS {
 
 	// @Parameters(name = "{0}")
 	public static Collection<KeyType> keyData() {
+		KeyTypeWarningValidator v = new KeyTypeWarningValidator();
+		
 		// Only do for keying material of 2048 bits or less.
 		Collection<KeyType> data = Arrays.stream(KeyType.values())//
-				.filter(key -> (key.getBitLength() <= TestUtilities.TEST_MAX_KEY_LENGTH))//
+				.filter(key -> (v.validate(key) == ValidationStatus.ok()))//
 				.collect(Collectors.toList());
 		return data;
 	}

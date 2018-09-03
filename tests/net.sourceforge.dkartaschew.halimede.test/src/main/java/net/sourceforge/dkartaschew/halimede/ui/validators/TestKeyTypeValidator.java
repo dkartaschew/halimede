@@ -76,6 +76,10 @@ public class TestKeyTypeValidator {
 			assertEquals(ValidationStatus.warning("").getSeverity(), s.getSeverity());
 		} else if (type.getType().equals("DSA") && type.getBitLength() >= 1024) {
 			assertEquals(ValidationStatus.warning("").getSeverity(), s.getSeverity());
+		} else if (type.getType().equals("XMSS") && type.getHeight() > 10) {
+			assertEquals(ValidationStatus.warning("").getSeverity(), s.getSeverity());
+		} else if (type.getType().equals("XMSSMT") && type.getHeight() / type.getLayers() > 5) {
+			assertEquals(ValidationStatus.warning("").getSeverity(), s.getSeverity());
 		} else {
 			assertEquals(ValidationStatus.ok().getSeverity(), s.getSeverity());
 		}

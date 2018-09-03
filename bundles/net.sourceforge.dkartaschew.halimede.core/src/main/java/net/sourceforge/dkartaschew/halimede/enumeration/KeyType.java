@@ -17,6 +17,7 @@
 
 package net.sourceforge.dkartaschew.halimede.enumeration;
 
+import java.lang.reflect.Field;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
@@ -24,10 +25,17 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.jcajce.provider.asymmetric.dstu.BCDSTU4145PublicKey;
 import org.bouncycastle.jce.interfaces.GOST3410PublicKey;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.bouncycastle.pqc.jcajce.provider.sphincs.BCSphincs256PublicKey;
+import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSMTPublicKey;
+import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSPublicKey;
 
 import net.sourceforge.dkartaschew.halimede.data.KeyPairFactory;
 import net.sourceforge.dkartaschew.halimede.exceptions.UnknownKeyTypeException;
@@ -592,15 +600,15 @@ public enum KeyType {
 	/**
 	 * XMSS 10 SHAKE256
 	 */
-	XMSS_SHAKE_10_512("XMSS 10 SHAKE256", "XMSS", 256, "SHAKE256", 10, 0),
+	XMSS_SHAKE_10_512("XMSS 10 SHAKE256", "XMSS", 512, "SHAKE256", 10, 0),
 	/**
 	 * XMSS 16 SHAKE256
 	 */
-	XMSS_SHAKE_16_512("XMSS 16 SHAKE256", "XMSS", 256, "SHAKE256", 16, 0),
+	XMSS_SHAKE_16_512("XMSS 16 SHAKE256", "XMSS", 512, "SHAKE256", 16, 0),
 	/**
 	 * XMSS 20 SHAKE256
 	 */
-	XMSS_SHAKE_20_512("XMSS 20 SHAKE256", "XMSS", 256, "SHAKE256", 20, 0),
+	XMSS_SHAKE_20_512("XMSS 20 SHAKE256", "XMSS", 512, "SHAKE256", 20, 0),
 	/**
 	 * XMSSMT 20/2 SHA256
 	 */
@@ -620,7 +628,7 @@ public enum KeyType {
 	/**
 	 * XMSSMT 40/8 SHA256
 	 */
-	XMSSMT_SHA2_20_8_256("XMSSMT 40/8 SHA256", "XMSSMT", 256, "SHA256", 40, 8),
+	XMSSMT_SHA2_40_8_256("XMSSMT 40/8 SHA256", "XMSSMT", 256, "SHA256", 40, 8),
 	/**
 	 * XMSSMT 60/3 SHA256
 	 */
@@ -652,7 +660,7 @@ public enum KeyType {
 	/**
 	 * XMSSMT 40/8 SHA512
 	 */
-	XMSSMT_SHA2_20_8_512("XMSSMT 40/8 SHA512", "XMSSMT", 512, "SHA512", 40, 8),
+	XMSSMT_SHA2_40_8_512("XMSSMT 40/8 SHA512", "XMSSMT", 512, "SHA512", 40, 8),
 	/**
 	 * XMSSMT 60/3 SHA512
 	 */
@@ -684,7 +692,7 @@ public enum KeyType {
 	/**
 	 * XMSSMT 40/8 SHAKE128
 	 */
-	XMSSMT_SHAKE_20_8_256("XMSSMT 40/8 SHAKE128", "XMSSMT", 256, "SHAKE128", 40, 8),
+	XMSSMT_SHAKE_40_8_256("XMSSMT 40/8 SHAKE128", "XMSSMT", 256, "SHAKE128", 40, 8),
 	/**
 	 * XMSSMT 60/3 SHAKE128
 	 */
@@ -716,7 +724,7 @@ public enum KeyType {
 	/**
 	 * XMSSMT 40/8 SHAKE256
 	 */
-	XMSSMT_SHAKE_20_8_512("XMSSMT 40/8 SHAKE256", "XMSSMT", 512, "SHAKE256", 40, 8),
+	XMSSMT_SHAKE_40_8_512("XMSSMT 40/8 SHAKE256", "XMSSMT", 512, "SHAKE256", 40, 8),
 	/**
 	 * XMSSMT 60/3 SHAKE256
 	 */
@@ -841,6 +849,21 @@ public enum KeyType {
 	public int getLayers() {
 		return layers;
 	}
+	
+	/**
+	 * Get the provider required to generate the keying material for this keytype
+	 * @return The provider.
+	 */
+	public String getProvider() {
+		switch (type) {
+		case "Rainbow":
+		case "XMSS":
+		case "XMSSMT":
+		case "SPHINCS256":
+			return BouncyCastlePQCProvider.PROVIDER_NAME;
+		}
+		return BouncyCastleProvider.PROVIDER_NAME;
+	}
 
 	/**
 	 * Get the keytype based on the given description
@@ -942,6 +965,49 @@ public enum KeyType {
 			for (KeyType t : values()) {
 				if (t.type.equals(algorithm) && t.bitLength == length) {
 					return t;
+				}
+			}
+
+		case "RAINBOW":
+			return KeyType.Rainbow;
+			
+		case "SPHINCS-256":
+			if (publicKey instanceof BCSphincs256PublicKey) {
+				BCSphincs256PublicKey pkey = (BCSphincs256PublicKey) publicKey;
+				try {
+					/*
+					 * NASTY, but to determine the key, when need the digest.
+					 */
+					Field f = pkey.getClass().getDeclaredField("treeDigest");
+					f.setAccessible(true);
+					ASN1ObjectIdentifier digest = (ASN1ObjectIdentifier) f.get(pkey);
+					if(digest.equals(NISTObjectIdentifiers.id_sha512_256)){
+						return KeyType.SPHINCS_SHA512_256;
+					}
+					if(digest.equals(NISTObjectIdentifiers.id_sha3_256)){
+						return KeyType.SPHINCS_SHA3_256;
+					}
+				} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+					throw new RuntimeException("BC SPHINCS-256 modified", e);
+				}
+
+			}
+		case "XMSS":
+			if(publicKey instanceof BCXMSSPublicKey) {
+				BCXMSSPublicKey pkey = (BCXMSSPublicKey)publicKey;
+				for (KeyType t : values()) {
+					if (t.type.equals(algorithm) && t.height == pkey.getHeight()) {
+						return t;
+					}
+				}
+			}
+		case "XMSSMT":
+			if(publicKey instanceof BCXMSSMTPublicKey) {
+				BCXMSSMTPublicKey pkey = (BCXMSSMTPublicKey)publicKey;
+				for (KeyType t : values()) {
+					if (t.type.equals(algorithm) && t.height == pkey.getHeight() && t.layers == pkey.getLayers()) {
+						return t;
+					}
 				}
 			}
 		}

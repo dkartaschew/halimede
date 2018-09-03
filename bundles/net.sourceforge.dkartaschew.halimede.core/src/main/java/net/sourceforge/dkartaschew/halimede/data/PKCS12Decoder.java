@@ -31,6 +31,7 @@ import java.security.cert.Certificate;
 import java.util.Enumeration;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 import net.sourceforge.dkartaschew.halimede.exceptions.InvalidPasswordException;
 
@@ -42,6 +43,9 @@ public class PKCS12Decoder {
 	static {
 		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
 			Security.addProvider(new BouncyCastleProvider());
+		}
+		if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
+			Security.addProvider(new BouncyCastlePQCProvider());
 		}
 	}
 	

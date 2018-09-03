@@ -49,6 +49,7 @@ import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
 import org.bouncycastle.cms.CMSSignedDataGenerator;
 import org.bouncycastle.cms.CMSTypedData;
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.bouncycastle.openssl.jcajce.JcaPKCS8Generator;
@@ -81,7 +82,7 @@ public class IssuedCertificate implements IIssuedCertificate {
 	/**
 	 * RND Generator for keying material.
 	 */
-	private final static SecureRandom random = new SecureRandom();
+	private final static SecureRandom random = CryptoServicesRegistrar.getSecureRandom();
 	/**
 	 * The Key Pair
 	 */
