@@ -226,6 +226,8 @@ public class TestTextHTMLExport {
 		c3.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(),
 				BouncyCastleProvider.PROVIDER_NAME);
 
+		// TODO: Implement Rainbow, SPHINCS, XMSS and XMSS-MT
+		
 		/*
 		 * Test Renderers
 		 */
