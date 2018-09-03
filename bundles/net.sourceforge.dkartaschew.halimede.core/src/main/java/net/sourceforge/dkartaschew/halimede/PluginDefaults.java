@@ -45,7 +45,7 @@ public class PluginDefaults {
 	/**
 	 * Application website.
 	 */
-	public static final String APPLICATION_WEBSITE = "https://halimede.dkartaschew.github.io";
+	public static final String APPLICATION_WEBSITE = "https://halimede.sourceforge.io/";
 	/**
 	 * The ID of the view as specified by the extension.
 	 */

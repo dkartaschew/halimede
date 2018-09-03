@@ -67,7 +67,7 @@ public class AboutDialog extends TitleAreaDialog {
 	/**
 	 * Create contents of the dialog.
 	 * 
-	 * @param parent
+	 * @param parent The parent composite
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
@@ -76,14 +76,14 @@ public class AboutDialog extends TitleAreaDialog {
 		container.setLayout(new GridLayout(1, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		Label lblECertificateAuthority = new Label(container, SWT.NONE);
-		lblECertificateAuthority.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		lblECertificateAuthority.setAlignment(SWT.CENTER);
-		lblECertificateAuthority.setText(PluginDefaults.APPLICATION_FULLNAME);
-		FontData[] fD = lblECertificateAuthority.getFont().getFontData();
+		Label lblApplicationName = new Label(container, SWT.NONE);
+		lblApplicationName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		lblApplicationName.setAlignment(SWT.CENTER);
+		lblApplicationName.setText(PluginDefaults.APPLICATION_FULLNAME);
+		FontData[] fD = lblApplicationName.getFont().getFontData();
 		fD[0].setHeight(fD[0].getHeight() + 4);
 		fD[0].setStyle(SWT.BOLD);
-		lblECertificateAuthority.setFont(new Font(getShell().getDisplay(), fD[0]));
+		lblApplicationName.setFont(new Font(getShell().getDisplay(), fD[0]));
 
 		Label lblVersion = new Label(container, SWT.NONE);
 		lblVersion.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -99,14 +99,14 @@ public class AboutDialog extends TitleAreaDialog {
 		lblCopyright.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		lblCopyright.setText("Copyright 2017-2018");
 
-		Label lblDarranKartaschew = new Label(container, SWT.NONE);
-		lblDarranKartaschew.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-		lblDarranKartaschew.setText("Darran Kartaschew");
+		Label lblAuthor = new Label(container, SWT.NONE);
+		lblAuthor.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
+		lblAuthor.setText("Darran Kartaschew");
 
-		Link lblHttpscertmamangerdkartaschewgithubio = new Link(container, SWT.NONE);
-		lblHttpscertmamangerdkartaschewgithubio.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-		lblHttpscertmamangerdkartaschewgithubio.setText("<A>" + PluginDefaults.APPLICATION_WEBSITE + "</A>");
-		lblHttpscertmamangerdkartaschewgithubio.addSelectionListener(new SelectionAdapter() {
+		Link lblSite = new Link(container, SWT.NONE);
+		lblSite.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
+		lblSite.setText("<A>" + PluginDefaults.APPLICATION_WEBSITE + "</A>");
+		lblSite.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -114,9 +114,9 @@ public class AboutDialog extends TitleAreaDialog {
 			}
 
 		});
-		Label lblProductIsLicensed = new Label(container, SWT.NONE);
-		lblProductIsLicensed.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-		lblProductIsLicensed.setText("Product is licensed under the EPL v2.0" + System.lineSeparator() + 
+		Label lblLicense = new Label(container, SWT.NONE);
+		lblLicense.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
+		lblLicense.setText("Product is licensed under the EPL v2.0" + System.lineSeparator() + 
 				"w/GPL v2+ w/CE secondary license");
 
 		return area;
@@ -125,7 +125,7 @@ public class AboutDialog extends TitleAreaDialog {
 	/**
 	 * Create contents of the button bar.
 	 * 
-	 * @param parent
+	 * @param parent The parent composite.
 	 */
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
