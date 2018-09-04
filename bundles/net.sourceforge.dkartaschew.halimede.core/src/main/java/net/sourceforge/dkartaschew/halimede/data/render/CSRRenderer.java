@@ -17,6 +17,7 @@
 
 package net.sourceforge.dkartaschew.halimede.data.render;
 
+import java.lang.reflect.Field;
 import java.security.KeyPair;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
@@ -28,6 +29,7 @@ import java.util.stream.Collectors;
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.misc.MiscObjectIdentifiers;
+import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.x509.BasicConstraints;
 import org.bouncycastle.asn1.x509.CRLDistPoint;
 import org.bouncycastle.asn1.x509.DistributionPoint;
@@ -43,6 +45,9 @@ import org.bouncycastle.jce.interfaces.GOST3410PublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
+import org.bouncycastle.pqc.jcajce.provider.sphincs.BCSphincs256PublicKey;
+import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSMTPublicKey;
+import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSPublicKey;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateRequestProperties;
 import net.sourceforge.dkartaschew.halimede.data.CertificateRequestProperties.Key;
@@ -135,8 +140,36 @@ public class CSRRenderer {
 						}
 					}
 				}
-				
-				// TODO: Implement Rainbow, SPHINCS, XMSS and XMSS-MT
+				if(pkey instanceof BCSphincs256PublicKey) {
+					BCSphincs256PublicKey sphincs = (BCSphincs256PublicKey) pkey;
+					try {
+						/*
+						 * NASTY, but to determine the key, when need the digest.
+						 */
+						Field f = sphincs.getClass().getDeclaredField("treeDigest");
+						f.setAccessible(true);
+						ASN1ObjectIdentifier digest = (ASN1ObjectIdentifier) f.get(sphincs);
+						if (digest.equals(NISTObjectIdentifiers.id_sha512_256)) {
+							r.addContentLine("Tree Digest:", "SHA512-256");
+						}
+						if (digest.equals(NISTObjectIdentifiers.id_sha3_256)) {
+							r.addContentLine("Tree Digest:", "SHA3-256");
+						}
+					} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+						throw new RuntimeException("BC SPHINCS-256 modified", e);
+					}
+				}
+				if(pkey instanceof BCXMSSPublicKey) {
+					BCXMSSPublicKey xmss = (BCXMSSPublicKey)pkey;
+					r.addContentLine("Tree Digest:", xmss.getTreeDigest());
+					r.addContentLine("Height:", Integer.toString(xmss.getHeight()));
+				}
+				if(pkey instanceof BCXMSSMTPublicKey) {
+					BCXMSSMTPublicKey xmss = (BCXMSSMTPublicKey)pkey;
+					r.addContentLine("Tree Digest:", xmss.getTreeDigest());
+					r.addContentLine("Height:", Integer.toString(xmss.getHeight()));
+					r.addContentLine("Layers:", Integer.toString(xmss.getLayers()));
+				}
 				
 				r.addContentLine("Public Key:", Strings.prettyPrint(pkey), true);
 			}

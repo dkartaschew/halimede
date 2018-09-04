@@ -28,6 +28,8 @@ import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.jce.interfaces.GOST3410PublicKey;
 import org.bouncycastle.jce.provider.JCEECPublicKey;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters;
 import org.bouncycastle.pqc.jcajce.provider.rainbow.BCRainbowPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.sphincs.BCSphincs256PublicKey;
 import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSMTPublicKey;
@@ -262,13 +264,13 @@ public class Strings {
 			sb.append(rainbow.getDocLength());
 			sb.append(System.lineSeparator());
 			sb.append("coeffquadratic: ");
-			sb.append(toHexString(rainbow.getCoeffQuadratic(), " ", WRAP / 2, "   "));
+			sb.append(toHexString(rainbow.getCoeffQuadratic(), " ", WRAP / 2, "                "));
 			sb.append(System.lineSeparator());
 			sb.append("coeffsingular: ");
-			sb.append(toHexString(rainbow.getCoeffSingular(), " ", WRAP / 2, "   "));
+			sb.append(toHexString(rainbow.getCoeffSingular(), " ", WRAP / 2, "               "));
 			sb.append(System.lineSeparator());
 			sb.append("coeffscalar: ");
-			sb.append(toHexString(rainbow.getCoeffScalar(), " ", WRAP / 2, "   "));
+			sb.append(toHexString(rainbow.getCoeffScalar(), " ", WRAP / 2, "             "));
 			return sb.toString();
 		}
 		if (pkey instanceof BCSphincs256PublicKey) {
@@ -287,13 +289,13 @@ public class Strings {
 				if(digest.equals(NISTObjectIdentifiers.id_sha3_256)){
 					sb.append("Tree Digest: SHA3-256");
 				}
+				sb.append(System.lineSeparator());
 			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 				//throw new RuntimeException("BC SPHINCS-256 modified", e);
 				// Ignore here...
 			}
-			
 			sb.append("Key Data: ");
-			sb.append(toHexString(sphincs.getKeyData(), " ", WRAP, "   "));
+			sb.append(toHexString(sphincs.getKeyData(), " ", WRAP, "          "));
 			return sb.toString();
 		}
 		if (pkey instanceof BCXMSSPublicKey) {
@@ -304,7 +306,22 @@ public class Strings {
 			sb.append(System.lineSeparator());
 			sb.append("Height: ");
 			sb.append(xmss.getHeight());
-			// TODO: Get Root and PublicSeed
+			try {
+				/*
+				 * NASTY, but to determine the key, when need the digest.
+				 */
+				Field f = xmss.getClass().getDeclaredField("keyParams");
+				f.setAccessible(true);
+				XMSSPublicKeyParameters keyParams = (XMSSPublicKeyParameters) f.get(xmss);
+				sb.append(System.lineSeparator());
+				sb.append("Seed: ");
+				sb.append(toHexString(keyParams.getPublicSeed(), " ", WRAP, "     "));
+				sb.append(System.lineSeparator());
+				sb.append("Root: ");
+				sb.append(toHexString(keyParams.getRoot(), " ", WRAP, "     "));
+			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+				// Ignore here...
+			}
 			return sb.toString();
 		}
 		if (pkey instanceof BCXMSSMTPublicKey) {
@@ -318,7 +335,22 @@ public class Strings {
 			sb.append(System.lineSeparator());
 			sb.append("Layers: ");
 			sb.append(xmssmt.getLayers());
-			// TODO: Get Root and PublicSeed
+			try {
+				/*
+				 * NASTY, but to determine the key, when need the digest.
+				 */
+				Field f = xmssmt.getClass().getDeclaredField("keyParams");
+				f.setAccessible(true);
+				XMSSMTPublicKeyParameters keyParams = (XMSSMTPublicKeyParameters) f.get(xmssmt);
+				sb.append(System.lineSeparator());
+				sb.append("Seed: ");
+				sb.append(toHexString(keyParams.getPublicSeed(), " ", WRAP, "      "));
+				sb.append(System.lineSeparator());
+				sb.append("Root: ");
+				sb.append(toHexString(keyParams.getRoot(), " ", WRAP, "      "));
+			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+				// Ignore here...
+			}
 			return sb.toString();
 		}
 		return "";

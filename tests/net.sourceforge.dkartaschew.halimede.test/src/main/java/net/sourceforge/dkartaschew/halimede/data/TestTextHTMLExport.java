@@ -213,7 +213,7 @@ public class TestTextHTMLExport {
 		req3.setCreationDate(ZonedDateTime.now());
 		req3.setDescription(subject2.toString());
 		req3.setSubject(subject2);
-		req3.setKeyType(KeyType.GOST_3410_94_A);
+		req3.setKeyType(KeyType.DSTU4145_0);
 		req3.setKeyUsage(subKeyUsage);
 		req3.setExtendedKeyUsage(extKeyUsage);
 		req3.setSubjectAlternativeName(subjAltNames3);
@@ -225,8 +225,74 @@ public class TestTextHTMLExport {
 
 		c3.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(),
 				BouncyCastleProvider.PROVIDER_NAME);
+		
+		/*
+		 * Request 4 - Rainbow
+		 */
 
-		// TODO: Implement Rainbow, SPHINCS, XMSS and XMSS-MT
+		CertificateRequest req4 = createRequest(KeyType.Rainbow);
+
+		IssuedCertificateProperties c4 = ca.signAndStoreCertificateRequest(req4, ZonedDateTime.now().plusSeconds(10),
+				ZonedDateTime.now().plusSeconds(360), PASSWORD);
+
+		assertNotNull(c4);
+
+		c4.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(),	BouncyCastleProvider.PROVIDER_NAME);
+		
+		
+		/*
+		 * Request 5 - SPHINCS
+		 */
+
+		CertificateRequest req5 = createRequest(KeyType.SPHINCS_SHA3_256);
+
+		IssuedCertificateProperties c5 = ca.signAndStoreCertificateRequest(req5, ZonedDateTime.now().plusSeconds(10),
+				ZonedDateTime.now().plusSeconds(360), PASSWORD);
+
+		assertNotNull(c5);
+
+		c5.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(),	BouncyCastleProvider.PROVIDER_NAME);
+
+		/*
+		 * Request 6 - XMSS
+		 */
+
+		CertificateRequest req6 = createRequest(KeyType.XMSS_SHA2_10_256);
+
+		IssuedCertificateProperties c6 = ca.signAndStoreCertificateRequest(req6, ZonedDateTime.now().plusSeconds(10),
+				ZonedDateTime.now().plusSeconds(360), PASSWORD);
+
+		assertNotNull(c6);
+
+		c6.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(),	BouncyCastleProvider.PROVIDER_NAME);
+
+		/*
+		 * Request 7 - XMSS-MT
+		 */
+
+		CertificateRequest req7 = createRequest(KeyType.XMSSMT_SHA2_20_4_256);
+
+		IssuedCertificateProperties c7 = ca.signAndStoreCertificateRequest(req7, ZonedDateTime.now().plusSeconds(10),
+				ZonedDateTime.now().plusSeconds(360), PASSWORD);
+
+		assertNotNull(c7);
+
+		c7.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(),	BouncyCastleProvider.PROVIDER_NAME);
+
+		
+		/*
+		 * Request 8 - GOST
+		 */
+
+		CertificateRequest req8 = createRequest(KeyType.GOST_3410_94_A);
+
+		IssuedCertificateProperties c8 = ca.signAndStoreCertificateRequest(req8, ZonedDateTime.now().plusSeconds(10),
+				ZonedDateTime.now().plusSeconds(360), PASSWORD);
+
+		assertNotNull(c8);
+
+		c8.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(),	BouncyCastleProvider.PROVIDER_NAME);
+
 		
 		/*
 		 * Test Renderers
@@ -241,33 +307,15 @@ public class TestTextHTMLExport {
 		caR.render(html);
 		html.finaliseRender();
 
-		// Request 1
-		CertificateRenderer cert1 = new CertificateRenderer(c1);
-		txt = new TextOutputRenderer(System.out);
-		cert1.render(txt);
-		txt.finaliseRender();
-		html = new HTMLOutputRenderer(System.out, "");
-		cert1.render(html);
-		html.finaliseRender();
-
-		// Request 2
-		CertificateRenderer cert2 = new CertificateRenderer(c2);
-		txt = new TextOutputRenderer(System.out);
-		cert2.render(txt);
-		txt.finaliseRender();
-		html = new HTMLOutputRenderer(System.out, "");
-		cert2.render(html);
-		html.finaliseRender();
-
-		// Request 3
-		CertificateRenderer cert3 = new CertificateRenderer(c3);
-		txt = new TextOutputRenderer(System.out);
-		cert3.render(txt);
-		txt.finaliseRender();
-		html = new HTMLOutputRenderer(System.out, "");
-		cert3.render(html);
-		html.finaliseRender();
-
+		render(c1);
+		render(c2);
+		render(c3);
+		render(c4);
+		render(c5);
+		render(c6);
+		render(c7);
+		render(c8);
+		
 		// CSR
 		CSRRenderer csrr = new CSRRenderer(csr);
 		txt = new TextOutputRenderer(System.out);
@@ -286,5 +334,25 @@ public class TestTextHTMLExport {
 		clrr.render(html);
 		html.finaliseRender();
 
+	}
+
+	private CertificateRequest createRequest(KeyType type) {
+		CertificateRequest req4 = new CertificateRequest();
+		req4.setcARequest(false);
+		req4.setCreationDate(ZonedDateTime.now());
+		req4.setDescription(subject.toString());
+		req4.setSubject(subject);
+		req4.setKeyType(type);
+		return req4;
+	}
+
+	private void render(IssuedCertificateProperties cProps) {
+		CertificateRenderer cert = new CertificateRenderer(cProps);
+		TextOutputRenderer txt = new TextOutputRenderer(System.out);
+		cert.render(txt);
+		txt.finaliseRender();
+		HTMLOutputRenderer html = new HTMLOutputRenderer(System.out, "");
+		cert.render(html);
+		html.finaliseRender();
 	}
 }
