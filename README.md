@@ -12,7 +12,7 @@ Oracle Java 8 JCE: [Java JCE Download](http://www.oracle.com/technetwork/java/ja
 
 ## Installation
 
-Simply place the plugin jar file into the /dropins or /plugins folder of your Eclipse 
+Simply place the plugin jars file into the /dropins or /plugins folder of your Eclipse 
 installation, and restart Eclipse. Use the Window > CA Manager to open it.
 
 Alternative, use the Install New Software dialog to install from the *.zip p2 bundle.
@@ -21,7 +21,10 @@ Alternative, use the Install New Software dialog to install from the *.zip p2 bu
 
 Run `$ mvn clean install` to build. The resulting JAR file is in the target folder.
 
-Deployment artefacts will be located in: `releng/net.sourceforge.dkartaschew.halimede.update/target`
+Deployment artefacts will be located in: 
+
+* `releng/net.sourceforge.dkartaschew.halimede.update/target` and 
+* `releng/net.sourceforge.dkartaschew.halimede.product/target/products`
 
 ## Java 9+
 
