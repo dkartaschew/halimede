@@ -146,6 +146,8 @@ All ECDSA can use the following Signature Algorithms:
 * ECDSA with SHA3-384
 * ECDSA with SHA3-512
 
+NOTE: sm2p256v1 uses the "SM3 with SM2" Signature Algorithm.
+
 #### GOST R34.10
 
 |	Revision      | Algorithm / Curves     | Signature Algorithm     |
@@ -177,12 +179,74 @@ All ECDSA can use the following Signature Algorithms:
 |                 | 1.2.804.2.1.1.1.1.3.1.1.2.7  |                           |
 |                 | 1.2.804.2.1.1.1.1.3.1.1.2.8  |                           |
 |                 | 1.2.804.2.1.1.1.1.3.1.1.2.9  |                           |
-|                 | 1.2.804.2.1.1.1.1.3.1.1.2.10 |                           |
 
+#### Rainbow
 
-#### Post Quantum Ciphers
+| Revision | Signature Algorithms |
+|----------|----------------------|
+| Rainbow  | SHA224 with RAINBOW  |
+|          | SHA256 with RAINBOW  |
+|          | SHA384 with RAINBOW  |
+|          | SHA512 with RAINBOW  |
 
-Coming soon...
+#### SPHINCS-256
+
+| Revision               | Signature Algorithms      |
+|------------------------|---------------------------|
+| SPHINCS-256 - SHA512   | SHA512 with SPHINCS-256   |
+| SPHINCS-256 - SHA3-512 | SHA3-512 with SPHINCS-256 |
+
+#### XMSS and XMSS-MT
+
+Halimede supports all configurations as noted in IETF 
+[RFC 8391](https://tools.ietf.org/html/rfc8391).
+
+| Revision               | Name                   | Signature Algorithms      |
+|------------------------|------------------------|---------------------------|
+| XMSS                   | XMSS-SHA2_10_256       | SHA256 with XMSS          |
+|                        | XMSS-SHA2_16_256       | SHA512 with XMSS          |
+|                        | XMSS-SHA2_20_256       | SHAKE128 with XMSS        |
+|                        | XMSS-SHA2_10_512       | SHAKE256 with XMSS        |
+|                        | XMSS-SHA2_16_512       |                           |
+|                        | XMSS-SHA2_20_512       |                           |
+|                        | XMSS-SHAKE_10_256      |                           |
+|                        | XMSS-SHAKE_16_256      |                           |
+|                        | XMSS-SHAKE_20_256      |                           |
+|                        | XMSS-SHAKE_10_512      |                           |
+|                        | XMSS-SHAKE_16_512      |                           |
+|                        | XMSS-SHAKE_20_512      |                           |
+| XMSS-MT                | XMSSMT-SHA2_20/2_256   | SHA256 with XMSS-MT       |
+|                        | XMSSMT-SHA2_20/4_256   | SHA512 with XMSS-MT       |
+|                        | XMSSMT-SHA2_40/2_256   | SHAKE128 with XMSS-MT     |
+|                        | XMSSMT-SHA2_40/4_256   | SHAKE256 with XMSS-MT     |
+|                        | XMSSMT-SHA2_40/8_256   | |
+|                        | XMSSMT-SHA2_60/3_256   | |
+|                        | XMSSMT-SHA2_60/6_256   | |
+|                        | XMSSMT-SHA2_60/12_256  | |
+|                        | XMSSMT-SHA2_20/2_512   | |
+|                        | XMSSMT-SHA2_20/4_512   | |
+|                        | XMSSMT-SHA2_40/2_512   | |
+|                        | XMSSMT-SHA2_40/4_512   | |
+|                        | XMSSMT-SHA2_40/8_512   | |
+|                        | XMSSMT-SHA2_60/3_512   | |
+|                        | XMSSMT-SHA2_60/6_512   | |
+|                        | XMSSMT-SHA2_60/12_512  | |
+|                        | XMSSMT-SHAKE_20/2_256  | |
+|                        | XMSSMT-SHAKE_20/4_256  | |
+|                        | XMSSMT-SHAKE_40/2_256  | |
+|                        | XMSSMT-SHAKE_40/4_256  | |
+|                        | XMSSMT-SHAKE_40/8_256  | |
+|                        | XMSSMT-SHAKE_60/3_256  | |
+|                        | XMSSMT-SHAKE_60/6_256  | |
+|                        | XMSSMT-SHAKE_60/12_256 | |
+|                        | XMSSMT-SHAKE_20/2_512  | |
+|                        | XMSSMT-SHAKE_20/4_512  | |
+|                        | XMSSMT-SHAKE_40/2_512  | |
+|                        | XMSSMT-SHAKE_40/4_512  | |
+|                        | XMSSMT-SHAKE_40/8_512  | | 
+|                        | XMSSMT-SHAKE_60/3_512  | |
+|                        | XMSSMT-SHAKE_60/6_512  | |
+|                        | XMSSMT-SHAKE_60/12_512 | |
 
 ### Datastore Format
 

@@ -45,7 +45,6 @@ public class CADetailsLabelProvider extends CellLabelProvider {
 	private IColumnLabelProvider<CertificateKeyPairTemplate> templateProvider = new TemplateColumnLabelProvider();
 	private IColumnLabelProvider<CertificateRequestProperties> csrProvider = new CSRColumnLabelProvider();
 	private IColumnLabelProvider<CRLProperties> crlProvider = new CRLColumnLabelProvider();
-	// TODO: Put these in a map...
 
 	@Override
 	public void update(ViewerCell cell) {

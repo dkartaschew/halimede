@@ -139,3 +139,16 @@ A. From wikipedia:
 GOST R34.10 defines a set of ciphers used by the Russian Federation.
 GOST R34.11 defines a set of hash functions.
 
+-----------------
+
+**Q. DSTU 4145-2002?**
+
+A. DSTU 4145-2002 is a set of Ukrainian cipher standards.
+
+-----------------
+
+**Q. Post Quantum Ciphers**
+
+A. Halimede supports Rainbow, SPHINCS-256, XMSS and XMSS-MT Post Quantum
+Ciphers.
+

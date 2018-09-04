@@ -43,7 +43,6 @@ public class CADetailsComparator extends ViewerComparator implements Comparator<
 	private IColumnComparator<CertificateKeyPairTemplate> templateProvider = new TemplateColumnComparator();
 	private IColumnComparator<CertificateRequestProperties> csrProvider = new CSRColumnComparator();
 	private IColumnComparator<CRLProperties> crlProvider = new CRLColumnComparator();
-	// TODO: Put these in a map...
 
 	private int propertyIndex = 0;
 	private static final int SORTED = 1;

@@ -23,7 +23,7 @@ Run `$ mvn clean install` to build. The resulting JAR file is in the target fold
 
 Deployment artefacts will be located in: `releng/net.sourceforge.dkartaschew.halimede.update/target`
 
-## Java 9
+## Java 9+
 
 The plugin works fine with Java 9 (both Oracle Java 9 and OpenJDK-9), however the 
 'java.se.ee' module needs to be available. (This is true for any Eclipse plugin running with Java 9).
