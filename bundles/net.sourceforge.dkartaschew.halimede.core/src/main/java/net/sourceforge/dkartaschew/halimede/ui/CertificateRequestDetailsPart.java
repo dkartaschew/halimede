@@ -178,7 +178,7 @@ public class CertificateRequestDetailsPart {
 		CertificateHeaderComposite header = new CertificateHeaderComposite(parent, SWT.NONE, headerModel);
 		header.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
-		this.composite = new CompositeOutputRenderer(parent, SWT.NONE);
+		this.composite = new CompositeOutputRenderer(parent, SWT.NONE, desc);
 		CSRRenderer renderer = new CSRRenderer(model);
 		renderer.render(composite);
 		composite.finaliseRender();

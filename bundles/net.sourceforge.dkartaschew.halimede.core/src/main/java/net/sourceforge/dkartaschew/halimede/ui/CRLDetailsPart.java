@@ -142,7 +142,9 @@ public class CRLDetailsPart {
 		CertificateHeaderComposite header = new CertificateHeaderComposite(parent, SWT.NONE, headerModel);
 		header.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
-		this.composite = new CompositeOutputRenderer(parent, SWT.NONE);
+		this.composite = new CompositeOutputRenderer(parent, SWT.NONE, //
+				"CRL #" + model.getProperty(Key.crlSerialNumber) + " : " //
+				+ model.getProperty(Key.issueDate));
 		CRLRenderer renderer = new CRLRenderer(model, 64);
 		renderer.render(composite);
 		composite.finaliseRender();
