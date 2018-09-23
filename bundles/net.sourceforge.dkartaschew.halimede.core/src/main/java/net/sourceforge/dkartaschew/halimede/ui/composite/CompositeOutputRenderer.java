@@ -28,7 +28,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import net.sourceforge.dkartaschew.halimede.data.render.HTMLOutputRenderer;
 import net.sourceforge.dkartaschew.halimede.data.render.ICertificateOutputRenderer;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
@@ -41,7 +40,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	/**
 	 * The HTML renderer
 	 */
-	private HTMLOutputRenderer renderer;
+	private CompositeHTMLRenderer renderer;
 	/**
 	 * The stream we capture the render to pass to the browser.
 	 */
@@ -72,7 +71,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		textArea = new Browser(this, SWT.DOUBLE_BUFFERED);
 		textArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		stream = new ByteArrayOutputStream();
-		renderer = new HTMLOutputRenderer(new PrintStream(stream), title);
+		renderer = new CompositeHTMLRenderer(new PrintStream(stream), title, getShell());
 	}
 
 	@Override

@@ -37,7 +37,7 @@ public class HTMLOutputRenderer implements ICertificateOutputRenderer {
 	/**
 	 * The output stream to write to.
 	 */
-	private final PrintStream out;
+	protected final PrintStream out;
 
 	/**
 	 * Create a new Text output render
@@ -55,7 +55,7 @@ public class HTMLOutputRenderer implements ICertificateOutputRenderer {
 	 * 
 	 * @param title The title heag tag contents
 	 */
-	private void head(String title) {
+	protected void head(String title) {
 		out.println("<!DOCTYPE html>");
 		out.println("<html>");
 		out.println("<head>");
@@ -77,8 +77,14 @@ public class HTMLOutputRenderer implements ICertificateOutputRenderer {
 		out.println("    font-family: \"Lucida Console\", Monaco, \"Courier New\", Courier, monospace");
 		out.println("}");
 		out.println("p.small {");
-		out.println("    font-family: sans-serif;"); 
+		out.println("    font-family: sans-serif;");
 		out.println("    font-size: 8pt;");
+		out.println("}");
+		out.println("hr {");
+		out.println("    border-style: inset;");
+		out.println("    border-width: 1px;");
+		out.println("    border-bottom: 0px;");
+		out.println("    opacity: 0.25;");
 		out.println("}");
 		out.println("</style>");
 		out.println("</head>");
@@ -159,7 +165,7 @@ public class HTMLOutputRenderer implements ICertificateOutputRenderer {
 		out.print("Generated: ");
 		out.println(DateTimeUtil.toString(ZonedDateTime.now()));
 		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		if(bundle != null) {
+		if (bundle != null) {
 			Version version = bundle.getVersion();
 			out.print(bundle.getHeaders().get("Bundle-Name"));
 			out.print(" {");
@@ -168,7 +174,7 @@ public class HTMLOutputRenderer implements ICertificateOutputRenderer {
 			out.print(version.toString());
 		}
 		out.println("</p>");
-		
+
 		out.println("</body>");
 		out.println("</html>");
 		out.flush();
