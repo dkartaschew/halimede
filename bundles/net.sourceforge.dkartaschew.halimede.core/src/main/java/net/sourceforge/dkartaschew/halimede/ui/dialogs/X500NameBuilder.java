@@ -229,7 +229,7 @@ public class X500NameBuilder extends Dialog {
 
 		IObservableValue<?> buttonEnable = WidgetProperties.enabled().observe(okButton);
 		// Create a list of all validators made available via bindings and global validators.
-		IObservableList<?> list = new WritableList<>(bindingContext.getValidationRealm());
+		IObservableList list = new WritableList<>(bindingContext.getValidationRealm());
 		list.addAll(bindingContext.getBindings());
 		list.addAll(bindingContext.getValidationStatusProviders());
 		IObservableValue<?> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,

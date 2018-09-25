@@ -63,7 +63,7 @@ public class CreateCertificateListener implements SelectionListener {
 	@SuppressWarnings("unchecked")
 	public void setBindingContext(DataBindingContext context) {
 		// Create a list of all validators made available via bindings and global validators.
-		IObservableList<?> list = new WritableList<>(context.getValidationRealm());
+		IObservableList list = new WritableList<>(context.getValidationRealm());
 		list.addAll(context.getBindings());
 		list.addAll(context.getValidationStatusProviders());
 		validationStatus = new AggregateValidationStatus(context.getValidationRealm(), list,
