@@ -27,6 +27,8 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 import net.sourceforge.dkartaschew.halimede.data.render.ICertificateOutputRenderer;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
@@ -50,8 +52,8 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	 * Create the composite based renderer.
 	 * 
 	 * @param parent The parent composite.
-	 * @param style The applied style.
-	 * @param title The title.
+	 * @param style  The applied style.
+	 * @param title  The title.
 	 */
 	public CompositeOutputRenderer(Composite parent, int style, String title) {
 		super(parent, SWT.BORDER);
@@ -60,16 +62,20 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 
 	/**
 	 * Initialise the composite
+	 * 
 	 * @param parent The parent instance.
-	 * @param title The title.
+	 * @param title  The title.
 	 */
 	private void init(Composite parent, String title) {
 		/*
 		 * Start layout.
 		 */
 		setLayout(new GridLayout(1, false));
+		setMenu(getBrowserMenu());
+
 		textArea = new Browser(this, SWT.DOUBLE_BUFFERED);
 		textArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		textArea.setMenu(getMenu());
 		stream = new ByteArrayOutputStream();
 		renderer = new CompositeHTMLRenderer(new PrintStream(stream), title, getShell());
 	}
@@ -89,7 +95,6 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	protected void checkSubclass() {
 		/* Do nothing - Subclassing is allowed */
 	}
-
 
 	@Override
 	public void addHeaderLine(String value) {
@@ -114,6 +119,21 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	@Override
 	public void addHorizontalLine() {
 		renderer.addHorizontalLine();
+	}
+
+	/**
+	 * Get the custom browser menu.
+	 * <P>
+	 * This menu only contains a "copy" command.
+	 * 
+	 * @return A customised browser menu.
+	 */
+	private Menu getBrowserMenu() {
+		Menu menu = new Menu(getShell(), SWT.POP_UP);
+		MenuItem item = new MenuItem(menu, SWT.NONE);
+		item.setText("Copy");
+		item.addListener(SWT.Selection, e -> textArea.execute("document.execCommand('copy')"));
+		return menu;
 	}
 
 }
