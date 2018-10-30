@@ -18,7 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.data;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateRequestProperties;
-import net.sourceforge.dkartaschew.halimede.ui.composite.CADetailPane;
+import net.sourceforge.dkartaschew.halimede.ui.composite.cadetails.PendingCertificatesPane;
 
 public class CSRColumnComparator extends AbstractColumnComparator<CertificateRequestProperties> {
 
@@ -26,17 +26,17 @@ public class CSRColumnComparator extends AbstractColumnComparator<CertificateReq
 	public int compare(int columnIndex, CertificateRequestProperties e1, CertificateRequestProperties e2) {
 		switch (columnIndex) {
 		case -1:
-		case CADetailPane.COLUMN_SUBJECT:
+		case PendingCertificatesPane.COLUMN_SUBJECT:
 			return compareString(e1.getProperty(CertificateRequestProperties.Key.subject),
 					e2.getProperty(CertificateRequestProperties.Key.subject));
-		case CADetailPane.COLUMN_IMPORT_DATE:
+		case PendingCertificatesPane.COLUMN_IMPORT_DATE:
 			return compareDate(e1.getProperty(CertificateRequestProperties.Key.importDate),
 					e2.getProperty(CertificateRequestProperties.Key.importDate));
-		case CADetailPane.COLUMN_COMMENTS:
+		case PendingCertificatesPane.COLUMN_COMMENTS:
 			return compareString(e1.getProperty(CertificateRequestProperties.Key.comments),
 					e2.getProperty(CertificateRequestProperties.Key.comments));
-		case CADetailPane.COLUMN_KEY_TYPE:
-			return compareKeyType(e1.getProperty(CertificateRequestProperties.Key.keyType), 
+		case PendingCertificatesPane.COLUMN_KEY_TYPE:
+			return compareKeyType(e1.getProperty(CertificateRequestProperties.Key.keyType),
 					e2.getProperty(CertificateRequestProperties.Key.keyType));
 		}
 		return 0;

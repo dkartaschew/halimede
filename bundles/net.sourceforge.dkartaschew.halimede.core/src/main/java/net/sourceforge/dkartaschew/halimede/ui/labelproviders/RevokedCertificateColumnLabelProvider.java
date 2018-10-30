@@ -24,31 +24,40 @@ import org.eclipse.swt.graphics.Image;
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties.Key;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
-import net.sourceforge.dkartaschew.halimede.ui.composite.cadetails.IssuedCertificatesPane;
+import net.sourceforge.dkartaschew.halimede.enumeration.RevokeReasonCode;
+import net.sourceforge.dkartaschew.halimede.ui.composite.cadetails.RevokedCertificatesPane;
 import net.sourceforge.dkartaschew.halimede.util.Strings;
 
-public class IssuedCertificateColumnLabelProvider extends CADetailsLabelProvider<IssuedCertificateProperties> {
+public class RevokedCertificateColumnLabelProvider extends CADetailsLabelProvider<IssuedCertificateProperties> {
 
 	@Override
 	public String getColumnText(IssuedCertificateProperties element, int columnIndex) {
 		switch (columnIndex) {
-		case IssuedCertificatesPane.COLUMN_DESCRIPTION:
+		case RevokedCertificatesPane.COLUMN_DESCRIPTION:
 			return Strings.trim(element.getProperty(Key.description), Strings.WRAP);
-		case IssuedCertificatesPane.COLUMN_SUBJECT:
+		case RevokedCertificatesPane.COLUMN_SUBJECT:
 			return element.getProperty(Key.subject);
-		case IssuedCertificatesPane.COLUMN_KEY_TYPE:
+		case RevokedCertificatesPane.COLUMN_KEY_TYPE:
 			try {
 				return KeyType.getKeyTypeDescription(element.getProperty(Key.keyType));
 			} catch (NoSuchElementException | NullPointerException e) {
 				return null;
 			}
-		case IssuedCertificatesPane.COLUMN_START_DATE:
+		case RevokedCertificatesPane.COLUMN_START_DATE:
 			return element.getProperty(Key.startDate);
-		case IssuedCertificatesPane.COLUMN_EXPIRY_DATE:
+		case RevokedCertificatesPane.COLUMN_EXPIRY_DATE:
 			return element.getProperty(Key.endDate);
-		case IssuedCertificatesPane.COLUMN_ISSUE_DATE:
+		case RevokedCertificatesPane.COLUMN_REVOKE_DATE:
+			return element.getProperty(Key.revokeDate);
+		case RevokedCertificatesPane.COLUMN_REVOKE_REASON:
+			String el = element.getProperty(Key.revokeCode);
+			if(el != null) {
+				el = RevokeReasonCode.valueOf(el).getDescription();
+			}
+			return el;
+		case RevokedCertificatesPane.COLUMN_ISSUE_DATE:
 			return element.getProperty(Key.creationDate);
-		case IssuedCertificatesPane.COLUMN_COMMENTS:
+		case RevokedCertificatesPane.COLUMN_COMMENTS:
 			return Strings.trim(element.getProperty(Key.comments), Strings.WRAP);
 		}
 		return null;
@@ -57,9 +66,9 @@ public class IssuedCertificateColumnLabelProvider extends CADetailsLabelProvider
 	@Override
 	public String getColumnTooltipText(IssuedCertificateProperties element, int columnIndex) {
 		switch (columnIndex) {
-		case IssuedCertificatesPane.COLUMN_DESCRIPTION:
+		case RevokedCertificatesPane.COLUMN_DESCRIPTION:
 			return element.getProperty(Key.description);
-		case IssuedCertificatesPane.COLUMN_COMMENTS:
+		case RevokedCertificatesPane.COLUMN_COMMENTS:
 			return element.getProperty(Key.comments);
 		}
 		return getColumnText(element, columnIndex);

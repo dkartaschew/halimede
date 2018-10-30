@@ -23,26 +23,25 @@ import org.eclipse.swt.graphics.Image;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateRequestProperties;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
-import net.sourceforge.dkartaschew.halimede.ui.composite.CADetailPane;
-import net.sourceforge.dkartaschew.halimede.ui.composite.IColumnLabelProvider;
+import net.sourceforge.dkartaschew.halimede.ui.composite.cadetails.PendingCertificatesPane;
 import net.sourceforge.dkartaschew.halimede.util.Strings;
 
-public class CSRColumnLabelProvider implements IColumnLabelProvider<CertificateRequestProperties> {
+public class CSRColumnLabelProvider extends CADetailsLabelProvider<CertificateRequestProperties> {
 
 	@Override
 	public String getColumnText(CertificateRequestProperties element, int columnIndex) {
 		switch (columnIndex) {
-		case CADetailPane.COLUMN_SUBJECT:
+		case PendingCertificatesPane.COLUMN_SUBJECT:
 			return element.getProperty(CertificateRequestProperties.Key.subject);
-		case CADetailPane.COLUMN_KEY_TYPE:
+		case PendingCertificatesPane.COLUMN_KEY_TYPE:
 			try {
 				return KeyType.getKeyTypeDescription(element.getProperty(CertificateRequestProperties.Key.keyType));
 			} catch (NullPointerException | NoSuchElementException e) {
 				return null;
 			}
-		case CADetailPane.COLUMN_IMPORT_DATE:
+		case PendingCertificatesPane.COLUMN_IMPORT_DATE:
 			return element.getProperty(CertificateRequestProperties.Key.importDate);
-		case CADetailPane.COLUMN_COMMENTS:
+		case PendingCertificatesPane.COLUMN_COMMENTS:
 			return Strings.trim(element.getProperty(CertificateRequestProperties.Key.comments), Strings.WRAP);
 		}
 		return null;
@@ -50,7 +49,7 @@ public class CSRColumnLabelProvider implements IColumnLabelProvider<CertificateR
 
 	@Override
 	public String getColumnTooltipText(CertificateRequestProperties element, int columnIndex) {
-		if(columnIndex == CADetailPane.COLUMN_COMMENTS) {
+		if(columnIndex == PendingCertificatesPane.COLUMN_COMMENTS) {
 			return element.getProperty(CertificateRequestProperties.Key.comments);
 		}
 		return getColumnText(element, columnIndex);

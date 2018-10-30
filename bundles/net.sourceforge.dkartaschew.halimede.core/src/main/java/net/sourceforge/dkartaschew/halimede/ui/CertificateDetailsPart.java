@@ -23,13 +23,11 @@ import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
@@ -45,12 +43,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TypedListener;
-
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.IIssuedCertificate;
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
@@ -72,6 +67,7 @@ import net.sourceforge.dkartaschew.halimede.ui.dialogs.ExportPKCS12Dialog;
 import net.sourceforge.dkartaschew.halimede.ui.dialogs.PassphraseDialog;
 import net.sourceforge.dkartaschew.halimede.ui.model.ExportInformationModel;
 import net.sourceforge.dkartaschew.halimede.ui.model.HeaderCompositeMenuModel;
+import net.sourceforge.dkartaschew.halimede.ui.util.MenuUtils;
 import net.sourceforge.dkartaschew.halimede.util.DateTimeUtil;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 import net.sourceforge.dkartaschew.halimede.util.Strings;
@@ -310,27 +306,7 @@ public class CertificateDetailsPart {
 		}
 		headerModel.getMenuItems().get(menuID++).addSelectionListener(new ExportCertificateAsTextListener(certificate));
 		headerModel.getMenuItems().get(menuID++).addSelectionListener(new ExportCertificateAsHTMLListener(certificate));
-		injectMenuItems(headerModel.getMenuItems());
-	}
-
-	/**
-	 * Inject all menu items.
-	 * 
-	 * @param menuItems The collection of menu items to inject.
-	 */
-	private void injectMenuItems(List<MenuItem> menuItems) {
-		for (MenuItem menu : menuItems) {
-			Listener[] listeners = menu.getListeners(SWT.Selection);
-			if (listeners != null && listeners.length > 0) {
-				for (Listener l : listeners) {
-					if (l instanceof TypedListener) {
-						TypedListener tl = (TypedListener) l;
-						ContextInjectionFactory.inject(tl.getEventListener(), context);
-					}
-					ContextInjectionFactory.inject(l, context);
-				}
-			}
-		}
+		MenuUtils.injectMenuItems(headerModel.getMenuItems(), context);
 	}
 
 	/**

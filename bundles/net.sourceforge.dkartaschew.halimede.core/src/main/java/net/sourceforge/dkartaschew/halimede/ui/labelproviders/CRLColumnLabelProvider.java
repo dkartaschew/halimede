@@ -20,24 +20,23 @@ package net.sourceforge.dkartaschew.halimede.ui.labelproviders;
 import org.eclipse.swt.graphics.Image;
 
 import net.sourceforge.dkartaschew.halimede.data.CRLProperties;
-import net.sourceforge.dkartaschew.halimede.ui.composite.CADetailPane;
-import net.sourceforge.dkartaschew.halimede.ui.composite.IColumnLabelProvider;
+import net.sourceforge.dkartaschew.halimede.ui.composite.cadetails.CRLPane;
 import net.sourceforge.dkartaschew.halimede.util.Strings;
 
-public class CRLColumnLabelProvider implements IColumnLabelProvider<CRLProperties> {
+public class CRLColumnLabelProvider extends CADetailsLabelProvider<CRLProperties> {
 
 	@Override
 	public String getColumnText(CRLProperties element, int columnIndex) {
 		switch (columnIndex) {
-		case CADetailPane.COLUMN_CRL_NUMBER:
+		case CRLPane.COLUMN_CRL_NUMBER:
 			return element.getProperty(CRLProperties.Key.crlSerialNumber);
-		case CADetailPane.COLUMN_SUBJECT:
+		case CRLPane.COLUMN_SUBJECT:
 			return element.getProperty(CRLProperties.Key.issuer);
-		case CADetailPane.COLUMN_ISSUE_DATE:
+		case CRLPane.COLUMN_START_DATE:
 			return element.getProperty(CRLProperties.Key.issueDate);
-		case CADetailPane.COLUMN_EXPIRY_DATE:
+		case CRLPane.COLUMN_EXPIRY_DATE:
 			return element.getProperty(CRLProperties.Key.nextExpectedDate);
-		case CADetailPane.COLUMN_COMMENTS:
+		case CRLPane.COLUMN_COMMENTS:
 			return Strings.trim(element.getProperty(CRLProperties.Key.comments), Strings.WRAP);
 		}
 		return null;
@@ -45,7 +44,7 @@ public class CRLColumnLabelProvider implements IColumnLabelProvider<CRLPropertie
 
 	@Override
 	public String getColumnTooltipText(CRLProperties element, int columnIndex) {
-		if(columnIndex == CADetailPane.COLUMN_COMMENTS) {
+		if(columnIndex == CRLPane.COLUMN_COMMENTS) {
 			return element.getProperty(CRLProperties.Key.comments);
 		}
 		return getColumnText(element, columnIndex);

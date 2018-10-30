@@ -18,7 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.data;
 
 import net.sourceforge.dkartaschew.halimede.data.CRLProperties;
-import net.sourceforge.dkartaschew.halimede.ui.composite.CADetailPane;
+import net.sourceforge.dkartaschew.halimede.ui.composite.cadetails.CRLPane;
 
 public class CRLColumnComparator extends AbstractColumnComparator<CRLProperties> {
 
@@ -26,19 +26,19 @@ public class CRLColumnComparator extends AbstractColumnComparator<CRLProperties>
 	public int compare(int columnIndex, CRLProperties e1, CRLProperties e2) {
 		switch (columnIndex) {
 		case -1:
-		case CADetailPane.COLUMN_CRL_NUMBER:
+		case CRLPane.COLUMN_CRL_NUMBER:
 			return compareString(e1.getProperty(CRLProperties.Key.crlSerialNumber),
 					e2.getProperty(CRLProperties.Key.crlSerialNumber));
-		case CADetailPane.COLUMN_SUBJECT:
-			return compareString(e1.getProperty(CRLProperties.Key.issuer),
+		case CRLPane.COLUMN_SUBJECT:
+			return compareString(e1.getProperty(CRLProperties.Key.issuer), 
 					e2.getProperty(CRLProperties.Key.issuer));
-		case CADetailPane.COLUMN_START_DATE:
+		case CRLPane.COLUMN_START_DATE:
 			return compareDate(e1.getProperty(CRLProperties.Key.issueDate),
 					e2.getProperty(CRLProperties.Key.issueDate));
-		case CADetailPane.COLUMN_EXPIRY_DATE:
+		case CRLPane.COLUMN_EXPIRY_DATE:
 			return compareDate(e1.getProperty(CRLProperties.Key.nextExpectedDate),
 					e2.getProperty(CRLProperties.Key.nextExpectedDate));
-		case CADetailPane.COLUMN_COMMENTS:
+		case CRLPane.COLUMN_COMMENTS:
 			return compareString(e1.getProperty(CRLProperties.Key.comments),
 					e2.getProperty(CRLProperties.Key.comments));
 		}

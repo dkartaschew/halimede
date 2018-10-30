@@ -18,13 +18,10 @@
 package net.sourceforge.dkartaschew.halimede.ui;
 
 import java.util.Arrays;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
@@ -35,11 +32,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.TypedListener;
-
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.CRLProperties;
 import net.sourceforge.dkartaschew.halimede.data.CRLProperties.Key;
@@ -50,6 +44,7 @@ import net.sourceforge.dkartaschew.halimede.ui.actions.ExportCRLListener;
 import net.sourceforge.dkartaschew.halimede.ui.composite.CertificateHeaderComposite;
 import net.sourceforge.dkartaschew.halimede.ui.composite.CompositeOutputRenderer;
 import net.sourceforge.dkartaschew.halimede.ui.model.HeaderCompositeMenuModel;
+import net.sourceforge.dkartaschew.halimede.ui.util.MenuUtils;
 
 @SuppressWarnings("restriction")
 public class CRLDetailsPart {
@@ -86,10 +81,6 @@ public class CRLDetailsPart {
 	 * Primary composite
 	 */
 	private CompositeOutputRenderer composite;
-	/**
-	 * Header model.
-	 */
-	private HeaderCompositeMenuModel headerModel;
 
 	@Inject
 	private EPartService partService;
@@ -125,7 +116,7 @@ public class CRLDetailsPart {
 		gridLayout.verticalSpacing = 0;
 		parent.setLayout(gridLayout);
 
-		headerModel = new HeaderCompositeMenuModel();
+		HeaderCompositeMenuModel headerModel = new HeaderCompositeMenuModel();
 		headerModel.setHeader("CRL #" + model.getProperty(Key.crlSerialNumber) + " : " //
 				+ model.getProperty(Key.issueDate));
 		headerModel.setToolItem("Export the CRL");
@@ -155,27 +146,7 @@ public class CRLDetailsPart {
 		headerModel.getMenuItems().get(0).addSelectionListener(headerModel.getToolItemSelectionListener());
 		headerModel.getMenuItems().get(2).addSelectionListener(new ExportCRLAsTextListener(model));
 		headerModel.getMenuItems().get(3).addSelectionListener(new ExportCRLAsHTMLListener(model));
-		injectMenuItems(headerModel.getMenuItems());
-	}
-
-	/**
-	 * Inject all menu items.
-	 * 
-	 * @param menuItems The collection of menu items to inject.
-	 */
-	private void injectMenuItems(List<MenuItem> menuItems) {
-		for (MenuItem menu : menuItems) {
-			Listener[] listeners = menu.getListeners(SWT.Selection);
-			if (listeners != null && listeners.length > 0) {
-				for (Listener l : listeners) {
-					if (l instanceof TypedListener) {
-						TypedListener tl = (TypedListener) l;
-						ContextInjectionFactory.inject(tl.getEventListener(), context);
-					}
-					ContextInjectionFactory.inject(l, context);
-				}
-			}
-		}
+		MenuUtils.injectMenuItems(headerModel.getMenuItems(), context);
 	}
 
 	@PreDestroy

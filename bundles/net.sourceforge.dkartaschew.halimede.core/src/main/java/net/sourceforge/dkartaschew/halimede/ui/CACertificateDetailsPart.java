@@ -18,13 +18,10 @@
 package net.sourceforge.dkartaschew.halimede.ui;
 
 import java.util.Arrays;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
@@ -35,11 +32,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.TypedListener;
-
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
 import net.sourceforge.dkartaschew.halimede.data.render.CertificateRenderer;
@@ -52,6 +46,7 @@ import net.sourceforge.dkartaschew.halimede.ui.actions.ExportCAPublicKeyListener
 import net.sourceforge.dkartaschew.halimede.ui.composite.CertificateHeaderComposite;
 import net.sourceforge.dkartaschew.halimede.ui.composite.CompositeOutputRenderer;
 import net.sourceforge.dkartaschew.halimede.ui.model.HeaderCompositeMenuModel;
+import net.sourceforge.dkartaschew.halimede.ui.util.MenuUtils;
 import net.sourceforge.dkartaschew.halimede.util.Strings;
 
 @SuppressWarnings("restriction")
@@ -162,27 +157,7 @@ public class CACertificateDetailsPart {
 		headerModel.getMenuItems().get(5).addSelectionListener(new ExportCAPublicKeyListener(ca));
 		headerModel.getMenuItems().get(7).addSelectionListener(new ExportCACertificateAsTextListener(ca));
 		headerModel.getMenuItems().get(8).addSelectionListener(new ExportCACertificateAsHTMLListener(ca));
-		injectMenuItems(headerModel.getMenuItems());
-	}
-
-	/**
-	 * Inject all menu items.
-	 * 
-	 * @param menuItems The collection of menu items to inject.
-	 */
-	private void injectMenuItems(List<MenuItem> menuItems) {
-		for (MenuItem menu : menuItems) {
-			Listener[] listeners = menu.getListeners(SWT.Selection);
-			if (listeners != null && listeners.length > 0) {
-				for (Listener l : listeners) {
-					if (l instanceof TypedListener) {
-						TypedListener tl = (TypedListener) l;
-						ContextInjectionFactory.inject(tl.getEventListener(), context);
-					}
-					ContextInjectionFactory.inject(l, context);
-				}
-			}
-		}
+		MenuUtils.injectMenuItems(headerModel.getMenuItems(), context);
 	}
 
 	@PreDestroy

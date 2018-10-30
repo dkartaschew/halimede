@@ -23,32 +23,25 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 
-import net.sourceforge.dkartaschew.halimede.data.CRLProperties;
-import net.sourceforge.dkartaschew.halimede.data.CertificateRequestProperties;
-import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
-import net.sourceforge.dkartaschew.halimede.data.impl.CertificateKeyPairTemplate;
 import net.sourceforge.dkartaschew.halimede.ui.composite.IColumnComparator;
 
-public class CADetailsComparator extends ViewerComparator implements Comparator<Object> {
+public class CADetailsComparator<U> extends ViewerComparator implements Comparator<Object> {
 
 	/**
 	 * Column ID for default sorting.
 	 */
 	public final static int DEFAULT_SORT = -1;
 
-	/**
-	 * Collection of current providers.
-	 */
-	private IColumnComparator<IssuedCertificateProperties> icProvider = new IssuedCertificateComparator();
-	private IColumnComparator<CertificateKeyPairTemplate> templateProvider = new TemplateColumnComparator();
-	private IColumnComparator<CertificateRequestProperties> csrProvider = new CSRColumnComparator();
-	private IColumnComparator<CRLProperties> crlProvider = new CRLColumnComparator();
-
+	private final IColumnComparator<U> comparator;
 	private int propertyIndex = 0;
 	private static final int SORTED = 1;
 	private static final int REVERSED = -1;
 	private int direction = SORTED;
 
+	public CADetailsComparator(IColumnComparator<U> comparator) {
+		this.comparator = comparator;
+	}
+	
 	/**
 	 * Get the sort direction (SWT.DOWN or SWT.UP)
 	 * 
@@ -110,30 +103,9 @@ public class CADetailsComparator extends ViewerComparator implements Comparator<
 	 * @param e2 The second object
 	 * @return The comparison.
 	 */
+	@SuppressWarnings("unchecked")
 	private int compare(int column, Object e1, Object e2) {
-		int rc = 0;
-		if (e1 instanceof IssuedCertificateProperties) {
-			rc = icProvider.compare(column, //
-					(IssuedCertificateProperties) e1, //
-					(IssuedCertificateProperties) e2);
-		}
-		if (e1 instanceof CertificateKeyPairTemplate) {
-			rc = templateProvider.compare(column, //
-					(CertificateKeyPairTemplate) e1, //
-					(CertificateKeyPairTemplate) e2);
-		}
-
-		if (e1 instanceof CertificateRequestProperties) {
-			rc = csrProvider.compare(column, //
-					(CertificateRequestProperties) e1, //
-					(CertificateRequestProperties) e2);
-		}
-
-		if (e1 instanceof CRLProperties) {
-			rc = crlProvider.compare(column, //
-					(CRLProperties) e1, //
-					(CRLProperties) e2);
-		}
+		int rc = comparator.compare(column, (U)e1, (U)e2);
 		// If reversed order, flip the direction
 		if (column != -1 && direction == REVERSED) {
 			rc = -rc;

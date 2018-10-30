@@ -268,7 +268,7 @@ public class CertificateManagerView implements PropertyChangeListener {
 	@PreDestroy
 	public void lockAllCAs() {
 		if (manager != null) {
-			manager.getCertificateAuthorities().stream().forEach(ca -> ca.lock());
+			manager.getCertificateAuthorities().stream().forEach(CertificateAuthority::lock);
 		}
 	}
 }

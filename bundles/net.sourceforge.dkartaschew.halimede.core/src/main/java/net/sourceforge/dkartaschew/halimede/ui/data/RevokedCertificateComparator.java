@@ -19,27 +19,31 @@ package net.sourceforge.dkartaschew.halimede.ui.data;
 
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties.Key;
-import net.sourceforge.dkartaschew.halimede.ui.composite.cadetails.IssuedCertificatesPane;
+import net.sourceforge.dkartaschew.halimede.ui.composite.cadetails.RevokedCertificatesPane;
 
-public class IssuedCertificateComparator extends AbstractColumnComparator<IssuedCertificateProperties> {
+public class RevokedCertificateComparator extends AbstractColumnComparator<IssuedCertificateProperties> {
 
 	@Override
 	public int compare(int columnIndex, IssuedCertificateProperties e1, IssuedCertificateProperties e2) {
 		switch (columnIndex) {
 		case -1:
-		case IssuedCertificatesPane.COLUMN_DESCRIPTION:
+		case RevokedCertificatesPane.COLUMN_DESCRIPTION:
 			return compareString(e1.getProperty(Key.description), e2.getProperty(Key.description));
-		case IssuedCertificatesPane.COLUMN_SUBJECT:
+		case RevokedCertificatesPane.COLUMN_SUBJECT:
 			return compareString(e1.getProperty(Key.subject), e2.getProperty(Key.subject));
-		case IssuedCertificatesPane.COLUMN_KEY_TYPE:
+		case RevokedCertificatesPane.COLUMN_KEY_TYPE:
 			return compareKeyType(e1.getProperty(Key.keyType), e2.getProperty(Key.keyType));
-		case IssuedCertificatesPane.COLUMN_ISSUE_DATE:
+		case RevokedCertificatesPane.COLUMN_ISSUE_DATE:
 			return compareDate(e1.getProperty(Key.creationDate), e2.getProperty(Key.creationDate));
-		case IssuedCertificatesPane.COLUMN_START_DATE:
+		case RevokedCertificatesPane.COLUMN_START_DATE:
 			return compareDate(e1.getProperty(Key.startDate), e2.getProperty(Key.startDate));
-		case IssuedCertificatesPane.COLUMN_EXPIRY_DATE:
+		case RevokedCertificatesPane.COLUMN_EXPIRY_DATE:
 			return compareDate(e1.getProperty(Key.endDate), e2.getProperty(Key.endDate));
-		case IssuedCertificatesPane.COLUMN_COMMENTS:
+		case RevokedCertificatesPane.COLUMN_REVOKE_DATE:
+			return compareDate(e1.getProperty(Key.revokeDate), e2.getProperty(Key.revokeDate));
+		case RevokedCertificatesPane.COLUMN_REVOKE_REASON:
+			return compareRevokeReason(e1.getProperty(Key.revokeCode), e2.getProperty(Key.revokeCode));
+		case RevokedCertificatesPane.COLUMN_COMMENTS:
 			return compareString(e1.getProperty(Key.comments), e2.getProperty(Key.comments));
 		}
 		return 0;

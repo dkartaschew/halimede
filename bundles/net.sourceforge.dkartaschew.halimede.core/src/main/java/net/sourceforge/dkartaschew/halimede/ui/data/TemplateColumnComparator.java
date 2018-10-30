@@ -18,7 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.data;
 
 import net.sourceforge.dkartaschew.halimede.data.impl.CertificateKeyPairTemplate;
-import net.sourceforge.dkartaschew.halimede.ui.composite.CADetailPane;
+import net.sourceforge.dkartaschew.halimede.ui.composite.cadetails.TemplatesPane;
 
 public class TemplateColumnComparator extends AbstractColumnComparator<CertificateKeyPairTemplate> {
 
@@ -26,18 +26,16 @@ public class TemplateColumnComparator extends AbstractColumnComparator<Certifica
 	public int compare(int columnIndex, CertificateKeyPairTemplate e1, CertificateKeyPairTemplate e2) {
 		switch (columnIndex) {
 		case -1:
-		case CADetailPane.COLUMN_DESCRIPTION:
+		case TemplatesPane.COLUMN_DESCRIPTION:
 			return compareString(e1.getDescription(), e2.getDescription());
-		case CADetailPane.COLUMN_SUBJECT:
+		case TemplatesPane.COLUMN_SUBJECT:
 			return compareX500Name(e1.getSubject(), e2.getSubject());
-		case CADetailPane.COLUMN_KEY_TYPE:
+		case TemplatesPane.COLUMN_KEY_TYPE:
 			return compareKeyType(e1.getKeyType().name(), e2.getKeyType().name());
-		case CADetailPane.COLUMN_ISSUE_DATE:
+		case TemplatesPane.COLUMN_CREATE_DATE:
 			return compareDate(e1.getCreationDate(), e2.getCreationDate());
 		}
 		return 0;
 	}
-
-	
 
 }

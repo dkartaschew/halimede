@@ -19,13 +19,10 @@ package net.sourceforge.dkartaschew.halimede.ui;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
-import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -35,11 +32,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.TypedListener;
-
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
 import net.sourceforge.dkartaschew.halimede.ui.actions.CreateTemplateListener;
@@ -48,6 +42,7 @@ import net.sourceforge.dkartaschew.halimede.ui.composite.CertificateHeaderCompos
 import net.sourceforge.dkartaschew.halimede.ui.composite.CertificateTemplateComposite;
 import net.sourceforge.dkartaschew.halimede.ui.model.HeaderCompositeMenuModel;
 import net.sourceforge.dkartaschew.halimede.ui.model.NewCertificateModel;
+import net.sourceforge.dkartaschew.halimede.ui.util.MenuUtils;
 import net.sourceforge.dkartaschew.halimede.util.DateTimeUtil;
 
 public class TemplateDetailsPart {
@@ -93,10 +88,6 @@ public class TemplateDetailsPart {
 	 * Primary composite
 	 */
 	private CertificateTemplateComposite composite;
-	/**
-	 * Header model.
-	 */
-	private HeaderCompositeMenuModel headerModel;
 
 	@Inject
 	private EPartService partService;
@@ -138,7 +129,7 @@ public class TemplateDetailsPart {
 		gridLayout.verticalSpacing = 0;
 		parent.setLayout(gridLayout);
 
-		headerModel = new HeaderCompositeMenuModel();
+		HeaderCompositeMenuModel headerModel = new HeaderCompositeMenuModel();
 		headerModel.setHeader(editModel ? "Edit Template" : "New Template");
 		headerModel.setToolItem(editModel ? "Edit an existing Template" : "Create a new Certificate Template");
 		headerModel.setToolItemImage(PluginDefaults.IMG_CERTIFICATE);
@@ -161,27 +152,7 @@ public class TemplateDetailsPart {
 		 */
 		headerModel.getMenuItems().get(0).addSelectionListener(headerModel.getToolItemSelectionListener());
 		headerModel.getMenuItems().get(2).addSelectionListener(new CreateTemplateListener(model));
-		injectMenuItems(headerModel.getMenuItems());
-	}
-
-	/**
-	 * Inject all menu items.
-	 * 
-	 * @param menuItems The collection of menu items to inject.
-	 */
-	private void injectMenuItems(List<MenuItem> menuItems) {
-		for (MenuItem menu : menuItems) {
-			Listener[] listeners = menu.getListeners(SWT.Selection);
-			if (listeners != null && listeners.length > 0) {
-				for (Listener l : listeners) {
-					if(l instanceof TypedListener) {
-						TypedListener tl = (TypedListener)l;
-						ContextInjectionFactory.inject(tl.getEventListener(), context);
-					}
-					ContextInjectionFactory.inject(l, context);
-				}
-			}
-		}
+		MenuUtils.injectMenuItems(headerModel.getMenuItems(), context);
 	}
 
 	@PreDestroy
