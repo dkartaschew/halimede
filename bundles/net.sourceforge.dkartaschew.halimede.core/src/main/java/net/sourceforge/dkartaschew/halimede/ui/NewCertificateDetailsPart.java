@@ -98,6 +98,10 @@ public class NewCertificateDetailsPart {
 	 * Primary composite
 	 */
 	private CertificateTemplateComposite composite;
+	/**
+	 * Header model
+	 */
+	private CertificateHeaderComposite header;
 
 	@Inject
 	private Logger logger;
@@ -111,7 +115,7 @@ public class NewCertificateDetailsPart {
 	/**
 	 * Create contents of the view part.
 	 * 
-	 * @param part The part which this is part of.
+	 * @param part   The part which this is part of.
 	 * @param parent The parent composite
 	 */
 	@PostConstruct
@@ -183,7 +187,7 @@ public class NewCertificateDetailsPart {
 		new MenuItem(headerModel.getDropDownMenu(), SWT.PUSH).setText("Save as Certificate Template");
 		headerModel.getMenuItems().addAll(Arrays.asList(headerModel.getDropDownMenu().getItems()));
 
-		CertificateHeaderComposite header = new CertificateHeaderComposite(parent, SWT.NONE, headerModel);
+		header = new CertificateHeaderComposite(parent, SWT.NONE, headerModel);
 		header.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
 		this.composite = new CertificateTemplateComposite(parent, SWT.NONE, model, header);
@@ -228,10 +232,14 @@ public class NewCertificateDetailsPart {
 			partService.hidePart(part, true);
 		});
 	}
-	
+
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#isCloseable <em>Closeable</em>}'
-	 * attribute.
+	 * Sets the value of the
+	 * '{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#isCloseable
+	 * <em>Closeable</em>}' attribute. 
+	 * <p>
+	 * This call also has the side effect of disabling the header buttons as well to
+	 * stop multiple calls to various actions.
 	 * 
 	 * @param value the new value of the '<em>Closeable</em>' attribute.
 	 * @see #isCloseable()
@@ -239,6 +247,7 @@ public class NewCertificateDetailsPart {
 	public void setClosable(boolean value) {
 		Display.getDefault().asyncExec(() -> {
 			this.part.setCloseable(value);
+			this.header.setEnabled(value);
 		});
 	}
 

@@ -94,6 +94,12 @@ public class CertificateHeaderComposite extends Composite {
 	public ToolBar getToolbar() {
 		return toolbar;
 	}
+	
+	@Override
+	public void setEnabled (boolean enabled) { 
+		super.setEnabled(enabled);
+		toolbar.setEnabled(enabled);
+	}
 
 	@Override
 	protected void checkSubclass() {
