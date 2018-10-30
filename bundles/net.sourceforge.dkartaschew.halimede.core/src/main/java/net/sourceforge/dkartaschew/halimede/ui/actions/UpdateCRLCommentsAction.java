@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -60,6 +61,9 @@ public class UpdateCRLCommentsAction extends Action {
 
 	@Inject
 	private Logger logger;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * Create a new Comment update action
@@ -94,14 +98,14 @@ public class UpdateCRLCommentsAction extends Action {
 					caDetailsPane.refresh();
 					subMonitor.done();
 
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Comment Updated",
 								"The comments for this CRL has been updated.");
 					});
 
 				} catch (Throwable ex) {
 					logger.error(ex, ExceptionUtil.getMessage(ex));
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Updating the CRL Failed",
 								"Updating the CRL failed with the following error: " + ExceptionUtil.getMessage(ex));
 					});

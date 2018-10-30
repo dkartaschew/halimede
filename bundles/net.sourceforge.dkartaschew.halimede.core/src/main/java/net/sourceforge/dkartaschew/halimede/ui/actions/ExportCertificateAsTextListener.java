@@ -27,12 +27,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -61,6 +61,9 @@ public class ExportCertificateAsTextListener implements SelectionListener {
 
 	@Inject
 	private Logger logger;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * Create a new export certificate private key information listener.
@@ -106,7 +109,7 @@ public class ExportCertificateAsTextListener implements SelectionListener {
 						renderer.finaliseRender();
 					}
 					subMonitor.worked(1);
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openInformation(shell, "Certificate Information Exported",
 								"The Issued Certificate '" + certDescription + "' Information have been exported to '"
 										+ dir + "'.");
@@ -114,7 +117,7 @@ public class ExportCertificateAsTextListener implements SelectionListener {
 				} catch (Throwable ex) {
 					if (logger != null)
 						logger.error(ex, "Exporting the Certificate Information Failed");
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(shell, "Exporting the Certificate Information Failed",
 								"Exporting the Certificate Information from Issued Certificate '" + certDescription
 										+ "' failed with the following error: " + ExceptionUtil.getMessage(ex));

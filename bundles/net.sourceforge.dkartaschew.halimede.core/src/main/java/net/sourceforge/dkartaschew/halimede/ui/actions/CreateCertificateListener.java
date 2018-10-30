@@ -17,6 +17,8 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -26,12 +28,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
-
 import net.sourceforge.dkartaschew.halimede.data.ICertificateRequest;
 import net.sourceforge.dkartaschew.halimede.ui.NewCertificateDetailsPart;
 import net.sourceforge.dkartaschew.halimede.ui.model.NewCertificateModel;
@@ -54,6 +55,10 @@ public class CreateCertificateListener implements SelectionListener {
 	 * Binding context...
 	 */
 	private IObservableValue<IStatus> validationStatus;
+	
+	
+	@Inject 
+	private UISynchronize sync;
 
 	public CreateCertificateListener(NewCertificateModel model, NewCertificateDetailsPart part) {
 		this.model = model;
@@ -105,7 +110,7 @@ public class CreateCertificateListener implements SelectionListener {
 					}
 				} catch (Throwable ex) {
 					part.setClosable(true);
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(e.display.getActiveShell(), "Creating the Certificate Failed",
 								"Creating the Certificate failed with the following error: " + ExceptionUtil.getMessage(ex));
 					});

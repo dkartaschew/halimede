@@ -33,11 +33,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthourityManager;
@@ -67,6 +67,9 @@ public class CreateNewCAAction extends Action {
 
 	@Inject
 	private Logger logger;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * Create an Action for creating a new CA
@@ -117,7 +120,7 @@ public class CreateNewCAAction extends Action {
 				} catch (Throwable e) {
 					if (logger != null)
 						logger.error(e, "Creating the CA Failed");
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(shell, "Creating the CA Failed",
 								"Creating the CA failed with the following error: " + ExceptionUtil.getMessage(e));
 					});

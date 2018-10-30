@@ -25,13 +25,13 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
@@ -105,6 +105,9 @@ public class CertificateRequestDetailsPart {
 
 	@Inject
 	private IEclipseContext context;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	@Inject
 	private Logger logger;
@@ -198,7 +201,7 @@ public class CertificateRequestDetailsPart {
 	@Focus
 	public void setFocus() {
 		if (this.composite != null) {
-			Display.getDefault().asyncExec(() -> {
+			sync.asyncExec(() -> {
 				if (!this.composite.isDisposed()) {
 					this.composite.setFocus();
 				}
@@ -212,7 +215,7 @@ public class CertificateRequestDetailsPart {
 	 * Note: This an async request.
 	 */
 	public void close() {
-		Display.getDefault().asyncExec(() -> {
+		sync.asyncExec(() -> {
 			// This will call @PreDestroy
 			partService.hidePart(part, true);
 		});
@@ -226,7 +229,7 @@ public class CertificateRequestDetailsPart {
 	 * @see #isCloseable()
 	 */
 	public void setClosable(boolean value) {
-		Display.getDefault().asyncExec(() -> {
+		sync.asyncExec(() -> {
 			this.part.setCloseable(value);
 		});
 	}

@@ -29,6 +29,7 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -36,7 +37,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
@@ -111,6 +111,9 @@ public class NewCertificateDetailsPart {
 
 	@Inject
 	private IEclipseContext context;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * Create contents of the view part.
@@ -213,7 +216,7 @@ public class NewCertificateDetailsPart {
 	@Focus
 	public void setFocus() {
 		if (this.composite != null) {
-			Display.getDefault().asyncExec(() -> {
+			sync.asyncExec(() -> {
 				if (!this.composite.isDisposed()) {
 					this.composite.setFocus();
 				}
@@ -227,7 +230,7 @@ public class NewCertificateDetailsPart {
 	 * Note: This an async request.
 	 */
 	public void close() {
-		Display.getDefault().asyncExec(() -> {
+		sync.asyncExec(() -> {
 			// This will call @PreDestroy
 			partService.hidePart(part, true);
 		});
@@ -245,7 +248,7 @@ public class NewCertificateDetailsPart {
 	 * @see #isCloseable()
 	 */
 	public void setClosable(boolean value) {
-		Display.getDefault().asyncExec(() -> {
+		sync.asyncExec(() -> {
 			this.part.setCloseable(value);
 			this.header.setEnabled(value);
 		});

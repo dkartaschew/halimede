@@ -25,10 +25,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -48,6 +48,9 @@ public class ImportCSRAction extends Action {
 	@Inject
 	@Named(IServiceConstants.ACTIVE_SHELL)
 	private Shell shell;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	public ImportCSRAction(CertificateAuthority ca) {
 		super("Import a Certificate Request");
@@ -72,7 +75,7 @@ public class ImportCSRAction extends Action {
 					}
 					CertificateRequestProperties csr = ca.addCertificateSigningRequest(Paths.get(path));
 					subMonitor.worked(1);
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openInformation(shell, "Importing Certificate Signing Request Completed",
 								"Importing Certificate Signing Request Completed Successfully." + System.lineSeparator()
 										+ "Subject: " + csr.getProperty(Key.subject));
@@ -80,7 +83,7 @@ public class ImportCSRAction extends Action {
 				} catch (Throwable e) {
 					if (logger != null)
 						logger.error(e, "Importing Certificate Signing Request Failed");
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(shell, "Importing Certificate Signing Request Failed",
 								"Importing Certificate Signing Request failed with the following error: "
 										+ ExceptionUtil.getMessage(e));

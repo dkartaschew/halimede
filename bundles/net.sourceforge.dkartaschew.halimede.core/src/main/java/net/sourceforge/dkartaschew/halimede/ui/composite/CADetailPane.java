@@ -24,13 +24,12 @@ import java.util.EnumMap;
 import javax.inject.Inject;
 
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthourityManager;
 import net.sourceforge.dkartaschew.halimede.ui.CertificateManagerView;
@@ -51,6 +50,9 @@ public class CADetailPane extends Composite implements ISelectionChangedListener
 
 	@Inject
 	private Logger logger;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * The CA Manager.
@@ -131,7 +133,7 @@ public class CADetailPane extends Composite implements ISelectionChangedListener
 
 	@Override
 	public void propertyChange(final PropertyChangeEvent evt) {
-		Display.getDefault().asyncExec(() -> {
+		sync.asyncExec(() -> {
 			if (tableViewerElements.get(ElementType.Issued).isDisposed()) {
 				return;
 			}
@@ -209,7 +211,7 @@ public class CADetailPane extends Composite implements ISelectionChangedListener
 	 * Signal a refresh is required.
 	 */
 	public void refresh() {
-		Display.getDefault().asyncExec(() -> tableViewerElements.get(type).getTableViewer().refresh());
+		sync.asyncExec(() -> tableViewerElements.get(type).getTableViewer().refresh());
 	}
 
 }

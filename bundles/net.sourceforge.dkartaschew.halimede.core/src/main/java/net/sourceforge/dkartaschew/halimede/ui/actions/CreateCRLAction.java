@@ -27,11 +27,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CRLProperties;
@@ -59,6 +59,9 @@ public class CreateCRLAction extends Action {
 
 	@Inject
 	private IEclipseContext context;
+		
+	@Inject 
+	private UISynchronize sync;
 
 	@Inject
 	@Named(IServiceConstants.ACTIVE_SHELL)
@@ -101,7 +104,7 @@ public class CreateCRLAction extends Action {
 				} catch (Throwable e) {
 					if (logger != null)
 						logger.error(e, "Creating the CRL Failed");
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(shell, "Creating the CRL Failed",
 								"Creating the CRL failed with the following error: " + ExceptionUtil.getMessage(e));
 					});

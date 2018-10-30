@@ -26,13 +26,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
@@ -59,6 +59,9 @@ public class ExportCAPublicKeyListener implements SelectionListener {
 
 	@Inject
 	private Logger logger;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * Create a new export CA Public Key information listener.
@@ -91,7 +94,7 @@ public class ExportCAPublicKeyListener implements SelectionListener {
 					}
 					ca.createPublicKey(Paths.get(model.getFilename()), model.getEncoding());
 					subMonitor.worked(1);
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openInformation(shell, "CA Public Key Exported",
 								"The Public Key from '" + ca.getDescription() + "' Certificate has been exported to '"
 										+ model.getFilename() + "'.");
@@ -99,7 +102,7 @@ public class ExportCAPublicKeyListener implements SelectionListener {
 				} catch (Throwable ex) {
 					if (logger != null)
 						logger.error(ex, "Exporting the Public Key Failed");
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(shell, "Exporting CA Public Key Failed",
 								"Exporting Public Key from Issued Certificate '" + ca.getDescription()
 										+ "' failed with the following error: " + ExceptionUtil.getMessage(ex));

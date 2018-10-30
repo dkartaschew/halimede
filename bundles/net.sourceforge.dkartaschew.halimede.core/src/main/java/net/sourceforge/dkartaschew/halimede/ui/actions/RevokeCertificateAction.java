@@ -25,13 +25,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
@@ -64,6 +64,9 @@ public class RevokeCertificateAction extends Action implements SelectionListener
 
 	@Inject
 	private Logger logger;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	public RevokeCertificateAction(IssuedCertificateProperties certificate, CertificateAuthority ca) {
 		super("Revoke Certificate");
@@ -110,14 +113,14 @@ public class RevokeCertificateAction extends Action implements SelectionListener
 					if (part != null) {
 						part.close();
 					}
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openInformation(shell, "Certificate Revoked",
 								"The certificate has been revoked.");
 					});
 
 				} catch (Throwable ex) {
 					logger.error(ex, ExceptionUtil.getMessage(ex));
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(shell, "Revoking the Certificate Failed",
 								"Revoking the Certificte failed with the following error: " + ExceptionUtil.getMessage(ex));
 					});

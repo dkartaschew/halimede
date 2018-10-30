@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -36,7 +37,6 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
@@ -74,6 +74,9 @@ public class ViewCRLAction extends Action implements Runnable {
 	@Inject
 	@Named(IServiceConstants.ACTIVE_SHELL)
 	private Shell shell;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * Create a new CRL Action
@@ -116,7 +119,7 @@ public class ViewCRLAction extends Action implements Runnable {
 				// Add our data to the part.
 				part.getTransientData().put(CRLDetailsPart.MODEL, crl);
 
-				Display.getDefault().asyncExec(() -> {
+				sync.asyncExec(() -> {
 					// Find the preferred part stack, otherwise just use the first one.
 					MPartStack stack = stacks.stream().filter(p -> p.getElementId().equals(editor)).findFirst()
 							.orElse(stacks.get(0));
@@ -129,7 +132,7 @@ public class ViewCRLAction extends Action implements Runnable {
 			} catch (Throwable e) {
 				if (logger != null)
 					logger.error(e, "Viewing the CRL Failed");
-				Display.getDefault().asyncExec(() -> {
+				sync.asyncExec(() -> {
 					MessageDialog.openError(shell, "Viewing the CRL Failed",
 							"Viewing the CRL failed with the following error: " + ExceptionUtil.getMessage(e));
 				});

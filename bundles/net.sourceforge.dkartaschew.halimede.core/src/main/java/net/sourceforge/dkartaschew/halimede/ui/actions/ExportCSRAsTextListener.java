@@ -27,12 +27,12 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
@@ -61,6 +61,9 @@ public class ExportCSRAsTextListener implements SelectionListener {
 
 	@Inject
 	private Logger logger;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * Create a new export CSR information listener.
@@ -101,14 +104,14 @@ public class ExportCSRAsTextListener implements SelectionListener {
 						renderer.finaliseRender();
 					}
 					subMonitor.worked(1);
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openInformation(shell, "Certificate Request Exported", "Certificate Request for ;"
 								+ csr.getProperty(Key.subject) + "; has been exported to '" + dir + "'.");
 					});
 				} catch (Throwable ex) {
 					if (logger != null)
 						logger.error(ex, "Exporting the Certificate Request Failed");
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(shell, "Exporting Certificate Request Failed",
 								"Certificate Request for '" + csr.getProperty(Key.subject)
 										+ "' failed with the following error: " + ExceptionUtil.getMessage(ex));

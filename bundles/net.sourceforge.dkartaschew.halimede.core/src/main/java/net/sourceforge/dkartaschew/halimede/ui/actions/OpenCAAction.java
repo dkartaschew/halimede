@@ -26,11 +26,11 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthourityManager;
@@ -52,7 +52,10 @@ public class OpenCAAction extends Action {
 
 	@Inject
 	private Logger logger;
-
+	
+	@Inject 
+	private UISynchronize sync;
+	
 	/**
 	 * Create an Action for opening an existing CA
 	 * 
@@ -83,7 +86,7 @@ public class OpenCAAction extends Action {
 				} catch (Throwable e) {
 					if (logger != null)
 						logger.error(e, "Opening the CA Failed");
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(shell, "Opening the CA Failed",
 								"Opening the CA failed with the following error: " + ExceptionUtil.getMessage(e));
 					});

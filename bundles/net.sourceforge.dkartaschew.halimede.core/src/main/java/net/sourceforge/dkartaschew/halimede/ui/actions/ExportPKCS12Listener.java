@@ -26,13 +26,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
@@ -65,6 +65,9 @@ public class ExportPKCS12Listener implements SelectionListener {
 
 	@Inject
 	private Logger logger;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * Create a new export certificate private key information listener.
@@ -101,7 +104,7 @@ public class ExportPKCS12Listener implements SelectionListener {
 					certificate.loadIssuedCertificate(null)//
 							.createPKCS12(Paths.get(model.getFilename()), model.getPassword(), alias, model.getPkcs12Cipher());
 					subMonitor.worked(1);
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openInformation(shell, "Key Information Exported",
 								"The Issued Certificate '" + certDescription
 										+ "' Keys in PKCS#12 Container have been exported to '" + model.getFilename()
@@ -111,7 +114,7 @@ public class ExportPKCS12Listener implements SelectionListener {
 				} catch (Throwable ex) {
 					if (logger != null)
 						logger.error(ex, "Exporting the Keys Failed");
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(shell, "Exporting Keys Failed",
 								"Exporting Keys in PKCS#12 Container from Issued Certificate '" + certDescription
 										+ "' failed with the following error: " + ExceptionUtil.getMessage(ex));

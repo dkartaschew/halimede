@@ -26,13 +26,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
@@ -63,6 +63,9 @@ public class ExportCACertificateListener implements SelectionListener {
 
 	@Inject
 	private Logger logger;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * Create a new export certificate information listener.
@@ -101,7 +104,7 @@ public class ExportCACertificateListener implements SelectionListener {
 						ca.exportCertificate(Paths.get(model.getFilename()), model.getEncoding());
 					}
 					subMonitor.worked(1);
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openInformation(shell, "Certificate(s) Exported",
 								"The Certificate Authority '" + ca.getDescription()
 										+ "' Certificates have been exported to '" + model.getFilename() + "'.");
@@ -109,7 +112,7 @@ public class ExportCACertificateListener implements SelectionListener {
 				} catch (Throwable ex) {
 					if (logger != null)
 						logger.error(ex, "Exporting the CA Certificate(s) Failed");
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(shell, "Exporting Certificate(s) Failed",
 								"Exporting Certificate(s) from CA '" + ca.getDescription()
 										+ "' failed with the following error: " + ExceptionUtil.getMessage(ex));

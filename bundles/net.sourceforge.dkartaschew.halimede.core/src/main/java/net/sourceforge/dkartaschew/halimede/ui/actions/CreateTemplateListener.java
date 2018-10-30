@@ -19,15 +19,16 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.time.ZonedDateTime;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
-
 import net.sourceforge.dkartaschew.halimede.ui.model.NewCertificateModel;
 import net.sourceforge.dkartaschew.halimede.util.DateTimeUtil;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
@@ -35,6 +36,9 @@ import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 public class CreateTemplateListener implements SelectionListener {
 
 	private final NewCertificateModel model;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * Create a certificate template instance.
@@ -60,13 +64,13 @@ public class CreateTemplateListener implements SelectionListener {
 				model.setCreationDate(cDate);
 				subMonitor.done();
 
-				Display.getDefault().asyncExec(() -> {
+				sync.asyncExec(() -> {
 					MessageDialog.openInformation(e.display.getActiveShell(), "Template Created",
 							"The template has been created.");
 				});
 
 			} catch (Throwable ex) {
-				Display.getDefault().asyncExec(() -> {
+				sync.asyncExec(() -> {
 					MessageDialog.openError(e.display.getActiveShell(), "Creating the Template Failed",
 							"Creating the Template failed with the following error: " + ExceptionUtil.getMessage(ex));
 				});

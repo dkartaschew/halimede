@@ -37,13 +37,13 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -77,6 +77,9 @@ public class CertificateManagerView implements PropertyChangeListener {
 
 	@Inject
 	private IEclipseContext context;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * The Certificate Authority manager.
@@ -178,7 +181,7 @@ public class CertificateManagerView implements PropertyChangeListener {
 				CertificateAuthorityNode[] nodes = manager.getCertificateAuthorities().stream()
 						.map(i -> new CertificateAuthorityNode(i))//
 						.toArray(CertificateAuthorityNode[]::new);
-				Display.getDefault().asyncExec(() -> {
+				sync.asyncExec(() -> {
 					caList.setInput(nodes);
 				});
 			}
@@ -218,7 +221,7 @@ public class CertificateManagerView implements PropertyChangeListener {
 			CertificateAuthorityNode[] nodes = cas.stream().map(i -> new CertificateAuthorityNode(i))//
 					.toArray(CertificateAuthorityNode[]::new);
 			// We need to set the input in the UI thread...
-			Display.getDefault().asyncExec(() -> {
+			sync.asyncExec(() -> {
 				caList.setInput(nodes);
 			});
 
@@ -238,7 +241,7 @@ public class CertificateManagerView implements PropertyChangeListener {
 			}
 		} else {
 			// CA update...
-			Display.getDefault().asyncExec(() -> {
+			sync.asyncExec(() -> {
 				caList.refresh();
 			});
 		}

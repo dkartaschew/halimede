@@ -26,13 +26,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
@@ -59,6 +59,9 @@ public class ExportCAPrivateKeyListener implements SelectionListener {
 
 	@Inject
 	private Logger logger;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * Create a new export certificate private key information listener.
@@ -86,7 +89,7 @@ public class ExportCAPrivateKeyListener implements SelectionListener {
 					}
 					ca.exportPrivateKey(Paths.get(model.getFilename()), model.getPassword(), model.getEncoding(), model.getPkcs8Cipher());
 					subMonitor.worked(1);
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openInformation(shell, "Private Key Exported",
 								"The Certificate Authority '" + ca.getDescription()
 										+ "' Private Key have been exported to '" + model.getFilename() + "'.");
@@ -94,7 +97,7 @@ public class ExportCAPrivateKeyListener implements SelectionListener {
 				} catch (Throwable ex) {
 					if (logger != null)
 						logger.error(ex, "Exporting the CA Private Key Failed");
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(shell, "Exporting Private Key Failed",
 								"Exporting Private Key from CA '" + ca.getDescription()
 										+ "' failed with the following error: " + ExceptionUtil.getMessage(ex));

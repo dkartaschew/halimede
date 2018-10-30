@@ -33,6 +33,7 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Focus;
 import org.eclipse.e4.ui.di.Persist;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
@@ -42,7 +43,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
@@ -124,6 +124,10 @@ public class CertificateDetailsPart {
 
 	@Inject
 	private IEclipseContext context;
+		
+	@Inject 
+	private UISynchronize sync;
+	
 	/**
 	 * UI Shell
 	 */
@@ -330,7 +334,7 @@ public class CertificateDetailsPart {
 					certificate.loadIssuedCertificate(null)//
 							.createPKCS12(Paths.get(model.getFilename()), model.getPassword(), alias,
 									model.getPkcs12Cipher());
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openInformation(shell, "Key Information Exported",
 								"The Issued Certificate '" + certDescription
 										+ "' Keys in PKCS#12 Container have been exported to '" + model.getFilename()
@@ -340,7 +344,7 @@ public class CertificateDetailsPart {
 				} catch (Throwable ex) {
 					if (logger != null)
 						logger.error(ex, "Exporting the Keys Failed");
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(shell, "Exporting Keys Failed",
 								"Exporting Keys in PKCS#12 Container from Issued Certificate '" + certDescription
 										+ "' failed with the following error: " + ExceptionUtil.getMessage(ex));
@@ -361,7 +365,7 @@ public class CertificateDetailsPart {
 	 * @param dirty The dirty state of the part.
 	 */
 	public void setDirty(boolean dirty) {
-		Display.getDefault().asyncExec(() -> {
+		sync.asyncExec(() -> {
 			part.setDirty(dirty);
 		});
 	}
@@ -374,7 +378,7 @@ public class CertificateDetailsPart {
 	@Focus
 	public void setFocus() {
 		if (this.composite != null) {
-			Display.getDefault().asyncExec(() -> {
+			sync.asyncExec(() -> {
 				if (!this.composite.isDisposed()) {
 					this.composite.setFocus();
 				}
@@ -388,7 +392,7 @@ public class CertificateDetailsPart {
 	 * Note: This an async request.
 	 */
 	public void close() {
-		Display.getDefault().asyncExec(() -> {
+		sync.asyncExec(() -> {
 			// This will call @PreDestroy
 			partService.hidePart(part, true);
 		});

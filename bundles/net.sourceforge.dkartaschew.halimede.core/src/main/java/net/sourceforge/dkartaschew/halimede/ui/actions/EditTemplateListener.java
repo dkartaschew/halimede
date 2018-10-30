@@ -17,9 +17,12 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -37,6 +40,9 @@ public class EditTemplateListener implements SelectionListener {
 	 * The part to close if successful
 	 */
 	private final TemplateDetailsPart part;
+		
+	@Inject 
+	private UISynchronize sync;
 	
 	/**
 	 * Edit a certificate template instance.
@@ -60,7 +66,7 @@ public class EditTemplateListener implements SelectionListener {
 				model.getCa().addTemplate(model.asTemplate());
 				subMonitor.done();
 				
-				Display.getDefault().asyncExec(() -> {
+				sync.asyncExec(() -> {
 					MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Template Updated",
 							"The template has been updated.");
 				});
@@ -68,7 +74,7 @@ public class EditTemplateListener implements SelectionListener {
 				part.close();
 
 			} catch (Throwable ex) {
-				Display.getDefault().asyncExec(() -> {
+				sync.asyncExec(() -> {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Creating the Template Failed",
 							"Creating the Template failed with the following error: " + ExceptionUtil.getMessage(ex));
 				});

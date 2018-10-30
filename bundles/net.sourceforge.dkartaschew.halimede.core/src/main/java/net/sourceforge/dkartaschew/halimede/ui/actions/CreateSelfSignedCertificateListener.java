@@ -32,12 +32,11 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
-
 import net.sourceforge.dkartaschew.halimede.data.CertificateFactory;
 import net.sourceforge.dkartaschew.halimede.data.ICertificateRequest;
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
@@ -67,6 +66,9 @@ public class CreateSelfSignedCertificateListener implements SelectionListener {
 
 	@Inject
 	private IEclipseContext context;
+		
+	@Inject 
+	private UISynchronize sync;
 	/**
 	 * Binding context...
 	 */
@@ -128,13 +130,13 @@ public class CreateSelfSignedCertificateListener implements SelectionListener {
 					
 					ViewCertificateInformationAction action = new ViewCertificateInformationAction(p, null, editor, true);
 					ContextInjectionFactory.inject(action, context);
-					Display.getDefault().asyncExec(action);
+					sync.asyncExec(action);
 
 					// Close the part.
 					part.close();
 				} catch (Throwable ex) {
 					part.setClosable(true);
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(e.display.getActiveShell(), "Creating the Certificate Failed",
 								"Creating the Certificate failed with the following error: " + ExceptionUtil.getMessage(ex));
 					});

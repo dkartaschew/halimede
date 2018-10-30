@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -60,6 +61,9 @@ public class UpdateCertificateRequestsCommentsAction extends Action {
 
 	@Inject
 	private Logger logger;
+	
+	@Inject 
+	private UISynchronize sync;
 
 	/**
 	 * Create a new Comment update action
@@ -95,14 +99,14 @@ public class UpdateCertificateRequestsCommentsAction extends Action {
 					caDetailsPane.refresh();
 					subMonitor.done();
 
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Comment Updated",
 								"The comments for this certificate request has been updated.");
 					});
 
 				} catch (Throwable ex) {
 					logger.error(ex, ExceptionUtil.getMessage(ex));
-					Display.getDefault().asyncExec(() -> {
+					sync.asyncExec(() -> {
 						MessageDialog.openError(Display.getDefault().getActiveShell(),
 								"Updating the Certificate Request Failed",
 								"Updating the Certificte Request failed with the following error: " + ExceptionUtil.getMessage(ex));
