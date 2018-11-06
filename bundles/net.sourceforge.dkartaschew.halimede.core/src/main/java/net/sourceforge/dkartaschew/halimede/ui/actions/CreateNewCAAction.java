@@ -52,7 +52,7 @@ import net.sourceforge.dkartaschew.halimede.util.DateTimeUtil;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
 @SuppressWarnings("restriction")
-public class CreateNewCAAction extends Action {
+public class CreateNewCAAction extends Action implements Runnable {
 
 	/**
 	 * UI Shell

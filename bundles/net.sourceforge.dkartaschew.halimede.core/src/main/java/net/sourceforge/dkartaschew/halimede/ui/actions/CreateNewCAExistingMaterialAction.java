@@ -47,7 +47,7 @@ import net.sourceforge.dkartaschew.halimede.ui.model.NewCAModel;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
 @SuppressWarnings("restriction")
-public class CreateNewCAExistingMaterialAction extends Action {
+public class CreateNewCAExistingMaterialAction extends Action implements Runnable {
 
 	/**
 	 * UI Shell

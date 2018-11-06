@@ -37,7 +37,7 @@ import net.sourceforge.dkartaschew.halimede.data.CertificateAuthourityManager;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
 @SuppressWarnings("restriction")
-public class OpenCAAction extends Action {
+public class OpenCAAction extends Action implements Runnable {
 
 	/**
 	 * UI Shell
@@ -70,7 +70,7 @@ public class OpenCAAction extends Action {
 	@Override
 	public void run() {
 		DirectoryDialog dialog = new DirectoryDialog(shell);
-		dialog.setText("Set Base Location for CA Datastore");
+		dialog.setText("Base Location for CA");
 		dialog.setMessage("Select a directory");
 		String path = dialog.open();
 		if (path != null) {
