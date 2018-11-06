@@ -212,11 +212,19 @@ public class CertificateTemplateComposite extends Composite {
 			comboKeyType.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
 			comboViewerKeyType.setLabelProvider(new KeyTypeLabelProvider());
 			comboViewerKeyType.setContentProvider(new ArrayContentProvider());
-			comboViewerKeyType.setInput(KeyType.values());
+			comboViewerKeyType.setInput(KeyType.getAllowedValues());
 			comboKeyType.setToolTipText("The Keying material type");
 			// Set default value.
 			if (model.getKeyType() == null) {
-				model.setKeyType(KeyType.EC_secp521r1);
+				model.setKeyType(KeyType.getDefaultKeyType());
+			} else {
+				// ensure key type is allowed by policy.
+				KeyType key = model.getKeyType();
+				boolean contains = Arrays.stream(KeyType.getAllowedValues()).anyMatch(key::equals);
+				if (!contains) {
+					// reset according to policy.
+					model.setKeyType(KeyType.getDefaultKeyType());
+				}
 			}
 			comboKeyType.select(KeyType.getIndex(model.getKeyType()));
 

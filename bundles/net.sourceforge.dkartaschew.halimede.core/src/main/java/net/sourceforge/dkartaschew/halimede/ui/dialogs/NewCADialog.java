@@ -211,10 +211,10 @@ public class NewCADialog extends Dialog {
 		comboKeyType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		comboViewerKeyType.setLabelProvider(new KeyTypeLabelProvider());
 		comboViewerKeyType.setContentProvider(new ArrayContentProvider());
-		comboViewerKeyType.setInput(KeyType.values());
+		comboViewerKeyType.setInput(KeyType.getAllowedValues());
 		comboKeyType.setToolTipText("The Keying material type");
 		// Set default value.
-		model.setKeyType(KeyType.EC_secp521r1);
+		model.setKeyType(KeyType.getDefaultKeyType());
 		comboKeyType.select(KeyType.getIndex(model.getKeyType()));
 
 		new Label(grpCertificateAndKeying, SWT.NONE);

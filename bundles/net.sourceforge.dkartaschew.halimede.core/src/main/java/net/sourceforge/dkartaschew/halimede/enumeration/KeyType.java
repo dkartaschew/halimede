@@ -769,9 +769,9 @@ public enum KeyType {
 	 * Create a new key type
 	 * 
 	 * @param description Plain text user friendly description
-	 * @param type Key pair type
-	 * @param bitLength The number of bits for RSA/DSA
-	 * @param parameter The curve name for EC or digest
+	 * @param type        Key pair type
+	 * @param bitLength   The number of bits for RSA/DSA
+	 * @param parameter   The curve name for EC or digest
 	 */
 	private KeyType(String description, String type, int bitLength, String parameter) {
 		this(description, type, bitLength, parameter, 0, 0);
@@ -781,11 +781,11 @@ public enum KeyType {
 	 * Create a new key type
 	 * 
 	 * @param description Plain text user friendly description
-	 * @param type Key pair type
-	 * @param bitLength The number of bits for RSA/DSA
-	 * @param parameter The digest type
-	 * @param height The height of the tree
-	 * @param layers The number of layers (XMSSMT only).
+	 * @param type        Key pair type
+	 * @param bitLength   The number of bits for RSA/DSA
+	 * @param parameter   The digest type
+	 * @param height      The height of the tree
+	 * @param layers      The number of layers (XMSSMT only).
 	 */
 	private KeyType(String description, String type, int bitLength, String parameter, int height, int layers) {
 		this.description = description;
@@ -870,9 +870,10 @@ public enum KeyType {
 	 * Get the keytype based on the given description
 	 * 
 	 * @param value The description obtained from the keytype
-	 * @return The key type based on the given description. NULL will returned if no description
+	 * @return The key type based on the given description. NULL will returned if no
+	 *         description
 	 * @throws NoSuchElementException The description doesn't match a known element.
-	 * @throws NullPointerException The description was null.
+	 * @throws NullPointerException   The description was null.
 	 */
 	public static Object forDescription(String value) {
 		Objects.requireNonNull(value, "Description was null");
@@ -890,7 +891,7 @@ public enum KeyType {
 			return 0;
 		}
 		int index = 0;
-		for (KeyType k : values()) {
+		for (KeyType k : getAllowedValues()) {
 			if (k == value) {
 				return index;
 			}
@@ -900,12 +901,30 @@ public enum KeyType {
 	}
 
 	/**
+	 * Get an array of allowed Key Types based on policy.
+	 * 
+	 * @return The allowed key types based on policy.
+	 */
+	public static KeyType[] getAllowedValues() {
+		return values();
+	}
+
+	/**
+	 * Get the default key type based on policy.
+	 * 
+	 * @return The default key type based on policy.
+	 */
+	public static KeyType getDefaultKeyType() {
+		return EC_secp521r1;
+	}
+
+	/**
 	 * Get the description of the key type based on getName() value of the type
 	 * 
 	 * @param name The name of the enum
 	 * @return The plain description.
 	 * @throws NoSuchElementException The name doesn't match a known element.
-	 * @throws NullPointerException The name was null.
+	 * @throws NullPointerException   The name was null.
 	 */
 	public static String getKeyTypeDescription(String name) {
 		Objects.requireNonNull(name, "Name was null");
@@ -917,7 +936,8 @@ public enum KeyType {
 	 * 
 	 * @param publicKey The public Key
 	 * @return The KeyType or NULL if unknown?
-	 * @throws UnknownKeyTypeException The Public Key doesn't match a defined KeyType.
+	 * @throws UnknownKeyTypeException The Public Key doesn't match a defined
+	 *                                 KeyType.
 	 */
 	public static KeyType forKey(PublicKey publicKey) throws UnknownKeyTypeException {
 		Objects.requireNonNull(publicKey, "Public Key was null");
