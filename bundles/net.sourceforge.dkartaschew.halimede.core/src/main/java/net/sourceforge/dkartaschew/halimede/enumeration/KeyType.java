@@ -739,6 +739,16 @@ public enum KeyType {
 	XMSSMT_SHAKE_60_12_512("XMSSMT 60/12 SHAKE256", "XMSSMT", 512, "SHAKE256", 60, 12);
 
 	/**
+	 * System Properties key (allowed key types)
+	 */
+	public static final String ALLOWED = "net.sourceforge.dkartaschew.halimede.keytype.allow";
+	
+	/**
+	 * System Properties key (default key type)
+	 */
+	public static final String DEFAULT = "net.sourceforge.dkartaschew.halimede.keytype.default";
+	
+	/**
 	 * Plain text user friendly description
 	 */
 	private final String description;
