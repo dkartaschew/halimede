@@ -22,8 +22,11 @@ import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
@@ -742,12 +745,12 @@ public enum KeyType {
 	 * System Properties key (allowed key types)
 	 */
 	public static final String ALLOWED = "net.sourceforge.dkartaschew.halimede.keytype.allow";
-	
+
 	/**
 	 * System Properties key (default key type)
 	 */
 	public static final String DEFAULT = "net.sourceforge.dkartaschew.halimede.keytype.default";
-	
+
 	/**
 	 * Plain text user friendly description
 	 */
@@ -891,7 +894,7 @@ public enum KeyType {
 	}
 
 	/**
-	 * Get the index into the values array...
+	 * Get the index into the allowed values array...
 	 * 
 	 * @param value The value
 	 * @return The index into the values array...
@@ -916,7 +919,69 @@ public enum KeyType {
 	 * @return The allowed key types based on policy.
 	 */
 	public static KeyType[] getAllowedValues() {
-		return values();
+		String allowed = System.getProperty(ALLOWED);
+		if (allowed == null) {
+			// parameter not set, so return all.
+			return values();
+		}
+		Set<KeyType> values = new HashSet<>();
+		Pattern.compile(" ")//
+				.splitAsStream(allowed)//
+				.filter(v -> !v.isEmpty())//
+				.forEach(v -> process(v, values));
+
+		if (!values.isEmpty()) {
+			return values.stream().sorted().toArray(KeyType[]::new);
+		}
+		// set is empty.
+		return new KeyType[] { EC_secp521r1 };
+	}
+
+	/**
+	 * Process the key typoe indicator and add/remove from the values set.
+	 * 
+	 * @param keyIndicator The key indicatior
+	 * @param values       The set to add / remove from
+	 */
+	private static void process(String keyIndicator, Set<KeyType> values) {
+		// Determine state operations
+		boolean remove = keyIndicator.startsWith("-");
+		boolean wildcard = keyIndicator.endsWith("*");
+		// Trim the key indicator to remove the state indicators
+		keyIndicator = remove ? keyIndicator.substring(1) : keyIndicator;
+		keyIndicator = wildcard ? keyIndicator.substring(0, keyIndicator.length() - 1) : keyIndicator;
+		if (keyIndicator.isEmpty()) {
+			// empty, so ignore if not wildcard
+			if (wildcard) {
+				if (!remove) {
+					values.addAll(Arrays.asList(KeyType.values()));
+				} else {
+					values.clear();
+				}
+			}
+			return;
+		}
+		for (KeyType key : KeyType.values()) {
+			if (!wildcard) {
+				// match on name() or getType();
+				if (key.getType().equals(keyIndicator) || key.name().equals(keyIndicator)) {
+					if (!remove) {
+						values.add(key);
+					} else {
+						values.remove(key);
+					}
+				}
+			} else {
+				// match on being prefix of name();
+				if (key.getType().startsWith(keyIndicator) || key.name().startsWith(keyIndicator)) {
+					if (!remove) {
+						values.add(key);
+					} else {
+						values.remove(key);
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -925,7 +990,27 @@ public enum KeyType {
 	 * @return The default key type based on policy.
 	 */
 	public static KeyType getDefaultKeyType() {
-		return EC_secp521r1;
+		KeyType[] values = getAllowedValues();
+		String defaultKey = System.getProperty(DEFAULT);
+		KeyType type0;
+		try {
+			if (defaultKey == null || defaultKey.trim().isEmpty()) {
+				// parameter not set, set system default.
+				type0 = EC_secp521r1;
+			} else {
+				type0 = KeyType.valueOf(defaultKey.trim());
+			}
+		} catch (IllegalArgumentException e) {
+			// ignore, this is an unknown key, set system default.
+			type0 = EC_secp521r1;
+		}
+		// ensure the key type is in the allowed set...
+		final KeyType type = type0;
+		if (Arrays.stream(values).anyMatch(k -> k == type)) {
+			return type;
+		}
+		// The key type is not in the set...
+		return values[0];
 	}
 
 	/**

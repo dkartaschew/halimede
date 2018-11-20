@@ -230,9 +230,84 @@ public class TestKeyType {
 	@Test
 	public void testDefaultAllowedKeys_NoMatch() {
 		System.setProperty(KeyType.ALLOWED, "UNKNOWN");
+		Set<KeyType> allowed = new HashSet<KeyType>(Arrays.asList(KeyType.getAllowedValues()));
+		assertTrue(allowed.size() == 1);
+		assertTrue(allowed.contains(KeyType.getDefaultKeyType()));
+	}
+
+	@Test
+	public void testDefaultAllowedKeys_EmptySet() {
+		System.setProperty(KeyType.ALLOWED, "RSA -RSA");
+		Set<KeyType> allowed = new HashSet<KeyType>(Arrays.asList(KeyType.getAllowedValues()));
+		assertTrue(allowed.size() == 1);
+		assertTrue(allowed.contains(KeyType.getDefaultKeyType()));
+	}
+
+	@Test
+	public void testDefaultAllowedKeys_EmptySetWithNOP() {
+		System.setProperty(KeyType.ALLOWED, "RSA -RSA -   *    -*   ");
+		Set<KeyType> allowed = new HashSet<KeyType>(Arrays.asList(KeyType.getAllowedValues()));
+		assertTrue(allowed.size() == 1);
+		assertTrue(allowed.contains(KeyType.getDefaultKeyType()));
+	}
+
+	@Test
+	public void testDefaultAllowedKeys_EmptySetWildcard() {
+		System.setProperty(KeyType.ALLOWED, "* -*");
+		Set<KeyType> allowed = new HashSet<KeyType>(Arrays.asList(KeyType.getAllowedValues()));
+		assertTrue(allowed.size() == 1);
+		assertTrue(allowed.contains(KeyType.getDefaultKeyType()));
+	}
+	
+	@Test
+	public void testDefaultAllowedKeys_FullSetWildcard() {
+		System.setProperty(KeyType.ALLOWED, "*");
 		Set<KeyType> available = new HashSet<KeyType>(Arrays.asList(KeyType.values()));
 		Set<KeyType> allowed = new HashSet<KeyType>(Arrays.asList(KeyType.getAllowedValues()));
 		assertEquals(available, allowed);
+	}
+	
+	@Test
+	public void testDefaultAllowedKeys_FullSetWildcardExceptDSA() {
+		System.setProperty(KeyType.ALLOWED, "* -DSA");
+		Set<KeyType> available = new HashSet<KeyType>(Arrays.asList(KeyType.values()));
+		available.removeIf(e -> e.getType().equals("DSA"));
+		Set<KeyType> allowed = new HashSet<KeyType>(Arrays.asList(KeyType.getAllowedValues()));
+		assertEquals(available, allowed);
+	}
+	
+	@Test
+	public void testDefaultAllowedKeys_EmptySet2() {
+		System.setProperty(KeyType.ALLOWED, "RSA -RSA_*");
+		Set<KeyType> allowed = new HashSet<KeyType>(Arrays.asList(KeyType.getAllowedValues()));
+		assertTrue(allowed.size() == 1);
+		assertTrue(allowed.contains(KeyType.getDefaultKeyType()));
+	}
+
+	@Test
+	public void testDefaultAllowedKeys_EmptySet3() {
+		System.setProperty(KeyType.ALLOWED, "RSA -RSA DSA -DSA_512 -DSA_1024 -DSA_2048 -DSA_3072");
+		Set<KeyType> allowed = new HashSet<KeyType>(Arrays.asList(KeyType.getAllowedValues()));
+		assertTrue(allowed.size() == 1);
+		assertTrue(allowed.contains(KeyType.getDefaultKeyType()));
+	}
+
+	@Test
+	public void testKeyTypeIndexRSA() {
+		testAllowedByType("RSA");
+		assertEquals(0, KeyType.getIndex(KeyType.RSA_512));
+		assertEquals(1, KeyType.getIndex(KeyType.RSA_1024));
+		// not in set.
+		assertEquals(0, KeyType.getIndex(KeyType.EC_B163));
+	}
+
+	@Test
+	public void testKeyTypeIndexECDSA() {
+		testAllowedByType("ECDSA");
+		assertEquals(0, KeyType.getIndex(KeyType.EC_secp112r1));
+		assertEquals(1, KeyType.getIndex(KeyType.EC_secp112r2));
+		// not in set.
+		assertEquals(0, KeyType.getIndex(KeyType.Rainbow));
 	}
 
 	@Test
@@ -289,17 +364,17 @@ public class TestKeyType {
 	public void testXMSSMTAllowed() {
 		testAllowedByType("XMSSMT");
 	}
-	
+
 	@Test
 	public void testRSADSAAllowed() {
-		testAllowedByType("RSA" , "DSA");
+		testAllowedByType("RSA", "DSA");
 	}
 
 	@Test
 	public void testGOSTECGOSTAllowed() {
-		testAllowedByType("GOST3410" , "ECGOST3410");
+		testAllowedByType("GOST3410", "ECGOST3410");
 	}
-	
+
 	@Test
 	public void testRSASubsetAllowed() {
 		System.setProperty(KeyType.ALLOWED, "RSA -RSA_512 -RSA_1024");
@@ -312,21 +387,21 @@ public class TestKeyType {
 		assertTrue(allowed.contains(KeyType.RSA_16384));
 		assertEquals(KeyType.RSA_16384, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testRSASubsetAllowedWithTypo() {
 		System.setProperty(KeyType.ALLOWED, "RSA -RSA_512 -RAS_1024");
 		System.setProperty(KeyType.DEFAULT, "RSA_16384");
 		assertEquals(5, KeyType.getAllowedValues().length);
 		Set<KeyType> allowed = new HashSet<KeyType>(Arrays.asList(KeyType.getAllowedValues()));
-		assertTrue(allowed.contains(KeyType.RSA_512));
+		assertTrue(allowed.contains(KeyType.RSA_1024));
 		assertTrue(allowed.contains(KeyType.RSA_2048));
 		assertTrue(allowed.contains(KeyType.RSA_4096));
 		assertTrue(allowed.contains(KeyType.RSA_8192));
 		assertTrue(allowed.contains(KeyType.RSA_16384));
 		assertEquals(KeyType.RSA_16384, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testRainbow() {
 		System.setProperty(KeyType.ALLOWED, "Rainbow");
@@ -336,7 +411,7 @@ public class TestKeyType {
 		assertTrue(allowed.contains(KeyType.Rainbow));
 		assertEquals(KeyType.Rainbow, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testRainbowNoneAllowed() {
 		System.setProperty(KeyType.ALLOWED, "Rainbow -Rainbow");
@@ -346,7 +421,7 @@ public class TestKeyType {
 		assertTrue(allowed.contains(KeyType.EC_secp521r1));
 		assertEquals(KeyType.EC_secp521r1, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testAllECGOST() {
 		System.setProperty(KeyType.ALLOWED, "ECGOST3410*");
@@ -364,7 +439,7 @@ public class TestKeyType {
 		assertTrue(allowed.contains(KeyType.GOST_3410_2012_512_C));
 		assertEquals(KeyType.GOST_3410_2012_256_A, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testAllECGOSTByName() {
 		System.setProperty(KeyType.ALLOWED, "GOST_3410_20*");
@@ -382,7 +457,7 @@ public class TestKeyType {
 		assertTrue(allowed.contains(KeyType.GOST_3410_2012_512_C));
 		assertEquals(KeyType.GOST_3410_2012_256_A, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testAllGOSTR3410() {
 		System.setProperty(KeyType.ALLOWED, "ECGOST3410* GOST3410*");
@@ -403,7 +478,7 @@ public class TestKeyType {
 		assertTrue(allowed.contains(KeyType.GOST_3410_2012_512_C));
 		assertEquals(KeyType.GOST_3410_2012_256_A, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testAllGOSTR3410_94() {
 		System.setProperty(KeyType.ALLOWED, "GOST3410*");
@@ -415,7 +490,7 @@ public class TestKeyType {
 		assertTrue(allowed.contains(KeyType.GOST_3410_94_XA));
 		assertEquals(KeyType.GOST_3410_94_XA, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testAllGOSTR3410_94_BadDefault() {
 		System.setProperty(KeyType.ALLOWED, "GOST3410*");
@@ -427,7 +502,7 @@ public class TestKeyType {
 		assertTrue(allowed.contains(KeyType.GOST_3410_94_XA));
 		assertEquals(KeyType.GOST_3410_94_A, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testAllGOSTR3410_94_BadDefault2() {
 		System.setProperty(KeyType.ALLOWED, "GOST3410*");
@@ -439,7 +514,7 @@ public class TestKeyType {
 		assertTrue(allowed.contains(KeyType.GOST_3410_94_XA));
 		assertEquals(KeyType.GOST_3410_94_A, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testDSA_RSA_Removed() {
 		System.setProperty(KeyType.ALLOWED, "RSA DSA -RSA");
@@ -452,65 +527,136 @@ public class TestKeyType {
 		assertTrue(allowed.contains(KeyType.DSA_3072));
 		assertEquals(KeyType.DSA_1024, KeyType.getDefaultKeyType());
 	}
-	
+
+	@Test
+	public void testECDSA_Default() {
+		System.setProperty(KeyType.ALLOWED, "ECDSA");
+		assertEquals(KeyType.EC_secp521r1, KeyType.getDefaultKeyType());
+	}
+
 	@Test
 	public void testDefaultKey_Empty() {
 		System.setProperty(KeyType.DEFAULT, "");
 		assertEquals(KeyType.EC_secp521r1, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testDefaultKey_Whitespace() {
 		System.setProperty(KeyType.DEFAULT, "   ");
 		assertEquals(KeyType.EC_secp521r1, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testDefaultKey_NoMatch() {
 		System.setProperty(KeyType.DEFAULT, "UNKNOWN");
 		assertEquals(KeyType.EC_secp521r1, KeyType.getDefaultKeyType());
 	}
-	
+
+	@Test
+	public void testDefaultKeyRSA() {
+		System.setProperty(KeyType.DEFAULT, "RSA_4096");
+		assertEquals(KeyType.RSA_4096, KeyType.getDefaultKeyType());
+	}
+
+	@Test
+	public void testDefaultKeyEC() {
+		System.setProperty(KeyType.DEFAULT, "EC_B571");
+		assertEquals(KeyType.EC_B571, KeyType.getDefaultKeyType());
+	}
+
+	@Test
+	public void testDefaultKeyDSA() {
+		System.setProperty(KeyType.DEFAULT, "DSA_2048");
+		assertEquals(KeyType.DSA_2048, KeyType.getDefaultKeyType());
+	}
+
+	@Test
+	public void testDefaultKeyXMMS() {
+		System.setProperty(KeyType.DEFAULT, "XMSS_SHAKE_16_256");
+		assertEquals(KeyType.XMSS_SHAKE_16_256, KeyType.getDefaultKeyType());
+	}
+
 	@Test
 	public void testDefaultKey_RSAOnly() {
 		System.setProperty(KeyType.ALLOWED, "RSA");
 		assertEquals(KeyType.RSA_512, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testDefaultKey_RSA() {
 		System.setProperty(KeyType.ALLOWED, "RSA");
 		System.setProperty(KeyType.DEFAULT, "RSA_4096");
 		assertEquals(KeyType.RSA_4096, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testDefaultKey_RSAOnly_NoDefaultInSet() {
 		System.setProperty(KeyType.ALLOWED, "RSA");
 		System.setProperty(KeyType.DEFAULT, "DSA_1024");
 		assertEquals(KeyType.RSA_512, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testDefaultKey_XMMSOnly() {
 		System.setProperty(KeyType.ALLOWED, "XMSS");
 		assertEquals(KeyType.XMSS_SHA2_10_256, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testDefaultKey_XMMS() {
 		System.setProperty(KeyType.ALLOWED, "XMSS");
 		System.setProperty(KeyType.DEFAULT, "XMSS_SHAKE_16_256");
 		assertEquals(KeyType.XMSS_SHAKE_16_256, KeyType.getDefaultKeyType());
 	}
-	
+
 	@Test
 	public void testDefaultKey_XMMSOnly_NoDefaultInSet() {
 		System.setProperty(KeyType.ALLOWED, "XMSS");
 		System.setProperty(KeyType.DEFAULT, "XMSSMT_SHA2_20_4_256");
 		assertEquals(KeyType.XMSS_SHA2_10_256, KeyType.getDefaultKeyType());
 	}
-	
+
+	@Test
+	public void testAllowedOrdering() {
+		System.setProperty(KeyType.ALLOWED, "XMSS DSA RSA");
+		testAllowedOrdinalOrdering();
+	}
+
+	@Test
+	public void testAllowedOrdering2() {
+		System.setProperty(KeyType.ALLOWED, "RSA DSA");
+		testAllowedOrdinalOrdering();
+	}
+
+	@Test
+	public void testAllowedOrdering3() {
+		System.setProperty(KeyType.ALLOWED, "Rainbow DSA");
+		testAllowedOrdinalOrdering();
+	}
+
+	@Test
+	public void testAllowedOrdering4() {
+		System.setProperty(KeyType.ALLOWED, "DSA_3072 DSA_2048");
+		testAllowedOrdinalOrdering();
+	}
+
+	@Test
+	public void testAllowedDuplicates() {
+		System.setProperty(KeyType.ALLOWED, "RSA RSA RSA");
+		KeyType[] allowed = KeyType.getAllowedValues();
+		long count = Arrays.stream(allowed).distinct().count();
+		assertEquals(allowed.length, count);
+	}
+
+	@Test
+	public void testAllowedDuplicates2() {
+		System.setProperty(KeyType.ALLOWED, "RSA_1204 RSA_1024 RSA_1024");
+		KeyType[] allowed = KeyType.getAllowedValues();
+		long count = Arrays.stream(allowed).distinct().count();
+		assertEquals(allowed.length, count);
+		assertEquals(1, count);
+	}
+
 	private void testAllowedByType(String t) {
 		// Set the type to a single element...
 		System.setProperty(KeyType.ALLOWED, t);
@@ -529,5 +675,16 @@ public class TestKeyType {
 		assertEquals(count, KeyType.getAllowedValues().length);
 		Set<KeyType> allowed = new HashSet<KeyType>(Arrays.asList(KeyType.getAllowedValues()));
 		assertTrue(allowed.stream().allMatch(k -> k.getType().equals(t1) || k.getType().equals(t2)));
+	}
+
+	private void testAllowedOrdinalOrdering() {
+		KeyType[] allowed = KeyType.getAllowedValues();
+		// assert that they are in ordinal order...
+		int last = 0;
+		for (KeyType k : allowed) {
+			int ord = k.ordinal();
+			assertTrue(last <= ord);
+			last = ord;
+		}
 	}
 }
