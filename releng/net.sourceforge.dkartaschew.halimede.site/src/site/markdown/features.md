@@ -136,15 +136,15 @@ Certificates:
 
 All ECDSA can use the following Signature Algorithms:
 
-* ECDSA with SHA1
-* ECDSA with SHA224
-* ECDSA with SHA256
-* ECDSA with SHA384
-* ECDSA with SHA512
-* ECDSA with SHA3-224
-* ECDSA with SHA3-256
-* ECDSA with SHA3-384
-* ECDSA with SHA3-512
+* SHA1 with ECDSA
+* SHA224with ECDSA
+* SHA256 with ECDSA
+* SHA384 with ECDSA
+* SHA512 with ECDSA
+* SHA3-224 with ECDSA
+* SHA3-256 with ECDSA
+* SHA3-384 with ECDSA
+* SHA3-512 with ECDSA
 
 NOTE: sm2p256v1 uses the "SM3 with SM2" Signature Algorithm.
 
