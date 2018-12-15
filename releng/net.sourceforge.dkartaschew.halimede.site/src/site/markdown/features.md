@@ -248,6 +248,36 @@ Halimede supports all configurations as noted in IETF
 |                        | XMSSMT-SHAKE_60/6_512  | |
 |                        | XMSSMT-SHAKE_60/12_512 | |
 
+#### Cipher Restriction
+
+Users and System Administrators can limit the types of Asymmetric Ciphers made
+available to users based on corporate policies. This is achieved via setting a 
+Java System Property.
+
+The System Property used to define the allowed ciphers is 
+"```net.sourceforge.dkartaschew.halimede.keytype.allow```". Ciphers can be 
+defined either by the type/family of cipher, or by the name of the cipher. An 
+asterisk can be appended to the name to select all starting with, and a '-' 
+can be prepended to the name to act as a negation option.
+
+For example:
+
+* "```EC*```" will select all ECDSA ciphers to be made available.
+* "```* -RSA* -DSA*```" will select all ciphers, except all RSA and RSA ciphers.
+* "```RSA -RSA_512 -RSA_1024```" will select all RSA ciphers except RSA 512 and 
+RSA 1024. (Allow all RSA ciphers with a key strength of at least 2028 bits).
+
+Note: If using the name, this is based on the internal name of the cipher.
+For the complete list, see KeyType enumeration for all values.
+
+The System Property used to define the default cipher is 
+"```net.sourceforge.dkartaschew.halimede.keytype.default```". This should be 
+set to one of the ciphers defined in the Allow set. If this property is not 
+set, then the first value from the allowed set is selected.
+
+Note: These settings are system global and apply to all Certificate Authorities
+currently in use.
+
 ### Datastore Format
 
 Halimede uses a simple datastore format.
