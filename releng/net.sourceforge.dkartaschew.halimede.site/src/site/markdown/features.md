@@ -54,7 +54,7 @@ Halimede operates as a e4 RCP plugin designed to be operated in an Eclipse
 Oxygen environment.
 
 Halimede requires a minimum of a Java 8 environment and is tested with Oracle 
-Java 8 and OpenJDK 8, 9 and 10.
+Java 8 and OpenJDK 8, 9, 10 and 11.
 
 Note: For Oracle Java 8, the
 [JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html) 

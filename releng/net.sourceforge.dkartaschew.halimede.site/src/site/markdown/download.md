@@ -25,7 +25,7 @@ All systems:
 
 * [Oracle Java 8u171+](https://java.com/en/download/) or
 * [OpenJDK 8u171+](https://www.azul.com/downloads/zulu/)
-* Java 9 and 10 are supported as well.
+* Java 9, 10 and 11 are supported as well.
 
 Notes: Older versions of Oracle Java 8 are supported, however the 
 [JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html) 
