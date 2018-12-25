@@ -91,7 +91,25 @@ Select Halimede, and accept the license agreement. Halimede will now install.
 
 ## Certificate Authority
 
+Halimede supports running one or Certificate Authorities at a time, using
+a wide variety of ciphers for X509 Certificate generation.
+
+Most functions are made available via right-click context menu interface.
+
+Most functions require the Certificate Authority to be unlocked, therefore if
+a function is not available, please check the *lock* status of the Certificate
+Authority. 
+
+INSERT EXAMPLE IMAGE OF LOCK AND UNLOCK.
+
+To unlock a Certificate Authority, right-click on the Certificate Authority,
+and select "Unlock". Halimede will prompt for the Certificate Authority's 
+password.
+
 ### Create a new Certificate Authority
+
+Halimede supports creating a new Certificate Authority either by creating a 
+new Certificate and Keying Material *or* using existing Keying Material.
 
 ### Settings
 
@@ -106,6 +124,13 @@ Select Halimede, and accept the license agreement. Halimede will now install.
 ### Certificate Templates
 
 ### Backup and Restoration
+
+All data files for each Certificate Authority are contained with the single
+nominated folder which hosts the Certificate Authority.
+
+Note: Recovery of passwords for any keying material for a Certificate 
+Authority is currently not possible. (Unless you know of a method of 
+decrypting a PKCS#12 container utilising AES256).
 
 ## General Utilities
 
