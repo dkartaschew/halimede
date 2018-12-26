@@ -9,18 +9,18 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<photon-repo.url>http://download.eclipse.org/releases/photon</photon-repo.url>
+		<eclipse-repo.url>http://download.eclipse.org/releases/2018-12</eclipse-repo.url>
 		<nebula-repo.url>http://download.eclipse.org/nebula/releases/1.4.0</nebula-repo.url>
 		<orbit-repo.url>http://download.eclipse.org/tools/orbit/downloads/drops/R20180606145124/repository</orbit-repo.url>
 
-		<tycho.version>1.2.0</tycho.version>
-		<compiler.plugin.version>3.7.0</compiler.plugin.version>
-		<dependency.plugin.version>3.0.2</dependency.plugin.version>
+		<tycho.version>1.3.0</tycho.version>
+		<compiler.plugin.version>3.8.0</compiler.plugin.version>
+		<dependency.plugin.version>3.1.1</dependency.plugin.version>
 		<site.plugin.version>3.7.1</site.plugin.version>
 		<site.markdown.plugin.version>1.8</site.markdown.plugin.version>
 		<site.reports.plugin.version>2.9</site.reports.plugin.version>
-		<spotbugs.version>3.1.5</spotbugs.version>
-		<pmd.version>3.10.0</pmd.version>
+		<spotbugs.version>3.1.10</spotbugs.version>
+		<pmd.version>3.11.0</pmd.version>
 	</properties>
 
 	<build>
@@ -114,8 +114,8 @@
 
 	<repositories>
 		<repository>
-			<id>photon</id>
-			<url>${photon-repo.url}</url>
+			<id>eclipse</id>
+			<url>${eclipse-repo.url}</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
