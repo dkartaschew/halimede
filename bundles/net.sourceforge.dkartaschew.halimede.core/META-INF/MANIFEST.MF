@@ -25,7 +25,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.nebula.widgets.cdatetime;bundle-version="1.1.0",
  org.eclipse.nebula.jface.cdatetime;bundle-version="1.0.0",
  org.bouncycastle.bcpkix;bundle-version="1.60.0",
- org.bouncycastle.bcprov;bundle-version="1.60.0"
+ org.bouncycastle.bcprov;bundle-version="1.60.0",
+ javax.annotation;bundle-version="1.2.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .
 Export-Package: net.sourceforge.dkartaschew.halimede,
