@@ -97,7 +97,7 @@ public class AboutDialog extends TitleAreaDialog {
 
 		Label lblCopyright = new Label(container, SWT.NONE);
 		lblCopyright.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-		lblCopyright.setText("Copyright 2017-2018");
+		lblCopyright.setText("Copyright 2017-2019");
 
 		Label lblAuthor = new Label(container, SWT.NONE);
 		lblAuthor.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
@@ -118,6 +118,7 @@ public class AboutDialog extends TitleAreaDialog {
 		lblLicense.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		lblLicense.setText("Product is licensed under the EPL v2.0" + System.lineSeparator() + 
 				"w/GPL v2+ w/CE secondary license");
+		lblLicense.setAlignment(SWT.CENTER);
 
 		return area;
 	}
