@@ -53,6 +53,7 @@ import org.bouncycastle.asn1.x509.CRLNumber;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.X509CRLHolder;
+import org.bouncycastle.openssl.jcajce.JceOpenSSLPKCS8EncryptorBuilder;
 import org.bouncycastle.operator.OperatorCreationException;
 
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties.Key;
@@ -803,11 +804,50 @@ public class CertificateAuthority {
 		}
 		Files.delete(path);
 		Files.delete(basePath.resolve(PROPERTY_REQUESTS)
-				.resolve(request.getProperty(CertificateRequestProperties.Key.csrFilename)));
+				.resolve(request.getProperty(CertificateRequestProperties.Key.filename)));
 
 		Map<Path, CertificateRequestProperties> oldValue = new ConcurrentHashMap<>(requests);
 		requests.remove(path);
 		propertySupport.firePropertyChange(PROPERTY_REQUESTS, oldValue, requests);
+	}
+	
+	/**
+	 * Copy the CSR from the CSR location to the Issued Certificates location, named
+	 * as
+	 * 
+	 * @param request The original CSR properties
+	 * @param newCert The New Certificate Properties to match the CSR with.
+	 * @throws IOException The Copy operation failed.
+	 */
+	public void moveCertificateSigningRequest(CertificateRequestProperties request, IssuedCertificateProperties newCert)
+			throws IOException {
+		if (newCert == null) {
+			throw new IllegalArgumentException("Missing issued certificate details");
+		}
+		if (request == null) {
+			throw new IllegalArgumentException("Missing certificate request details");
+		}
+		// Find the item in the map of CSRs.
+		Path path = requests.entrySet().stream()//
+				.filter(e -> e.getValue() == request)//
+				.findFirst()//
+				.map(e -> e.getKey())//
+				.orElse(null);
+		if (path == null) {
+			throw new NoSuchElementException("The Certificate Request doesn't exist");
+		}
+		String filename = newCert.getProperty(IssuedCertificateProperties.Key.pkcs12store);
+		if (filename == null) {
+			filename = newCert.getProperty(IssuedCertificateProperties.Key.pkcs7store);
+		}
+		filename = filename.substring(0, filename.lastIndexOf('.')) + ICertificateRequest.DEFAULT_EXTENSION;
+		Path target = basePath.resolve(ISSUED_PATH).resolve(filename);
+		Files.copy(path, target, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
+		newCert.setProperty(IssuedCertificateProperties.Key.csrStore, target.getFileName().toString());
+		try (FileOutputStream out = new FileOutputStream(basePath.resolve(ISSUED_PATH)
+				.resolve(newCert.getProperty(IssuedCertificateProperties.Key.filename)).toFile())) {
+			newCert.store(out);
+		}
 	}
 
 	/**

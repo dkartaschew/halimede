@@ -34,6 +34,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import net.sourceforge.dkartaschew.halimede.data.ICertificateRequest;
+import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
 import net.sourceforge.dkartaschew.halimede.ui.NewCertificateDetailsPart;
 import net.sourceforge.dkartaschew.halimede.ui.model.NewCertificateModel;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
@@ -94,7 +95,7 @@ public class CreateCertificateListener implements SelectionListener {
 					r.getSubjectPublicKeyInfo();
 					subMonitor.worked(1);
 					// Now sign and store.
-					model.getCa().signAndStoreCertificateRequest(//
+					IssuedCertificateProperties newCert = model.getCa().signAndStoreCertificateRequest(//
 							r, //
 							model.getStartDate(), //
 							model.getExpiryDate(), //
@@ -106,6 +107,8 @@ public class CreateCertificateListener implements SelectionListener {
 
 					// remove the cert request.
 					if (model.isCertificateRequest()) {
+						// move the CSR to the issued certificates.
+						model.getCa().moveCertificateSigningRequest(model.getCsr(), newCert);
 						model.getCa().removeCertificateSigningRequest(model.getCsr());
 					}
 				} catch (Throwable ex) {

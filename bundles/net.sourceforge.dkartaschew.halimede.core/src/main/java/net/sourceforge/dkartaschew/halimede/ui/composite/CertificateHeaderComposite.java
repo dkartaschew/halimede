@@ -96,9 +96,11 @@ public class CertificateHeaderComposite extends Composite {
 	}
 	
 	@Override
-	public void setEnabled (boolean enabled) { 
-		super.setEnabled(enabled);
-		toolbar.setEnabled(enabled);
+	public void setEnabled (boolean enabled) {
+		if(!isDisposed()) {
+			super.setEnabled(enabled);
+			toolbar.setEnabled(enabled);
+		}
 	}
 
 	@Override

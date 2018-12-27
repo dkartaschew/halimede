@@ -127,7 +127,11 @@ public class IssuedCertificateProperties
 		/**
 		 * Certificate Serial Number
 		 */
-		certificateSerialNumber
+		certificateSerialNumber,
+		/**
+		 * Original CSR if this cert was created from a CSR.
+		 */
+		csrStore
 	}
 
 	/**
