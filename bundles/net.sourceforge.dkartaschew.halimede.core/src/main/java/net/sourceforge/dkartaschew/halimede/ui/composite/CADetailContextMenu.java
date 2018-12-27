@@ -103,6 +103,9 @@ public class CADetailContextMenu implements IMenuListener {
 				if (e.getProperty(Key.revokeDate) == null) {
 					manager.add(new RevokeCertificateAction(e, ca));
 				}
+				if (e.getProperty(Key.csrStore) != null) {
+					manager.add(new ViewCertificateRequestInformationAction(e, editor));
+				}
 			}
 			if (element instanceof ICertificateKeyPairTemplate) {
 				final ICertificateKeyPairTemplate e = (ICertificateKeyPairTemplate) element;

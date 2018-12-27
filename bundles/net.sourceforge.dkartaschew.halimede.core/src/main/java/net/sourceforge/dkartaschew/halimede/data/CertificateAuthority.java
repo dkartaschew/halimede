@@ -81,7 +81,7 @@ public class CertificateAuthority {
 	/**
 	 * The default folder name where Issued Certificates are stored.
 	 */
-	final static String ISSUED_PATH = "Issued";
+	public final static String ISSUED_PATH = "Issued";
 	/**
 	 * The default folder name where incoming requests are stored.
 	 */
@@ -885,6 +885,11 @@ public class CertificateAuthority {
 		} else {
 			Path src = basePath.resolve(ISSUED_PATH).resolve(certificateToRevoke.getProperty(Key.pkcs7store));
 			Path dest = basePath.resolve(REVOKED_PATH).resolve(certificateToRevoke.getProperty(Key.pkcs7store));
+			Files.move(src, dest, StandardCopyOption.REPLACE_EXISTING);
+		}
+		if (certificateToRevoke.getProperty(Key.csrStore) != null) {
+			Path src = basePath.resolve(ISSUED_PATH).resolve(certificateToRevoke.getProperty(Key.csrStore));
+			Path dest = basePath.resolve(REVOKED_PATH).resolve(certificateToRevoke.getProperty(Key.csrStore));
 			Files.move(src, dest, StandardCopyOption.REPLACE_EXISTING);
 		}
 		Path src = basePath.resolve(ISSUED_PATH).resolve(certificateToRevoke.getProperty(Key.filename));

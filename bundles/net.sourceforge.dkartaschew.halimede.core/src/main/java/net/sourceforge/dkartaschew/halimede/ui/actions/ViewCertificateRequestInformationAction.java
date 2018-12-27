@@ -17,6 +17,7 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
+import java.nio.file.Path;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -41,7 +42,11 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
+import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
 import net.sourceforge.dkartaschew.halimede.data.CertificateRequestProperties;
+import net.sourceforge.dkartaschew.halimede.data.ICertificateRequest;
+import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
+import net.sourceforge.dkartaschew.halimede.data.impl.CertificateRequestPKCS10;
 import net.sourceforge.dkartaschew.halimede.ui.CertificateRequestDetailsPart;
 import net.sourceforge.dkartaschew.halimede.ui.lifecycle.CAManagerProcessor;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
@@ -53,6 +58,10 @@ public class ViewCertificateRequestInformationAction extends Action implements S
 	 * The node that contains the reference to the model
 	 */
 	private CertificateRequestProperties model;
+	/**
+	 * The node that contains the reference to the model
+	 */
+	private IssuedCertificateProperties model2;
 
 	/**
 	 * The ID of the stack to add to.
@@ -88,11 +97,25 @@ public class ViewCertificateRequestInformationAction extends Action implements S
 		this.model = model;
 		this.editor = editor;
 	}
+	
+	/**
+	 * Create a new action.
+	 * 
+	 * @param model The Certificate Request node
+	 * @param password The password to unlock
+	 * @param editor The ID of the part stack to add the part to.
+	 */
+	public ViewCertificateRequestInformationAction(IssuedCertificateProperties model, String editor) {
+		super("View Original Certificate Request Details");
+		setToolTipText("View the Original Certificate Request Details");
+		this.model2 = model;
+		this.editor = editor;
+	}
 
 	@Override
 	public void run() {
 		try {
-			if (model == null) {
+			if (model == null && model2 == null) {
 				if (logger != null) {
 					logger.error("Unable to get certificate request?");
 				}
@@ -109,7 +132,31 @@ public class ViewCertificateRequestInformationAction extends Action implements S
 			return;
 		}
 
-		
+		// Convert model2 into model
+		if (model2 != null && model == null) {
+			String filename = model2.getProperty(IssuedCertificateProperties.Key.csrStore);
+			if (filename == null) {
+				if (logger != null) {
+					logger.error("Unable to get certificate request?");
+				}
+				MessageDialog.openError(shell, "Certificate Request Missing",
+						"The Certificate Request information is missing");
+				return;
+			}
+			try {
+				Path p = model2.getCertificateAuthority().getBasePath().resolve(CertificateAuthority.ISSUED_PATH)
+						.resolve(filename);
+				ICertificateRequest csr = CertificateRequestPKCS10.create(p);
+				model = new CertificateRequestProperties(null, csr);
+			} catch (Throwable e) {
+				if (logger != null) {
+					logger.error("Unable to get certificate request?");
+				}
+				MessageDialog.openError(shell, "Certificate Request Missing",
+						"The Certificate Request information is missing");
+
+			}
+		}
 
 		List<MPartStack> stacks = modelService.findElements(application, null, MPartStack.class, null);
 		if (stacks == null || stacks.isEmpty()) {
