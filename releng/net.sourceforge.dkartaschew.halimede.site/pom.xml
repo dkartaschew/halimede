@@ -11,7 +11,7 @@
 
 	<artifactId>net.sourceforge.dkartaschew.halimede.site</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<distributionManagement>
 		<site>
