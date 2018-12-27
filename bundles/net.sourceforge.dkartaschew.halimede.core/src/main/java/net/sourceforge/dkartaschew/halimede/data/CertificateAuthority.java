@@ -89,7 +89,7 @@ public class CertificateAuthority {
 	/**
 	 * The default folder name where Revoked Certificates are stored.
 	 */
-	final static String REVOKED_PATH = "Revoked";
+	public final static String REVOKED_PATH = "Revoked";
 	/**
 	 * The default folder name where X509CRLs are stored.
 	 */

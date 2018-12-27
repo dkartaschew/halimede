@@ -144,8 +144,14 @@ public class ViewCertificateRequestInformationAction extends Action implements S
 				return;
 			}
 			try {
-				Path p = model2.getCertificateAuthority().getBasePath().resolve(CertificateAuthority.ISSUED_PATH)
-						.resolve(filename);
+				Path p = null;
+				if (model2.getProperty(IssuedCertificateProperties.Key.revokeDate) == null) {
+					p = model2.getCertificateAuthority().getBasePath()//
+							.resolve(CertificateAuthority.ISSUED_PATH).resolve(filename);
+				} else {
+					p = model2.getCertificateAuthority().getBasePath()//
+							.resolve(CertificateAuthority.REVOKED_PATH).resolve(filename);
+				}
 				ICertificateRequest csr = CertificateRequestPKCS10.create(p);
 				model = new CertificateRequestProperties(null, csr);
 			} catch (Throwable e) {
