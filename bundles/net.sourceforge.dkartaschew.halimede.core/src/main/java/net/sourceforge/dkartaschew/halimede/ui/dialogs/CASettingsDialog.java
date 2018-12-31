@@ -59,6 +59,7 @@ public class CASettingsDialog extends Dialog {
 	private Spinner spinnerExpiry;
 	private ComboViewer comboViewerSigAlg;
 	private Combo comboSigAlg;
+	private Button chkIncremental;
 	
 	private final CASettingsModel model;
 	
@@ -154,6 +155,14 @@ public class CASettingsDialog extends Dialog {
 		int index = Arrays.asList(model.getSignatureAlgorithms()).indexOf(model.getSignatureAlgorithm());
 		comboSigAlg.select(index >=0 ? index : 0);
 		
+		Label lblIncSerial = new Label(container, SWT.NONE);
+		lblIncSerial.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblIncSerial.setText("Incremental Serial Numbers:");
+		
+		chkIncremental = new Button(container, SWT.CHECK);
+		chkIncremental.setSelection(model.isIncrementalSerial());
+		chkIncremental.setToolTipText("Use incremental serial numbers for issued Certificates");
+		
 		return area;
 	}
 
@@ -219,6 +228,13 @@ public class CASettingsDialog extends Dialog {
 		s = UpdateValueStrategy.create(convertStringToKeyType);
 
 		bindingContext.bindValue(keyTypeWidget, keyTypeModel, s, null);
+		
+		/*
+		 * Incremental Serial
+		 */
+		IObservableValue<?> serialWidget = WidgetProperties.selection().observe(chkIncremental);
+		IObservableValue<Boolean> serialModel = PojoProperties.value("incrementalSerial").observe(model);
+		bindingContext.bindValue(serialWidget, serialModel, null, null);
 
 		/*
 		 * Bind the OK button for enablement.

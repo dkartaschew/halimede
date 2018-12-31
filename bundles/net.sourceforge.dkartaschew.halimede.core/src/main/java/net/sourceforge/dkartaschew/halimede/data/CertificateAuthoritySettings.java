@@ -84,6 +84,13 @@ public class CertificateAuthoritySettings {
 	 */
 	private final AtomicLong serial = new AtomicLong(0);
 	/**
+	 * Incremental Serial denotes if we are using incremental serial (true) or
+	 * timestamp (false) as the serial.
+	 * <p>
+	 * Default is TRUE.
+	 */
+	private boolean incrementalSerial = true;
+	/**
 	 * A unique ID for this node.
 	 */
 	private UUID uuid;
@@ -186,7 +193,7 @@ public class CertificateAuthoritySettings {
 	public void setCRLSerial(long serial) {
 		this.crlSerial.set(serial);
 	}
-	
+
 	/**
 	 * Get this CA's UUID
 	 * 
@@ -229,7 +236,13 @@ public class CertificateAuthoritySettings {
 	 * @return The serial number to use for signing.
 	 */
 	public long getAndIncrementSerial() {
-		return serial.getAndIncrement();
+		if (incrementalSerial) {
+			return serial.getAndIncrement();
+		} else {
+			final long tm = System.currentTimeMillis();
+			serial.set(tm);
+			return tm;
+		}
 	}
 
 	/**
@@ -240,7 +253,7 @@ public class CertificateAuthoritySettings {
 	public long getAndIncrementCRLSerial() {
 		return crlSerial.getAndIncrement();
 	}
-	
+
 	/**
 	 * Get the default days for expiry from start date
 	 * 
@@ -257,6 +270,25 @@ public class CertificateAuthoritySettings {
 	 */
 	public void setExpiryDays(int expiryDays) {
 		this.expiryDays = expiryDays;
+	}
+
+	/**
+	 * Is Incremental serial number generation set.
+	 * 
+	 * @return TRUE if incremental serial number generation is set.
+	 */
+	public boolean isIncrementalSerial() {
+		return incrementalSerial;
+	}
+
+	/**
+	 * Set incremental serial number generation
+	 * 
+	 * @param incrementalSerial TRUE to enable incremental serial numbers or FALSE
+	 *                          for serial number to be timestamp.
+	 */
+	public void setIncrementalSerial(boolean incrementalSerial) {
+		this.incrementalSerial = incrementalSerial;
 	}
 
 	/*
@@ -288,8 +320,8 @@ public class CertificateAuthoritySettings {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		
-		// Don't include description, sigAlg and expiry days in equals 
+
+		// Don't include description, sigAlg and expiry days in equals
 		// (these can change in the life of the object instance).
 		CertificateAuthoritySettings other = (CertificateAuthoritySettings) obj;
 		if (pkcs12Filename == null) {
@@ -312,7 +344,7 @@ public class CertificateAuthoritySettings {
 	 */
 	@Override
 	public String toString() {
-		if(description == null && uuid == null) {
+		if (description == null && uuid == null) {
 			return super.toString();
 		}
 		if (description == null) {

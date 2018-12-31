@@ -134,6 +134,10 @@ public class CertificateAuthority {
 	 * The emitted property for change in default signature.
 	 */
 	public static final String PROPERTY_EXPIRY = "expiry";
+	/**
+	 * The emitted property for change in incrementalSerial.
+	 */
+	public static final String PROPERTY_INCREMENTAL_SERIAL = "incrementalSerial";
 
 	/**
 	 * The base path for the CA
@@ -462,6 +466,31 @@ public class CertificateAuthority {
 		propertySupport.firePropertyChange(PROPERTY_EXPIRY, oldValue, expiry);
 	}
 
+	/**
+	 * Is Incremental serial number generation set.
+	 * 
+	 * @return TRUE if incremental serial number generation is set.
+	 */
+	public synchronized boolean isIncrementalSerial() {
+		return settings.isIncrementalSerial();
+	}
+
+	/**
+	 * Set incremental serial number generation
+	 * 
+	 * @param incrementalSerial TRUE to enable incremental serial numbers or FALSE
+	 *                          for serial number to be timestamp.
+	 *
+	 * @throws IllegalArgumentException The value was 0 or negative.
+	 * @throws IOException If saving the configuration fails.
+	 */
+	public synchronized void setIncrementalSerial(boolean incrementalSerial) throws IOException {
+		boolean oldValue = settings.isIncrementalSerial();
+		settings.setIncrementalSerial(incrementalSerial);
+		saveSettings();
+		propertySupport.firePropertyChange(PROPERTY_INCREMENTAL_SERIAL, oldValue, incrementalSerial);
+	}
+	
 	/**
 	 * Get the CA's UUID
 	 * 

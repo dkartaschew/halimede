@@ -76,6 +76,7 @@ public class CASettingsAction extends Action {
 			model.setBasePath(node.getCertificateAuthority().getBasePath());
 			model.setDescription(node.getCertificateAuthority().getDescription());
 			model.setExpiryDays(node.getCertificateAuthority().getExpiryDays());
+			model.setIncrementalSerial(node.getCertificateAuthority().isIncrementalSerial());
 
 			// Get our current signature algorithm, and get the other valid one for this type.
 			SignatureAlgorithm sigAl = node.getCertificateAuthority().getSignatureAlgorithm();
@@ -95,6 +96,7 @@ public class CASettingsAction extends Action {
 				node.getCertificateAuthority().setDescription(model.getDescription());
 				node.getCertificateAuthority().setExpiryDays(model.getExpiryDays());
 				node.getCertificateAuthority().setSignatureAlgorithm(model.getSignatureAlgorithm());
+				node.getCertificateAuthority().setIncrementalSerial(model.isIncrementalSerial());
 			} catch (IOException | IllegalArgumentException e) {
 				if (logger != null) {
 					logger.error(e, "Unable to set CA Settings");

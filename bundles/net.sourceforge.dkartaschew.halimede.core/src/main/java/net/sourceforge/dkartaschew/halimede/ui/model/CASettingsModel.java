@@ -59,6 +59,12 @@ public class CASettingsModel {
 	 * The Certificate subject.
 	 */
 	private String subject;
+	
+	/**
+	 * Incremental Serial denotes if we are using incremental serial (true) or
+	 * timestamp (false) as the serial.
+	 */
+	private boolean incrementalSerial;
 
 	public UUID getNodeID() {
 		return nodeID;
@@ -116,9 +122,14 @@ public class CASettingsModel {
 		this.subject = subject;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
+	public boolean isIncrementalSerial() {
+		return incrementalSerial;
+	}
+
+	public void setIncrementalSerial(boolean incrementalSerial) {
+		this.incrementalSerial = incrementalSerial;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -126,6 +137,7 @@ public class CASettingsModel {
 		result = prime * result + ((basePath == null) ? 0 : basePath.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + expiryDays;
+		result = prime * result + (incrementalSerial ? 1231 : 1237);
 		result = prime * result + ((nodeID == null) ? 0 : nodeID.hashCode());
 		result = prime * result + ((signatureAlgorithm == null) ? 0 : signatureAlgorithm.hashCode());
 		result = prime * result + Arrays.hashCode(signatureAlgorithms);
@@ -133,9 +145,6 @@ public class CASettingsModel {
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -156,6 +165,8 @@ public class CASettingsModel {
 		} else if (!description.equals(other.description))
 			return false;
 		if (expiryDays != other.expiryDays)
+			return false;
+		if (incrementalSerial != other.incrementalSerial)
 			return false;
 		if (nodeID == null) {
 			if (other.nodeID != null)

@@ -52,6 +52,7 @@ public class TestCertificateAuthoritySettings {
 		settings.setUuid(UUID.randomUUID());
 		settings.setSignatureAlgorithm(SignatureAlgorithm.SHA512withECDSA);
 		settings.setExpiryDays(265);
+		settings.setIncrementalSerial(false);
 		Path path = Paths.get(TestUtilities.TMP, CertificateAuthoritySettings.DEFAULT_NAME);
 		try {
 			CertificateAuthoritySettings.write(settings, path);
@@ -168,6 +169,48 @@ public class TestCertificateAuthoritySettings {
 		assertEquals(next + 1, settings.getAndIncrementCRLSerial());
 		assertEquals(next + 2, settings.getAndIncrementCRLSerial());
 		assertEquals(next + 3, settings.getAndIncrementCRLSerial());
+	}
+	
+	/**
+	 * Basic test of serial number increment
+	 * 
+	 * @throws Exception Test failure
+	 */
+	@Test
+	public void timestampSerial() throws Exception {
+		CertificateAuthoritySettings settings = new CertificateAuthoritySettings(UUID.randomUUID());
+
+		assertTrue(settings.isIncrementalSerial());
+		/*
+		 * Issuing serial.
+		 */
+		assertEquals(0, settings.getAndIncrementSerial());
+		assertEquals(1, settings.getAndIncrementSerial());
+		assertEquals(2, settings.getAndIncrementSerial());
+		assertEquals(3, settings.getAndIncrementSerial());
+
+		long next = new Random().nextLong();
+		settings.setSerial(next);
+		assertEquals(next + 0, settings.getAndIncrementSerial());
+		assertEquals(next + 1, settings.getAndIncrementSerial());
+		assertEquals(next + 2, settings.getAndIncrementSerial());
+		assertEquals(next + 3, settings.getAndIncrementSerial());
+
+		settings.setIncrementalSerial(false);
+		assertFalse(settings.isIncrementalSerial());
+		
+		long s = System.currentTimeMillis();
+		long i = settings.getAndIncrementSerial();
+		long e = System.currentTimeMillis();
+		assertTrue(s <= i && i <= e);
+		
+		Thread.sleep(100);
+		
+		long s2 = System.currentTimeMillis();
+		long i2 = settings.getAndIncrementSerial();
+		long e2 = System.currentTimeMillis();
+		assertTrue(s2 <= i2 && i2 <= e2);
+		assertTrue(s2 > e);
 	}
 
 }
