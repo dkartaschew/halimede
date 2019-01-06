@@ -38,6 +38,11 @@ public class INodeDecorationProvider implements ILabelDecorator {
 			.createImageDescriptor(PluginDefaults.IMG_LOCK_OVERLAY);
 
 	/**
+	 * Cached copy of the lock overlayed image.
+	 */
+	private Image lockOverlay;
+
+	/**
 	 * Lock location.
 	 */
 	private final static int LOCK_LOCATION = IDecoration.TOP_LEFT;
@@ -47,7 +52,10 @@ public class INodeDecorationProvider implements ILabelDecorator {
 		if (element instanceof CertificateAuthorityNode) {
 			CertificateAuthorityNode node = (CertificateAuthorityNode) element;
 			if (node.getCertificateAuthority().isLocked()) {
-				return new DecorationOverlayIcon(image, LOCK_OVERLAY, LOCK_LOCATION).createImage();
+				if (lockOverlay == null) {
+					lockOverlay = new DecorationOverlayIcon(image, LOCK_OVERLAY, LOCK_LOCATION).createImage();
+				}
+				return lockOverlay;
 			}
 		}
 		return null;
@@ -60,7 +68,9 @@ public class INodeDecorationProvider implements ILabelDecorator {
 
 	@Override
 	public void dispose() {
-		// NOP
+		if (lockOverlay != null) {
+			lockOverlay.dispose();
+		}
 	}
 
 	@Override
