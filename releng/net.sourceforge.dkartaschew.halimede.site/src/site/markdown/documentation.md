@@ -91,7 +91,7 @@ Select Halimede, and accept the license agreement. Halimede will now install.
 
 ## Certificate Authority
 
-Halimede supports running one or Certificate Authorities at a time, using
+Halimede supports running one or Certificate Authorities (CA) at a time, using
 a wide variety of ciphers for X509 Certificate generation.
 
 Most functions are made available via right-click context menu interface.
@@ -110,6 +110,79 @@ password.
 
 Halimede supports creating a new Certificate Authority either by creating a 
 new Certificate and Keying Material *or* using existing Keying Material.
+
+#### New Certificate Authority
+
+To Create a new Certificate Authority, perform:
+
+1. Right-Click on the left pane, and select "Create New Certificate Authority".
+ 
+ INSERT IMAGE
+
+2. Enter the Certificate Authority details:
+	1. The Name/Description.
+	2. The Base Location for the Certificate Authority. This location will have
+	the name of the Certificate Authority created as a folder, and the contents
+	of the Certificate will reside in this sub-folder.
+	3. The CA's X500 Name (or Common Name).
+	4. The keying material type for the CA's Certificate.
+	5. The Start and Expiry Date for the CA's Certificate.
+	6. The public location for obtaining the latest CRL. (Optional, if not using
+	or exporting CRLs).
+	7. The Passphrase (entered twice).
+
+ INSERT IMAGE OF DIALOG.
+ 
+3. Click OK to create the Certificate Authority instance. This may take some
+time depending on the keying material type choosen.
+
+On completion the Certificate Authority will be listed in the left pane of the
+application.
+ 
+INSERT IMAGE OF COMPLETED.
+
+By default, the newly created Certificate Authority will be unlocked.
+
+#### New Certificate Authority from Existing Certificate
+
+To Create a new Certificate Authority based on an Existing Certificate, perform:
+
+1. Right-click on the left pane, and select "Create New Certificate Authority
+based on Existing Certificate".
+
+ INSERT IMAGE
+
+2. Enter the Certificate Authority details:
+  1. The Name/Description.
+	2. The Base Location for the Certificate Authority. This location will have
+	the name of the Certificate Authority created as a folder, and the contents
+	of the Certificate will reside in this sub-folder.
+	3. Select either the existing Certificate from a PKCS#12 store, or the X509
+	Certificate and match Private Key.
+	4. The Passphrase (entered twice).
+
+  INSERT IMAGE OF DIALOG
+
+3. Click OK to create the Certificate Authority instance. It may prompt for the
+passphrase to access the PKCS#12 or private key to complete the operation.
+ 
+INSERT IMAGE OF COMPLETED.
+
+By default, the newly created Certificate Authority will be unlocked.
+
+#### Open Certificate Authority
+
+To Open an existing Certificate Authority, perform:
+
+1. Right-click on the left pane, and select "Open a Certificate Authority".
+
+INSERT IMAGE
+
+2. Select the base location of the Certificate Authority in the dialog.
+3. Click OK to open the Certificate Authority.
+
+By default, the newly opened Certificate Authority will be locked. (Only limited
+operations are permitted when the Certificate Authority is locked).
 
 ### Settings
 
