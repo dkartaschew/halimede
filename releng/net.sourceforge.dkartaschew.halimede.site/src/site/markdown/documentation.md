@@ -186,6 +186,34 @@ operations are permitted when the Certificate Authority is locked).
 
 ### Settings
 
+Each Certificate Authority has a number of settings which may be altered by the
+user. The following settings are available:
+
+1. Certificate Authority Description.
+    * The Description will be displayed in the Left Pane as the name of the
+   Certificate Authority.
+2. Default Certificate Expiry (for issued certificates).
+    * This defines the number of days any issued Certificate will expire in from
+	 the start date. The user may freely adjust the Not Before and Not After
+	 Dates during Certificate creation.
+3. Default Signature Algorithm to utilise when signing Certificates.
+    * Defines the Signature Algorithm to use when signing Certificates by this
+	 Authority.
+4. User Incremental or Timestamp based Serial numbers.
+    * Halimede supports both Incremental and Timestamp based Serial Numbers for
+	 signed Certificates. The Timestamp used is milliseconds from UNIX epoch 
+	 (01-Jan-1970 00:00:00.000 UTC).
+
+To modify the settings for each Certificate Authority, perform:
+
+1. Unlock the Certificate Authority if locked.
+2. Right-click on the Certificate Authority, and select "Certificate Authority
+Settings".
+3. Modify the Settings as required.
+4. Click OK to update the settings. Or Cancel to cancel the operation.
+
+INSERT IMAGE OF SETTINGS DIALOG
+
 ### Create Certificate
 
 ### Export Certificate
