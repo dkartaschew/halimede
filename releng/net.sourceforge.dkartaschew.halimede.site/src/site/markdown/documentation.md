@@ -1,6 +1,7 @@
 # Halimede Certificate Authority Documentation
 
-INSERT LOGO.
+<img src="images/application-icon.svg" alt="Application Icon" width="20%" 
+style="max-width:50px" />
 
 Darran Kartaschew
 
@@ -116,9 +117,7 @@ new Certificate and Keying Material *or* using existing Keying Material.
 To Create a new Certificate Authority, perform:
 
 1. Right-Click on the left pane, and select "Create New Certificate Authority".
- 
- INSERT IMAGE
-
+    INSERT IMAGE
 2. Enter the Certificate Authority details:
 	1. The Name/Description.
 	2. The Base Location for the Certificate Authority. This location will have
@@ -130,9 +129,7 @@ To Create a new Certificate Authority, perform:
 	6. The public location for obtaining the latest CRL. (Optional, if not using
 	or exporting CRLs).
 	7. The Passphrase (entered twice).
-
- INSERT IMAGE OF DIALOG.
- 
+    INSERT IMAGE OF DIALOG.
 3. Click OK to create the Certificate Authority instance. This may take some
 time depending on the keying material type choosen.
 
@@ -140,7 +137,7 @@ On completion the Certificate Authority will be listed in the left pane of the
 application.
  
 INSERT IMAGE OF COMPLETED.
-
+ 
 By default, the newly created Certificate Authority will be unlocked.
 
 #### New Certificate Authority from Existing Certificate
@@ -149,9 +146,7 @@ To Create a new Certificate Authority based on an Existing Certificate, perform:
 
 1. Right-click on the left pane, and select "Create New Certificate Authority
 based on Existing Certificate".
-
- INSERT IMAGE
-
+    INSERT IMAGE
 2. Enter the Certificate Authority details:
   1. The Name/Description.
 	2. The Base Location for the Certificate Authority. This location will have
@@ -160,13 +155,11 @@ based on Existing Certificate".
 	3. Select either the existing Certificate from a PKCS#12 store, or the X509
 	Certificate and match Private Key.
 	4. The Passphrase (entered twice).
-
-  INSERT IMAGE OF DIALOG
-
+    INSERT IMAGE OF DIALOG
 3. Click OK to create the Certificate Authority instance. It may prompt for the
 passphrase to access the PKCS#12 or private key to complete the operation.
  
-INSERT IMAGE OF COMPLETED.
+    INSERT IMAGE OF COMPLETED.
 
 By default, the newly created Certificate Authority will be unlocked.
 
@@ -176,13 +169,33 @@ To Open an existing Certificate Authority, perform:
 
 1. Right-click on the left pane, and select "Open a Certificate Authority".
 
-INSERT IMAGE
-
+    INSERT IMAGE
 2. Select the base location of the Certificate Authority in the dialog.
 3. Click OK to open the Certificate Authority.
 
 By default, the newly opened Certificate Authority will be locked. (Only limited
 operations are permitted when the Certificate Authority is locked).
+
+#### Close Certificate Authority
+
+To close a Certificate Authority, perform:
+
+1. Right-click on the Certificate Authority and select "Close Certificate 
+Authority".
+2. Click "OK" to perform the action.
+
+The Certificate Authority will now be removed from the left pane.
+
+#### Delete Certificate Authority
+
+To delete a Certificate Authority, perform:
+
+1. Right-click on the Certificate Authority and select "Delete Certificate 
+Authority".
+2. Click "OK" to perform the action.
+
+The Certificate Authority will now be removed from the left pane, and deleted
+from the filesystem. This action cannot be undone.
 
 ### Settings
 
@@ -193,8 +206,8 @@ user. The following settings are available:
     * The Description will be displayed in the Left Pane as the name of the
    Certificate Authority.
 2. Default Certificate Expiry (for issued certificates).
-    * This defines the number of days any issued Certificate will expire in from
-	 the start date. The user may freely adjust the Not Before and Not After
+    * This defines the number of days any issued Certificate will expire in 
+	 from the start date. The user may freely adjust the Not Before and Not After
 	 Dates during Certificate creation.
 3. Default Signature Algorithm to utilise when signing Certificates.
     * Defines the Signature Algorithm to use when signing Certificates by this
@@ -212,9 +225,95 @@ Settings".
 3. Modify the Settings as required.
 4. Click OK to update the settings. Or Cancel to cancel the operation.
 
-INSERT IMAGE OF SETTINGS DIALOG
+    INSERT IMAGE OF SETTINGS DIALOG
 
 ### Create Certificate
+
+Halimede supports creation of Certificates and associated keying material 
+directly, or via a Certificate Signing Request. This section covers creation
+of Certificates directly. See [Certificate Requests](#Certificate_Requests) for
+Certificate creation via a Certificate Request.
+
+To create a new Issued Certificate with associated keying material, perform:
+
+1. Unlock the Certificate Authority if locked.
+2. Right-click on the Certificate Authority or Issued node, and select
+   "Create New Client Key/Certificate Pair".
+
+	 INSERT IMAGE OF MENU
+	
+This will open a new pane allowing entry of all required parameters for the
+X509 Cerificate.
+
+These parameters are:
+
+1. Description. A simple description of X509 Certificate.
+2. Subject. The Certificate's X500 Subject. A helper is available via the "..."
+   button to the right of the field.
+3. Key Type. The keying material to create for the certificate. This includes 
+   creation of both a private and public key pair. Note: Some keying material 
+	 may take significant time to generate. If this is the case, a warning will
+	 be displayed on the field.
+4. Start and Expiry Date. These are the Not Before and Not After Dates for the
+   X509 Certificate. All date / times are UTC.
+5. Flag to indicate to create a Certificate for an Intermediate Certificate
+   Authority. Note: This Intermediate Certificate Authority will have a chain
+	 length of 0, indicating that the Intermediate Certificate Authority may
+	 sign Certificates, but may **not** create additional child Intermediate
+	 Certificate Authorities.
+6. CRL Location. The CRL Location of the Intermediate Certificate Authority 
+   if the Certificate to be created is for an Intermediate Certificate 
+   Authority.
+7. Flags to indicate the Key Usage of the X509 Certificate. (If the Certificate
+   to be created is for an Intermediate Certificate Authority, some of the Key
+	 Usage flags will be automatically selected during Certificate Creation).
+8. Flags to indicate the Extended Key Usage of the X509 Certificate.
+9. Subject Alternate Names. 
+    1. Click on the "+" icon to add a new Subject Alternate Name.
+    2. Click on the "-" icon to remove a selected Subject Alternate Name.
+    3. Double click on a Subject Alternate Name to edit.
+    4. Each Subject Alternate Name needs the type selected, and the appropriate
+		entry added. The most common types are:
+        1. DNS. Primarily used for defining additional Domain Names for when
+		    the Certificate is to be used for a HTTPS or similar service.
+        2. Email. Primarily used to defined additional email addresses when
+		    the Certificate is to be used for email signing.
+        3. Directory Name. Primarily used to define additional objects located
+		    in LDAP services for user authentication.
+        4. IP Address. Used to define IP address of server offering services.
+10. Flag to indicate if the Keying material to be stored with the same 
+    passphrase as the Certificate Authority or is to use its own passphrase.
+		If it's to be stored with its own passphrase, the passphrase must be
+		entered twice.
+11. To create the Keying Material and associated X509 Certificate click on the
+    certificate icon in the top right corner, or from the drop down menu next 
+		to the icon, select "Create and Issue the certificate".
+12. The drop down menu, also allows you to save this certificate information as
+    a template to be utilised later.
+
+INSERT IMAGE OF CERTIFICATE PANE.
+
+Once the Keying Material and Certificate have been created, it will available
+in the "Issued" node of the Certificate Authority which create/issued the
+Certificate.
+
+On the "Issued" node of the Certificate Authority, the Certificate/Keying 
+Material can be view, the Certificate may be revoked, or additional comments
+about the Keying Material/Certificate may be added/updated. (The comments/notes
+are not exported as part of the X509 Certificate).
+
+To view the contents of the Certificate/Keying Material, perform:
+
+1. Right-click on the Certificate and select "View Certificate Details", or
+2. Double-click on the Certificate.
+
+INSERT IMAGE OF CERTIFICATE VIEW.
+
+To view/edit the comment attached to a Certificate, perform:
+
+1. Right-click on the Certificate and select "Update Comment".
+
+INSERT IMAGE OF COMMENT DIALOG.
 
 ### Export Certificate
 
