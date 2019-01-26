@@ -317,7 +317,93 @@ INSERT IMAGE OF COMMENT DIALOG.
 
 ### Export Certificate
 
+Certificate and associated keying material can be exported from the Certificate
+key store when viewing the Ceritifcate Information. The following actions are
+available:
+
+* Export the Certificate. 
+* Export the Certificate and the complete Certificate Chain.
+* Export the Public Key.
+* Export the Private Key (if present).
+* Export the Certificate, complete Certificate Chain and Private Key in a 
+PKCS#12 file.
+* Export the Certificate Information as either a Text or HTML file.
+
+The Certificate and Keying material can be exported as either DER or PEM 
+formats (where applicable).
+
+All the above actions are available via the drop-down menu from the 
+Certificate Icon when viewing the Certificate Information.
+
+INSERT IMAGE OF DROP DOWN EXAMPLE 
+
+#### Export Certificate, Certificate Chain or Public Key
+
+To export the Certificate, Certificate Chain or Public Key perform:
+
+1. From the drop down menu, select the appropriate action.
+2. Enter the filename to export to, or use the "..." to select the file name.
+3. Select the encoding format, either PEM or DER format.
+4. Select OK to save/export the information.
+
+INSERT IMAGE OF DIALOG
+
+#### Export Private Key
+
+To export the Private Key (if present) perform:
+
+1. From the drop down menu, select "Export the Private Key".
+2. Enter the filename to export to, or use the "..." to select the file name.
+3. Select the encoding format, either PEM or DER format.
+4. Select the cipher to use to encrypt the private key with.
+5. Enter the passphrase to protect the private key. (Note: If no passphrase
+is entered, the private key will not be encrypted).
+6. Select OK to save/export the private key.
+
+INSERT IMAGE OF DIALOG
+
+#### Export PKCS#12 Keystore
+
+To export the Certificate, complete Certificate Chain and Private Key in a 
+PKCS#12 file, perform:
+
+1. From the drop down menu, select "Export as PKCS#132 Keystore".
+2. Enter the filename to export to, or use the "..." to select the file name.
+3. Select the cipher to use to encrypt the Keystore with. (Note: whilst the
+use of 3DES for PKCS#12 is widely supported, support for using AES with 
+PKCS#12 is limited).
+4. Enter the passphrase to protect the keystore. (Note: If no passphrase
+is entered, the keystore will not be encrypted).
+5. Select OK to save/export the information into the keystore.
+
+INSERT IMAGE OF DIALOG
+
 ### Revoke Certificate and CRLs
+
+#### Revoke Certificate
+
+Any Issued Certificate may be revoked at any time. There are two methods to
+revoke the Certificate, either:
+
+1. Right-click on the Issued Certificate from the Issued Certificates pane.
+2. Use "Revoke the Certificate" menu option from the drop down menu when
+viewing the Certificate.
+
+INSERT IMAGE OF BOTH OPTIONS
+
+On revoking the Certificate, a Revocation Reason is required. Select the 
+reason from the drop down menu.
+
+INSERT IMAGE OF REVOKE DIALOG
+
+On completion the Certificate will be moved from "Issued" certificates to
+"Revoked" certificates.
+
+INSERT IMAGE OF REVOKE CERT PANE
+
+#### Certification Revocation List (CRL)
+
+
 
 ### Certificate Requests
 
