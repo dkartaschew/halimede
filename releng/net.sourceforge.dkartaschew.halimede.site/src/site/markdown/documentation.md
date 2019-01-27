@@ -403,7 +403,60 @@ INSERT IMAGE OF REVOKE CERT PANE
 
 #### Certification Revocation List (CRL)
 
+Halimede can produce a Certificate Revocation List (CRL) on demand. To produce
+a CRL for the selected Certificate Authority, perform:
 
+1. Right-click on the Certificate Authority or CRLs node, and select "Create
+CRL".
+2. Update or confirm the next CRL date.
+3. Click OK to generate the CRL.
+
+INSERT IMAGE OF DIALOG
+
+Once the CRL has been generate the CRL View will open displaying the CRL just
+generated.
+
+Note: Halimede currently has no support for generating delta CRLs. Only
+complete CRLs can be generated.
+
+INSERT IMAGE OF CRL VIEW
+
+To export the CRL, perform:
+
+1. Click on the certificate button (top right), or via the drop down, select 
+"Export the CRL".
+2. Enter the filename to export to, or use the "..." to select the file name.
+3. Select the encoding format, either PEM or DER format.
+4. Select OK to save/export the information.
+5. Upload / copy the file to the location as defined in the CRL Location
+defined when the Certificate Authority was create.
+
+INSERT IMAGE OF DIALOG.
+
+The CRL can also be saved as a Text or HTML file from the drop down menu on
+the certificate icon when viewing the CRL.
+
+Once a CRL has been generated, it will be available via the CRLs node in
+the Certificate Authority. To open the CRL, right-click on the CRL, and select
+"View CRL". Additionally, a CRL may have a comment attached, to update the
+comment, right-click on the CRL, and select "Update Comment".
+
+INSERT IMAGE OF MENU OPTIONS AND COMMENTS DIALOG.
+
+**CRL Policy**
+
+IETF [RFC 5280](https://tools.ietf.org/html/rfc5280) covers expected policy
+on the usage of CRLs with Certificate Authorities. It is expected that the user
+follow the policies and guidelines within RFC 5280. 
+
+In the general case, it is expected that:
+
+1. On creation of the Certificate Authority, a CRL location is defined.
+2. On creation of the Certificate Authority, create a CRL and publish to the
+CRL location defined. This will set the expected next update time.
+3. On or before the next update time, generate a new CRL and publish. CRLs
+can be generated at any time, on provision that it is always before the next
+update time noted in the prior CRL.
 
 ### Certificate Requests
 
