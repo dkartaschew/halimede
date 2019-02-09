@@ -367,7 +367,7 @@ INSERT IMAGE OF DIALOG
 To export the Certificate, complete Certificate Chain and Private Key in a 
 PKCS#12 file, perform:
 
-1. From the drop down menu, select "Export as PKCS#132 Keystore".
+1. From the drop down menu, select "Export as PKCS#12 Keystore".
 2. Enter the filename to export to, or use the "..." to select the file name.
 3. Select the cipher to use to encrypt the Keystore with. (Note: whilst the
 use of 3DES for PKCS#12 is widely supported, support for using AES with 
@@ -460,7 +460,73 @@ update time noted in the prior CRL.
 
 ### Certificate Requests
 
+Halimede supports the import of external Requests for Certificate (also known
+as a Certificate Signing Request (CSR)). Once the CSR has been imported, a
+Certificate can be issued based on the information in the CSR.
+
+To import a CSR, perform:
+
+1. Right-click on the "Pending" node under the Certificate Authority and select
+"Import a Certificate Request".
+2. Select the Certificate Signing Request (CSR).
+3. The CSR will be imported.
+
+INSERT IMAGE OF NEW CSR POST IMPORT
+
+To view a CSR once imported, perform:
+
+1. Double-click on the CSR in the Pending Pane, or
+2. Right-click on the CSR, and select "View Certificate Details".
+
+A new pane will open displaying the Certificate Signing Request details.
+
+INSERT IMAGE OF CSR DETAILS
+
+To issue a Certificate based on the CSR, perform:
+
+1. Right-click on the CSR, and select "Create new Certificate", or
+2. if viewing the CSR, click on the certificate icon, and select "Issue
+Certificate".
+3. This will open a pane very similar to the information pane used when 
+creating a new certificate.
+4. Set or add any additional information, and click on the Certificate Icon
+in the top right to issue the certificate. The resulting certificate can
+be exported as per instructions above.
+
+INSERT IMAGE OF MENU OPTIONS
+
+Note: Not all X509 Certificate extensions that are defined within the CSR may
+be supported by Halimede, therefore may not be present in the resulting issued
+Certificate.
+
 ### Certificate Templates
+
+Halimede during Certificate Creation, create a Template based on the current
+input in Certificate Details pane.
+
+To create a new Template, perform:
+
+1. Right-click on the "Templates" node under the Certificate Authority, and 
+select "Create a new Client Key/Certificate Template".
+2. This will open a new Certificate Template pane.
+
+INSERT IMAGE OF MENU OPTIONS
+
+Enter details as needed, and to save, click on the Certificate Icon in the 
+top right corner.
+
+To issue a new Certificate, based on a Template, perform:
+
+1. Double-click on the Template, or
+2. Right-click on the Template and select "Create New Certificate"
+
+This will open a New Certificate pane, pre-filled from details from the
+template.
+
+INSERT IMAGE OF NEW CERTIFICATE PANE
+
+To edit or delete a Template, right-click on the template, and select
+the appropriate option from the menu.
 
 ### Backup and Restoration
 
@@ -473,7 +539,56 @@ decrypting a PKCS#12 container utilising AES256).
 
 ## General Utilities
 
+Halimede includes a number of general purpose utility functions. These include
+and not limited to, viewing X509 Certificates, viewing keying material, 
+viewing external CRLs and creating self signed Certificates.
+
 ### Create Self-Signed Certificate
 
+Halimede can create a Self-Signed Certificate for general purpose use.
+
+To create a self-signed Certificate, perform:
+
+1. From the "Tools" menu, select "Create Self-Signed Certificate".
+2. Enter details for the Certificate.
+3. Click on the Certificate Icon (top right corner) and select "Create
+Certificate".
+4. Once created, a Certificate View will be displayed.
+5. The keying material and Certificate have **not** been saved to disk.
+6. To save the new Certificate and Keying Material, click on the context menu
+of the Certificate Icon (top right corner) and select "Export as PKCS#12
+Keystore". 
+    1. Enter the filename to export to, or use the "..." to select the file 
+		name.
+    2. Select the cipher to use to encrypt the Keystore with. (Note: whilst the
+    use of 3DES for PKCS#12 is widely supported, support for using AES with 
+    PKCS#12 is limited).
+    3. Enter the passphrase to protect the keystore. (Note: If no passphrase
+    is entered, the keystore will not be encrypted).
+    4. Select OK to save/export the information into the keystore.
+7. You can export other elements of the generated Certificate and Keying 
+material from the Certificate Icon drop down menu.
+
+INSERT IMAGE OF SELF SIGNED CERTIFICATE PANE
+
+INSERT IMAGE OF CREATED SELF SIGNED CERTIFICATE, INCLUDING MENU
+
 ### View Certificate
+
+To view, a X509 Certificate, keying material (contained in a PKCS#12 container),
+a CRL or CSR, select the applicable menu option from the "Tools" menu and 
+select the desired file. If a passphrase is required, a prompt for the 
+passphrase will be displayed.
+
+The resulting file will be displayed in the applicable view pane. Once open,
+various options are made available via the Certificate Icon in the top right 
+corner, including:
+
+1. Export as HTML or TXT report file.
+2. Export keying material.
+3. Export Certificate or Certificate Chain
+4. If a CRL, re-export the CRL in a different format. (Useful for converting
+between PEM and DER formats).
+
+Note: Options available will be based on the file being opened.
 
