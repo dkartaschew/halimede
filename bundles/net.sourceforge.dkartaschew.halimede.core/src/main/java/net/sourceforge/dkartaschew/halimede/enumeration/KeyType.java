@@ -1083,6 +1083,7 @@ public enum KeyType {
 					return t;
 				}
 			}
+			break;
 
 		case "Rainbow":
 			return KeyType.Rainbow;
@@ -1108,6 +1109,7 @@ public enum KeyType {
 				}
 
 			}
+			break;
 		case "XMSS":
 			if (publicKey instanceof BCXMSSPublicKey) {
 				BCXMSSPublicKey pkey = (BCXMSSPublicKey) publicKey;
@@ -1118,6 +1120,7 @@ public enum KeyType {
 					}
 				}
 			}
+			break;
 		case "XMSSMT":
 			if (publicKey instanceof BCXMSSMTPublicKey) {
 				BCXMSSMTPublicKey pkey = (BCXMSSMTPublicKey) publicKey;
@@ -1129,6 +1132,7 @@ public enum KeyType {
 					}
 				}
 			}
+			break;
 		}
 		throw new UnknownKeyTypeException("Public Key doesn't match a known KeyType");
 	}

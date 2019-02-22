@@ -36,6 +36,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1EncodableVector;
@@ -545,6 +546,61 @@ public class TestPKCS10CertificateSigning {
 			List<IssuedCertificateProperties> newValue = new ArrayList<>((Collection) l.evt.getNewValue());
 			assertEquals(1, newValue.size());
 			assertEquals(c, newValue.get(0));
+
+		} finally {
+			TestUtilities.cleanup(path);
+		}
+	}
+	
+	/**
+	 * Test basic signing and store routine.
+	 * 
+	 * @throws Throwable The creation failed.
+	 */
+	@Test
+	public void testSignAndStorePKCS10_DSA4096() throws Throwable {
+		Path path = Paths.get(TestUtilities.TMP, "CA");
+		assertTrue(path.toFile().mkdirs());
+		try {
+			Listener l = new Listener();
+
+			/*
+			 * CA
+			 */
+
+			KeyPair key = KeyPairFactory.generateKeyPair(KeyType.RSA_512);
+			X509Certificate cert = CertificateFactory.generateSelfSignedCertificate(issuer, //
+					ZonedDateTime.now().plusSeconds(3600), key, SignatureAlgorithm.getDefaultSignature(key.getPublic()),
+					true);
+			IssuedCertificate ic = new IssuedCertificate(key, new X509Certificate[] { cert }, null, null, PASSWORD);
+
+			CertificateAuthority ca = CertificateAuthority.create(path, ic);
+			ca.setDescription(CA_DESCRIPTION);
+			assertFalse(ca.isLocked());
+			ca.addPropertyChangeListener(l);
+
+			/*
+			 * Request (unhandled type).
+			 */
+			Path pkcs10file = TestUtilities.getFile("dsa4096key_der.csr");
+			ca.addCertificateSigningRequest(pkcs10file);
+			@SuppressWarnings({ "unchecked", "rawtypes" })
+			List<CertificateRequestProperties> newValue = new ArrayList<>(((ConcurrentHashMap) l.evt.getNewValue()).values());
+			assertEquals(1, newValue.size());
+			ICertificateRequest req = newValue.get(0).getCertificateRequest();
+			assertNull(newValue.get(0).getProperty(CertificateRequestProperties.Key.keyType));
+
+			IssuedCertificateProperties c = ca.signAndStoreCertificateRequest(req, ZonedDateTime.now().plusSeconds(10),
+					ZonedDateTime.now().plusSeconds(360), PASSWORD);
+
+			assertNotNull(c);
+			assertEquals(req.getSubject().toString(), c.getProperty(Key.subject));
+
+			assertNotNull(l.evt);
+			@SuppressWarnings({ "unchecked", "rawtypes" })
+			List<IssuedCertificateProperties> newValue2 = new ArrayList<>((Collection) l.evt.getNewValue());
+			assertEquals(1, newValue2.size());
+			assertEquals(c, newValue2.get(0));
 
 		} finally {
 			TestUtilities.cleanup(path);
