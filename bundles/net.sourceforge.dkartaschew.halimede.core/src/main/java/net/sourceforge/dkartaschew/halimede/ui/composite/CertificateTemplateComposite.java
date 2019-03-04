@@ -49,6 +49,7 @@ import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.nebula.jface.cdatetime.CDateTimeObservableValue;
@@ -385,6 +386,32 @@ public class CertificateTemplateComposite extends Composite {
 		} else {
 			listSubjectAltNames.setInput(new GeneralName[0]);
 		}
+		
+		listSubjectAltNames.getList().addListener(SWT.MouseDoubleClick, l -> {
+			IStructuredSelection selected = listSubjectAltNames.getStructuredSelection();
+			if(selected != null && !selected.isEmpty()) {
+				Object element = selected.getFirstElement();
+				if(element instanceof GeneralName) {
+					GeneralName name = (GeneralName)element;
+					GeneralNameModel gmodel = new GeneralNameModel(name);
+					GeneralNameDialog d = new GeneralNameDialog(getShell(), gmodel);
+					if (d.open() == IDialogConstants.OK_ID) {
+						// update collection...
+						GeneralName[] names = (GeneralName[]) listSubjectAltNames.getInput();
+						for(int i = 0; i < names.length; i++) {
+							if(names[i].equals(name)) {
+								names[i] = gmodel.createGeneralNameFromModel();
+								break;
+							}
+						}
+						listSubjectAltNames.setInput(names);
+						listSubjectAltNames.refresh();
+						// don't use databinding due to complexity...
+						model.setSubjectAlternativeName(new GeneralNames(names));
+					}
+				}
+			}
+		});
 
 		Button addSubjectAltName = new Button(grpSubAltNames, SWT.FLAT);
 		addSubjectAltName.setLayoutData(new GridData(SWT.CENTER, SWT.BOTTOM, false, true, 1, 1));
