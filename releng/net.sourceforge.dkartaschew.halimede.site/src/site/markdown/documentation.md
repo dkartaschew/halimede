@@ -97,11 +97,13 @@ a wide variety of ciphers for X509 Certificate generation.
 
 Most functions are made available via right-click context menu interface.
 
+<img src="images/doc_application.png" alt="Application Window" width="100%" />
+
 Most functions require the Certificate Authority to be unlocked, therefore if
 a function is not available, please check the *lock* status of the Certificate
 Authority. 
 
-INSERT EXAMPLE IMAGE OF LOCK AND UNLOCK.
+<img src="images/doc_lock.png" alt="Lock Icon" style="text-align:center" width="50%" />
 
 To unlock a Certificate Authority, right-click on the Certificate Authority,
 and select "Unlock". Halimede will prompt for the Certificate Authority's 
@@ -117,7 +119,7 @@ new Certificate and Keying Material *or* using existing Keying Material.
 To Create a new Certificate Authority, perform:
 
 1. Right-Click on the left pane, and select "Create New Certificate Authority".
-    INSERT IMAGE
+    <img src="images/doc_new_ca.png" alt="New CA Menu" width="100%" />
 2. Enter the Certificate Authority details:
 	1. The Name/Description.
 	2. The Base Location for the Certificate Authority. This location will have
@@ -129,14 +131,14 @@ To Create a new Certificate Authority, perform:
 	6. The public location for obtaining the latest CRL. (Optional, if not using
 	or exporting CRLs).
 	7. The Passphrase (entered twice).
-    INSERT IMAGE OF DIALOG.
+    <img src="images/doc_new_ca_dialog.png" alt="New CA Dialog" width="100%" />
 3. Click OK to create the Certificate Authority instance. This may take some
 time depending on the keying material type choosen.
 
 On completion the Certificate Authority will be listed in the left pane of the
 application.
  
-INSERT IMAGE OF COMPLETED.
+<img src="images/doc_ca.png" alt="CA" width="100%" />
  
 By default, the newly created Certificate Authority will be unlocked.
 
@@ -146,7 +148,7 @@ To Create a new Certificate Authority based on an Existing Certificate, perform:
 
 1. Right-click on the left pane, and select "Create New Certificate Authority
 based on Existing Certificate".
-    INSERT IMAGE
+    <img src="images/doc_new_ca2.png" alt="New CA Existing Menu" width="100%" />
 2. Enter the Certificate Authority details:
   1. The Name/Description.
 	2. The Base Location for the Certificate Authority. This location will have
@@ -155,11 +157,11 @@ based on Existing Certificate".
 	3. Select either the existing Certificate from a PKCS#12 store, or the X509
 	Certificate and match Private Key.
 	4. The Passphrase (entered twice).
-    INSERT IMAGE OF DIALOG
+     <img src="images/doc_new_ca2_dialog.png" alt="New CA Existing Dialog" width="100%" />
 3. Click OK to create the Certificate Authority instance. It may prompt for the
 passphrase to access the PKCS#12 or private key to complete the operation.
  
-    INSERT IMAGE OF COMPLETED.
+<img src="images/doc_ca2.png" alt="CA2" width="100%" />
 
 By default, the newly created Certificate Authority will be unlocked.
 
@@ -169,7 +171,7 @@ To Open an existing Certificate Authority, perform:
 
 1. Right-click on the left pane, and select "Open a Certificate Authority".
 
-    INSERT IMAGE
+    <img src="images/doc_open.png" alt="Open CA Menu" width="100%" />
 2. Select the base location of the Certificate Authority in the dialog.
 3. Click OK to open the Certificate Authority.
 
@@ -225,7 +227,7 @@ Settings".
 3. Modify the Settings as required.
 4. Click OK to update the settings. Or Cancel to cancel the operation.
 
-    INSERT IMAGE OF SETTINGS DIALOG
+<img src="images/doc_ca_settings.png" alt="CA Settings" />
 
 ### Create Certificate
 
@@ -240,7 +242,7 @@ To create a new Issued Certificate with associated keying material, perform:
 2. Right-click on the Certificate Authority or Issued node, and select
    "Create New Client Key/Certificate Pair".
 
-	 INSERT IMAGE OF MENU
+	 <img src="images/doc_new_cert_menu.png" alt="CA2" width="100%" />
 	
 This will open a new pane allowing entry of all required parameters for the
 X509 Cerificate.
@@ -291,7 +293,7 @@ These parameters are:
 12. The drop down menu, also allows you to save this certificate information as
     a template to be utilised later.
 
-INSERT IMAGE OF CERTIFICATE PANE.
+<img src="images/doc_new_certpane1.png" alt="New Certificate Pane" width="100%" />
 
 Once the Keying Material and Certificate have been created, it will available
 in the "Issued" node of the Certificate Authority which create/issued the
@@ -307,13 +309,13 @@ To view the contents of the Certificate/Keying Material, perform:
 1. Right-click on the Certificate and select "View Certificate Details", or
 2. Double-click on the Certificate.
 
-INSERT IMAGE OF CERTIFICATE VIEW.
+<img src="images/doc_cert_view.png" alt="Certificate View" width="100%" />
 
 To view/edit the comment attached to a Certificate, perform:
 
 1. Right-click on the Certificate and select "Update Comment".
 
-INSERT IMAGE OF COMMENT DIALOG.
+<img src="images/doc_cert_comment.png" alt="Certificate Comment"/>
 
 ### Export Certificate
 
@@ -335,7 +337,7 @@ formats (where applicable).
 All the above actions are available via the drop-down menu from the 
 Certificate Icon when viewing the Certificate Information.
 
-INSERT IMAGE OF DROP DOWN EXAMPLE 
+<img src="images/doc_cert_menu.png" alt="Certificate Menu" width="100%" /> 
 
 #### Export Certificate, Certificate Chain or Public Key
 
@@ -346,7 +348,7 @@ To export the Certificate, Certificate Chain or Public Key perform:
 3. Select the encoding format, either PEM or DER format.
 4. Select OK to save/export the information.
 
-INSERT IMAGE OF DIALOG
+<img src="images/doc_cert_export1.png" alt="Certificate Export" />
 
 #### Export Private Key
 
@@ -360,7 +362,7 @@ To export the Private Key (if present) perform:
 is entered, the private key will not be encrypted).
 6. Select OK to save/export the private key.
 
-INSERT IMAGE OF DIALOG
+<img src="images/doc_cert_export2.png" alt="Certificate Export" />
 
 #### Export PKCS#12 Keystore
 
@@ -376,7 +378,7 @@ PKCS#12 is limited).
 is entered, the keystore will not be encrypted).
 5. Select OK to save/export the information into the keystore.
 
-INSERT IMAGE OF DIALOG
+<img src="images/doc_cert_export3.png" alt="Certificate Export" />
 
 ### Revoke Certificate and CRLs
 
@@ -389,12 +391,10 @@ revoke the Certificate, either:
 2. Use "Revoke the Certificate" menu option from the drop down menu when
 viewing the Certificate.
 
-INSERT IMAGE OF BOTH OPTIONS
-
 On revoking the Certificate, a Revocation Reason is required. Select the 
 reason from the drop down menu.
 
-INSERT IMAGE OF REVOKE DIALOG
+<img src="images/doc_cert_revoke.png" alt="Certificate Export" />
 
 On completion the Certificate will be moved from "Issued" certificates to
 "Revoked" certificates.
@@ -411,7 +411,7 @@ CRL".
 2. Update or confirm the next CRL date.
 3. Click OK to generate the CRL.
 
-INSERT IMAGE OF DIALOG
+<img src="images/doc_new_crl.png" alt="New CRL" />
 
 Once the CRL has been generate the CRL View will open displaying the CRL just
 generated.
@@ -419,7 +419,7 @@ generated.
 Note: Halimede currently has no support for generating delta CRLs. Only
 complete CRLs can be generated.
 
-INSERT IMAGE OF CRL VIEW
+<img src="images/doc_crl_view.png" alt="CRL View"  width="100%" />
 
 To export the CRL, perform:
 
@@ -431,7 +431,7 @@ To export the CRL, perform:
 5. Upload / copy the file to the location as defined in the CRL Location
 defined when the Certificate Authority was create.
 
-INSERT IMAGE OF DIALOG.
+<img src="images/doc_crl_export.png" alt="CRL Export" />
 
 The CRL can also be saved as a Text or HTML file from the drop down menu on
 the certificate icon when viewing the CRL.
@@ -441,7 +441,7 @@ the Certificate Authority. To open the CRL, right-click on the CRL, and select
 "View CRL". Additionally, a CRL may have a comment attached, to update the
 comment, right-click on the CRL, and select "Update Comment".
 
-INSERT IMAGE OF MENU OPTIONS AND COMMENTS DIALOG.
+<img src="images/doc_crl_comment.png" alt="CRL Comment" />
 
 **CRL Policy**
 
@@ -471,7 +471,7 @@ To import a CSR, perform:
 2. Select the Certificate Signing Request (CSR).
 3. The CSR will be imported.
 
-INSERT IMAGE OF NEW CSR POST IMPORT
+<img src="images/doc_new_csr.png" alt="New CSR" />
 
 To view a CSR once imported, perform:
 
@@ -480,7 +480,7 @@ To view a CSR once imported, perform:
 
 A new pane will open displaying the Certificate Signing Request details.
 
-INSERT IMAGE OF CSR DETAILS
+<img src="images/doc_csr_view.png" alt="CSR View"  width="100%" />
 
 To issue a Certificate based on the CSR, perform:
 
@@ -493,7 +493,7 @@ creating a new certificate.
 in the top right to issue the certificate. The resulting certificate can
 be exported as per instructions above.
 
-INSERT IMAGE OF MENU OPTIONS
+<img src="images/doc_csr_menu.png" alt="CSR Menu"  width="100%" />
 
 Note: Not all X509 Certificate extensions that are defined within the CSR may
 be supported by Halimede, therefore may not be present in the resulting issued
@@ -510,7 +510,7 @@ To create a new Template, perform:
 select "Create a new Client Key/Certificate Template".
 2. This will open a new Certificate Template pane.
 
-INSERT IMAGE OF MENU OPTIONS
+<img src="images/doc_new_template.png" alt="Template Menu" width="100%" /> 
 
 Enter details as needed, and to save, click on the Certificate Icon in the 
 top right corner.
@@ -523,7 +523,7 @@ To issue a new Certificate, based on a Template, perform:
 This will open a New Certificate pane, pre-filled from details from the
 template.
 
-INSERT IMAGE OF NEW CERTIFICATE PANE
+<img src="images/doc_template_pane.png" alt="Template Pane" width="100%" /> 
 
 To edit or delete a Template, right-click on the template, and select
 the appropriate option from the menu.
@@ -569,9 +569,9 @@ Keystore".
 7. You can export other elements of the generated Certificate and Keying 
 material from the Certificate Icon drop down menu.
 
-INSERT IMAGE OF SELF SIGNED CERTIFICATE PANE
+<img src="images/doc_new_selfcert.png" alt="Self Signed Pane" width="100%" /> 
 
-INSERT IMAGE OF CREATED SELF SIGNED CERTIFICATE, INCLUDING MENU
+<img src="images/doc_selfcert_view2.png" alt="Self Signed View" width="100%" /> 
 
 ### View Certificate
 
