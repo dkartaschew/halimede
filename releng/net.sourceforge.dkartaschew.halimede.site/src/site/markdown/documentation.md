@@ -293,7 +293,7 @@ These parameters are:
 12. The drop down menu, also allows you to save this certificate information as
     a template to be utilised later.
 
-<img src="images/doc_new_certpane1.png" alt="New Certificate Pane" width="100%" />
+<img src="images/doc_new_certpane.png" alt="New Certificate Pane" width="100%" />
 
 Once the Keying Material and Certificate have been created, it will available
 in the "Issued" node of the Certificate Authority which create/issued the
@@ -570,7 +570,8 @@ Keystore".
 material from the Certificate Icon drop down menu.
 
 <img src="images/doc_new_selfcert.png" alt="Self Signed Pane" width="100%" /> 
-
+<br />
+<br />
 <img src="images/doc_selfcert_view2.png" alt="Self Signed View" width="100%" /> 
 
 ### View Certificate
