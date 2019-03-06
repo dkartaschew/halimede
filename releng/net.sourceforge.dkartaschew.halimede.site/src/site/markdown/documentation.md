@@ -399,7 +399,7 @@ reason from the drop down menu.
 On completion the Certificate will be moved from "Issued" certificates to
 "Revoked" certificates.
 
-INSERT IMAGE OF REVOKE CERT PANE
+<img src="images/doc_cert_revoked.png" alt="Revoked Certificate View" class="w3-card-4" width="100%" />
 
 #### Certification Revocation List (CRL)
 
