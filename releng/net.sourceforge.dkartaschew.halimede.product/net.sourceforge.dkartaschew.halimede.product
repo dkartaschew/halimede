@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="net.sourceforge.dkartaschew.halimede" uid="Halimede CA" id="net.sourceforge.dkartaschew.halimede.e4rcp.CAManager" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="net.sourceforge.dkartaschew.halimede" uid="Halimede CA" id="net.sourceforge.dkartaschew.halimede.e4rcp.CAManager" application="org.eclipse.e4.ui.workbench.swt.E4Application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -46,7 +46,7 @@
 
    <vm>
    </vm>
-
+<!--
    <plugins>
       <plugin id="com.ibm.icu.base"/>
       <plugin id="javax.annotation"/>
@@ -138,6 +138,12 @@
       <plugin id="org.w3c.dom.smil"/>
       <plugin id="org.w3c.dom.svg"/>
    </plugins>
+-->
+
+   <features>
+      <feature id="net.sourceforge.dkartaschew.halimede.application" version="1.0.0.qualifier"/>
+      <feature id="org.eclipse.e4.rcp" version="1.6.300.v20181204-1801"/>
+   </features>
 
    <configurations>
       <plugin id="net.sourceforge.dkartaschew.halimede.e4rcp" autoStart="true" startLevel="4" />

@@ -17,5 +17,6 @@
 		<module>net.sourceforge.dkartaschew.halimede.core</module>
 		<module>net.sourceforge.dkartaschew.halimede.e4ide</module>
 		<module>net.sourceforge.dkartaschew.halimede.e4rcp</module>
+		<module>net.sourceforge.dkartaschew.halimede.application</module>
 	</modules>
 </project>

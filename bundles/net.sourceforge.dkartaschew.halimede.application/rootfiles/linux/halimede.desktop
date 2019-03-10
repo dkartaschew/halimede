@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0.0
+Name=Halimede CA
+Comment=Halimede Certificate Authority Manager
+Keywords=Utility;Certificate;
+Exec=/opt/halimede/halimede
+Icon=/opt/halimede/icon.xmp
+Type=Application
+Categories=Network;
