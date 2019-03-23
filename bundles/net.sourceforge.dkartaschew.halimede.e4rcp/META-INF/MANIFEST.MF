@@ -27,3 +27,6 @@ Require-Bundle: org.eclipse.core.runtime,
  net.sourceforge.dkartaschew.halimede.core;bundle-version="1.0.0",
  javax.annotation;bundle-version="1.2.0"
 Automatic-Module-Name: net.sourceforge.dkartaschew.halimede.e4rcp
+Export-Package: net.sourceforge.dkartaschew.halimede.command,
+ net.sourceforge.dkartaschew.halimede.dialogs,
+ net.sourceforge.dkartaschew.halimede.ui

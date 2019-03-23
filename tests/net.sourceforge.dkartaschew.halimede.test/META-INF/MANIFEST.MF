@@ -12,3 +12,10 @@ Require-Bundle: org.mockito;bundle-version="2.23.0",
  net.bytebuddy.byte-buddy;bundle-version="1.9.0",
  net.bytebuddy.byte-buddy-agent;bundle-version="1.9.0"
 Automatic-Module-Name: net.sourceforge.dkartaschew.halimede.test
+Export-Package: net.sourceforge.dkartaschew.halimede,
+ net.sourceforge.dkartaschew.halimede.data,
+ net.sourceforge.dkartaschew.halimede.enumeration,
+ net.sourceforge.dkartaschew.halimede.exceptions,
+ net.sourceforge.dkartaschew.halimede.ui.model,
+ net.sourceforge.dkartaschew.halimede.ui.validators,
+ net.sourceforge.dkartaschew.halimede.util

@@ -11,6 +11,6 @@
          Halimede Certificate Authority Manager
       </description>
    </category-def>
-   <repository-reference location="http://download.eclipse.org/nebula/releases/1.4.0" enabled="true" />
-   <repository-reference location="http://download.eclipse.org/tools/orbit/downloads/drops/R20181128170323/repository" enabled="true" />
+   <repository-reference location="http://download.eclipse.org/nebula/releases/latest" enabled="true" />
+   <repository-reference location="http://download.eclipse.org/tools/orbit/downloads/drops/R20190226160451/repository" enabled="true" />
 </site>
