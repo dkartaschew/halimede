@@ -49,7 +49,6 @@ import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ComboViewer;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.nebula.jface.cdatetime.CDateTimeObservableValue;
