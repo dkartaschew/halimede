@@ -54,6 +54,7 @@ import org.eclipse.swt.widgets.Text;
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.Entropy;
 import net.sourceforge.dkartaschew.halimede.ui.model.NewCAModel;
+import net.sourceforge.dkartaschew.halimede.ui.validators.ExistingCAValidator;
 import net.sourceforge.dkartaschew.halimede.ui.validators.FileValidator;
 import net.sourceforge.dkartaschew.halimede.ui.validators.PassphraseValidator;
 import net.sourceforge.dkartaschew.halimede.ui.validators.PathValidator;
@@ -325,7 +326,7 @@ public class NewCAExistingMaterialDialog extends Dialog {
 		IObservableValue<?> caDescriptionModel = PojoProperties.value("cADescription").observe(model);
 		UpdateValueStrategy s = new UpdateValueStrategy().setAfterGetValidator(value -> {
 			String o = (String) value;
-			if (o.isEmpty()) {
+			if (o.isEmpty() || o.trim().isEmpty()) {
 				return ValidationStatus.error("CA Description cannot be empty");
 			}
 			return ValidationStatus.ok();
@@ -342,6 +343,12 @@ public class NewCAExistingMaterialDialog extends Dialog {
 		b = bindingContext.bindValue(locationWidget, locationModel, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
+		// Ensure CA Description and Base Location don't make up something already in use...
+		MultiValidator locCAValidator = new ExistingCAValidator(caDescriptionModel, locationModel);
+		bindingContext.addValidationStatusProvider(locCAValidator);
+		ControlDecorationSupport.create(locCAValidator.getValidationStatus(), SWT.TOP | SWT.LEFT, caDescriptionWidget);
+		ControlDecorationSupport.create(locCAValidator.getValidationStatus(), SWT.TOP | SWT.LEFT, locationWidget);
+		
 		/*
 		 * PKCS12 Enable
 		 */

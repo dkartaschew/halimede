@@ -67,6 +67,7 @@ import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.ui.model.NewCAModel;
 import net.sourceforge.dkartaschew.halimede.ui.model.X500NameModel;
 import net.sourceforge.dkartaschew.halimede.ui.validators.DatePeriodValidator;
+import net.sourceforge.dkartaschew.halimede.ui.validators.ExistingCAValidator;
 import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
 import net.sourceforge.dkartaschew.halimede.ui.validators.PassphraseValidator;
 import net.sourceforge.dkartaschew.halimede.ui.validators.PathValidator;
@@ -319,7 +320,7 @@ public class NewCADialog extends Dialog {
 		IObservableValue<?> caDescriptionModel = PojoProperties.value("cADescription").observe(model);
 		UpdateValueStrategy s = new UpdateValueStrategy().setAfterGetValidator(value -> {
 			String o = (String) value;
-			if (o.isEmpty()) {
+			if (o.isEmpty() || o.trim().isEmpty()) {
 				return ValidationStatus.error("CA Description cannot be empty");
 			}
 			return ValidationStatus.ok();
@@ -335,6 +336,13 @@ public class NewCADialog extends Dialog {
 		s = new UpdateValueStrategy().setAfterGetValidator(new PathValidator());
 		b = bindingContext.bindValue(locationWidget, locationModel, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
+		
+		// Ensure CA Description and Base Location don't make up something already in use...
+		MultiValidator locCAValidator = new ExistingCAValidator(caDescriptionModel, locationModel);
+		bindingContext.addValidationStatusProvider(locCAValidator);
+		ControlDecorationSupport.create(locCAValidator.getValidationStatus(), SWT.TOP | SWT.LEFT, caDescriptionWidget);
+		ControlDecorationSupport.create(locCAValidator.getValidationStatus(), SWT.TOP | SWT.LEFT, locationWidget);
+		
 
 		/*
 		 * X500 Name
