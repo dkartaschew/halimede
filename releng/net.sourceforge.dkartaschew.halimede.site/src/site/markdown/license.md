@@ -15,7 +15,7 @@ Halimede includes the following 3rd-party software libraries.
 
 | Library                                                                   | Version       | License |
 |---------------------------------------------------------------------------|---------------|-------------|
-| [The Legion of the Bouncy Castle](https://www.bouncycastle.org/java.html) | 1.59          | [Bouncy Castle License](https://www.bouncycastle.org/licence.html)         |
+| [The Legion of the Bouncy Castle](https://www.bouncycastle.org/java.html) | 1.60          | [Bouncy Castle License](https://www.bouncycastle.org/licence.html)         |
 
 Halimede includes the following 3rd-party art assets.
 
