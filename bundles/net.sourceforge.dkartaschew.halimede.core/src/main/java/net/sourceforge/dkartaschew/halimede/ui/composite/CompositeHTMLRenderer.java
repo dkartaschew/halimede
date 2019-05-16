@@ -2,6 +2,8 @@ package net.sourceforge.dkartaschew.halimede.ui.composite;
 
 import java.io.PrintStream;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
@@ -58,6 +60,8 @@ public class CompositeHTMLRenderer extends HTMLOutputRenderer {
 			fontName = "sans-serif";
 			fontSize = 10;
 		}
+		Color background = parent.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		Color foreground = parent.getForeground();
 
 		out.println("<!DOCTYPE html>");
 		out.println("<html>");
@@ -65,6 +69,10 @@ public class CompositeHTMLRenderer extends HTMLOutputRenderer {
 		out.println("<meta content=\"text/html; charset=UTF-8\" http-equiv=\"content-type\" />");
 		out.println("<title>" + HTMLEncode.escape(title) + "</title>");
 		out.println("<style>");
+		out.println("body {");
+		out.println("    color: " + asHexRGB(foreground) + ";");
+		out.println("    background-color: " + asHexRGB(background) + ";");
+		out.println("}");
 		out.println("table, th, td {");
 		out.println("    border: 0px;");
 		out.println("    padding: 2px;");
@@ -93,6 +101,15 @@ public class CompositeHTMLRenderer extends HTMLOutputRenderer {
 		out.println("</head>");
 		out.println("<body>");
 		out.println("<table>");
+	}
+
+	/**
+	 * Convert the color to CSS #RGB notation
+	 * @param color The color to convert
+	 * @return A string representation.
+	 */
+	private String asHexRGB(Color color) {
+		return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
 	}
 
 	@Override

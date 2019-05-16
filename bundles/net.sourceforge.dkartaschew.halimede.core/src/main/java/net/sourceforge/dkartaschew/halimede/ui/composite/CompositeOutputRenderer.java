@@ -76,6 +76,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		textArea = new Browser(this, SWT.DOUBLE_BUFFERED);
 		textArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		textArea.setMenu(getMenu());
+		textArea.setBackground(parent.getBackground());
 		stream = new ByteArrayOutputStream();
 		renderer = new CompositeHTMLRenderer(new PrintStream(stream), title, getShell());
 	}
