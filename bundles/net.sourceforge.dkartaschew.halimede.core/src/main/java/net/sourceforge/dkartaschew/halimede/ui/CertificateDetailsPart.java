@@ -372,7 +372,8 @@ public class CertificateDetailsPart {
 
 	@PreDestroy
 	public void dispose() {
-		// NOP
+		// Ensure we set to not be dirty...
+		part.setDirty(false);
 	}
 
 	@Focus
