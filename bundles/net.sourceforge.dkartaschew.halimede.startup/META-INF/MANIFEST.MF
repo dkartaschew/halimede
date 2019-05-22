@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: net.sourceforge.dkartaschew.halimede.startup
+Application-Name: Halimede Startup Bundle
+Bundle-ManifestVersion: 2
+Bundle-Name: Halimede CA Startup Check
+Bundle-SymbolicName: net.sourceforge.dkartaschew.halimede.startup;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: net.sourceforge.dkartaschew.halimede
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: net.sourceforge.dkartaschew.halimede.startup
+Require-Bundle: org.eclipse.swt;bundle-version="3.110.0",
+ org.eclipse.core.runtime;bundle-version="3.15.200",
+ org.eclipse.e4.ui.workbench;bundle-version="1.9.0",
+ org.eclipse.e4.ui.workbench.swt;bundle-version="0.14.500",
+ org.eclipse.osgi,
+ org.eclipse.jface
+Bundle-Activator: net.sourceforge.dkartaschew.halimede.startup.Activator
+

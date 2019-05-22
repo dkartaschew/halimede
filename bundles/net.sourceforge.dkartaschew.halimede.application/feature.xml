@@ -73,4 +73,11 @@ version 2 with the GNU Classpath Exception which is available at https://www.gnu
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="net.sourceforge.dkartaschew.halimede.startup"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>

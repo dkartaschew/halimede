@@ -1,0 +1,6 @@
+/target
+/workspace
+/lib/*.jar
+/target/
+.DS_Store
+*.pom
