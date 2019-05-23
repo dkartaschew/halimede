@@ -57,6 +57,42 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>name.abuchen</groupId>
+				<artifactId>fix-info-plist-maven-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>fix-info-plist</id>
+						<phase>package</phase>
+						<goals>
+							<goal>fix-info-list</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<productId>Halimede CA</productId>
+					<appName>Halimede CA.app</appName>
+					<properties>
+						<property>
+							<name>CFBundleName</name>
+							<value>Halimede CA</value>
+						</property>
+						<property>
+							<name>CFBundleDisplayName</name>
+							<value>Halimede CA</value>
+						</property>
+						<property>
+							<name>CFBundleGetInfoString</name>
+							<value>(c) Copyright 2010-2019, Darran Kartaschew</value>
+						</property>
+						<property>
+							<name>Eclipse</name>
+							<value /> <!-- key 'Eclipse' will be removed because there is no value -->
+						</property>
+					</properties>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>
