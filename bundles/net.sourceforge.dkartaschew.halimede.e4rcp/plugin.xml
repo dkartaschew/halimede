@@ -20,8 +20,10 @@
 	           name="applicationXMI"
 	           value="net.sourceforge.dkartaschew.halimede.e4rcp/Application.e4xmi">
 	     </property>
-         
+	     <property
+               name="lifeCycleURI"
+               value="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.ui.SaveHandlerProcessor">
+         </property>
       </product>
-   </extension>
-
+    </extension>
 </plugin>
