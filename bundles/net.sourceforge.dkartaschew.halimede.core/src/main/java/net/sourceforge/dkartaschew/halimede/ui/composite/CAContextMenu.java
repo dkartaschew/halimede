@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -45,6 +46,7 @@ import net.sourceforge.dkartaschew.halimede.ui.actions.ViewCACertificateInformat
 import net.sourceforge.dkartaschew.halimede.ui.actions.CASettingsAction;
 import net.sourceforge.dkartaschew.halimede.ui.node.CertificateAuthorityElement;
 import net.sourceforge.dkartaschew.halimede.ui.node.CertificateAuthorityNode;
+import net.sourceforge.dkartaschew.halimede.ui.util.ActionContributionItemEx;
 
 public class CAContextMenu implements IMenuListener {
 
@@ -81,9 +83,9 @@ public class CAContextMenu implements IMenuListener {
 	public void menuAboutToShow(IMenuManager manager) {
 
 		if (viewer.getSelection().isEmpty()) {
-			manager.add(new CreateNewCAAction(this.manager));
-			manager.add(new CreateNewCAExistingMaterialAction(this.manager));
-			manager.add(new OpenCAAction(this.manager));
+			manager.add(toACI(new CreateNewCAAction(this.manager)));
+			manager.add(toACI(new CreateNewCAExistingMaterialAction(this.manager)));
+			manager.add(toACI(new OpenCAAction(this.manager)));
 			injectMenuItems(manager);
 			return;
 		}
@@ -93,23 +95,23 @@ public class CAContextMenu implements IMenuListener {
 			if (object instanceof CertificateAuthorityNode) {
 				CertificateAuthorityNode element = (CertificateAuthorityNode) object;
 				if (!element.getCertificateAuthority().isLocked()) {
-					manager.add(new ViewCACertificateInformationAction(element.getCertificateAuthority(), editor));
-					manager.add(new CASettingsAction(element));
+					manager.add(toACI(new ViewCACertificateInformationAction(element.getCertificateAuthority(), editor)));
+					manager.add(toACI(new CASettingsAction(element)));
 				}
-				manager.add(new LockUnlockAction(viewer, element));
-				manager.add(new CloseCAAction(this.manager, element));
-				manager.add(new DeleteCAAction(this.manager, element));
+				manager.add(toACI(new LockUnlockAction(viewer, element)));
+				manager.add(toACI(new CloseCAAction(this.manager, element)));
+				manager.add(toACI(new DeleteCAAction(this.manager, element)));
 				manager.add(new Separator());
-				manager.add(new CreateNewCAAction(this.manager));
-				manager.add(new CreateNewCAExistingMaterialAction(this.manager));
-				manager.add(new OpenCAAction(this.manager));
+				manager.add(toACI(new CreateNewCAAction(this.manager)));
+				manager.add(toACI(new CreateNewCAExistingMaterialAction(this.manager)));
+				manager.add(toACI(new OpenCAAction(this.manager)));
 				manager.add(new Separator());
 				if (!element.getCertificateAuthority().isLocked()) {
-					manager.add(new CreateIssuedCertificateAction(element.getCertificateAuthority(), editor));
+					manager.add(toACI(new CreateIssuedCertificateAction(element.getCertificateAuthority(), editor)));
 				}
-				manager.add(new CreateNewTemplateAction(element.getCertificateAuthority(), editor));
+				manager.add(toACI(new CreateNewTemplateAction(element.getCertificateAuthority(), editor)));
 				if (!element.getCertificateAuthority().isLocked()) {
-					manager.add(new CreateCRLAction(element.getCertificateAuthority(), editor));
+					manager.add(toACI(new CreateCRLAction(element.getCertificateAuthority(), editor)));
 				}
 			}
 			if (object instanceof CertificateAuthorityElement) {
@@ -118,19 +120,19 @@ public class CAContextMenu implements IMenuListener {
 				switch (element.getType()) {
 				case Issued:
 					if (!element.getParent().getCertificateAuthority().isLocked()) {
-						manager.add(new CreateIssuedCertificateAction(ca, editor));
+						manager.add(toACI(new CreateIssuedCertificateAction(ca, editor)));
 					}
 					break;
 				case Pending:
-					manager.add(new ImportCSRAction(ca));
+					manager.add(toACI(new ImportCSRAction(ca)));
 					break;
 				case Template:
-					manager.add(new CreateNewTemplateAction(ca, editor));
+					manager.add(toACI(new CreateNewTemplateAction(ca, editor)));
 					break;
 				case Revoked:
 				case CRLs:
 					if (!ca.isLocked()) {
-						manager.add(new CreateCRLAction(ca, editor));
+						manager.add(toACI(new CreateCRLAction(ca, editor)));
 					}
 					break;
 				}
@@ -139,6 +141,16 @@ public class CAContextMenu implements IMenuListener {
 		}
 	}
 
+	/**
+	 * Construct an Action Contribution Item.
+	 * 
+	 * @param action The action
+	 * @return An Action Contribution Item.
+	 */
+	private ActionContributionItem toACI(IAction action) {
+		return new ActionContributionItemEx(action);
+	}
+	
 	/**
 	 * Force injection of all menu items.
 	 * 

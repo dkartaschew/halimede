@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -47,6 +48,7 @@ import net.sourceforge.dkartaschew.halimede.ui.actions.UpdateCertificateRequests
 import net.sourceforge.dkartaschew.halimede.ui.actions.ViewCRLAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.ViewCertificateInformationAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.ViewCertificateRequestInformationAction;
+import net.sourceforge.dkartaschew.halimede.ui.util.ActionContributionItemEx;
 
 public class CADetailContextMenu implements IMenuListener {
 
@@ -98,40 +100,50 @@ public class CADetailContextMenu implements IMenuListener {
 				} catch (DatastoreLockedException e1) {
 					// NOP - should never happen.
 				}
-				manager.add(new ViewCertificateInformationAction(e, pw, editor));
-				manager.add(new UpdateCertificateCommentsAction(e, ca, caDetailsPane));
+				manager.add(toACI(new ViewCertificateInformationAction(e, pw, editor)));
+				manager.add(toACI(new UpdateCertificateCommentsAction(e, ca, caDetailsPane)));
 				if (e.getProperty(Key.revokeDate) == null) {
-					manager.add(new RevokeCertificateAction(e, ca));
+					manager.add(toACI(new RevokeCertificateAction(e, ca)));
 				}
 				if (e.getProperty(Key.csrStore) != null) {
-					manager.add(new ViewCertificateRequestInformationAction(e, editor));
+					manager.add(toACI(new ViewCertificateRequestInformationAction(e, editor)));
 				}
 			}
 			if (element instanceof ICertificateKeyPairTemplate) {
 				final ICertificateKeyPairTemplate e = (ICertificateKeyPairTemplate) element;
 				if (!caDetailsPane.getCertificateAuthority().isLocked()) {
-					manager.add(new CreateCertificateFromTemplateAction(ca, e, editor));
+					manager.add(toACI(new CreateCertificateFromTemplateAction(ca, e, editor)));
 				}
-				manager.add(new EditTemplateAction(ca, e, editor));
-				manager.add(new DeleteTemplateAction(e, ca));
+				manager.add(toACI(new EditTemplateAction(ca, e, editor)));
+				manager.add(toACI(new DeleteTemplateAction(e, ca)));
 			}
 			if (element instanceof CertificateRequestProperties) {
 				CertificateRequestProperties e = (CertificateRequestProperties) element;
-				manager.add(new ViewCertificateRequestInformationAction(e, editor));
+				manager.add(toACI(new ViewCertificateRequestInformationAction(e, editor)));
 				if (!caDetailsPane.getCertificateAuthority().isLocked()) {
-					manager.add(new CreateCertificateFromCSRAction(ca, e, editor, null));
+					manager.add(toACI(new CreateCertificateFromCSRAction(ca, e, editor, null)));
 				}
-				manager.add(new UpdateCertificateRequestsCommentsAction(e, ca, caDetailsPane));
-				manager.add(new DeleteCertificateRequestAction(e, ca, null));
+				manager.add(toACI(new UpdateCertificateRequestsCommentsAction(e, ca, caDetailsPane)));
+				manager.add(toACI(new DeleteCertificateRequestAction(e, ca, null)));
 			}
 			if (element instanceof CRLProperties) {
-				manager.add(new ViewCRLAction((CRLProperties) element, editor));
-				manager.add(new UpdateCRLCommentsAction((CRLProperties) element, ca, caDetailsPane));
+				manager.add(toACI(new ViewCRLAction((CRLProperties) element, editor)));
+				manager.add(toACI(new UpdateCRLCommentsAction((CRLProperties) element, ca, caDetailsPane)));
 			}
 			injectMenuItems(manager);
 		}
 	}
 
+	/**
+	 * Construct an Action Contribution Item.
+	 * 
+	 * @param action The action
+	 * @return An Action Contribution Item.
+	 */
+	private ActionContributionItem toACI(IAction action) {
+		return new ActionContributionItemEx(action);
+	}
+	
 	/**
 	 * Force injection of all menu items.
 	 * 
