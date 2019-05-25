@@ -15,6 +15,8 @@
         <children xsi:type="menu:HandledMenuItem" xmi:id="_dcIkwBkXEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.quit" label="Quit" command="_-cxscBkdEeiXffmC_tm0rw"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_hPg6UBkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menu.utility" label="Utilities">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_znCfwH9BEems4uQuJw18GQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.preferences" label="Preferences" command="_NzWK0Iv-EeizKMQexdsaNg"/>
+        <children xsi:type="menu:MenuSeparator" xmi:id="_6VdfkH9BEems4uQuJw18GQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menuseparator.0"/>
         <children xsi:type="menu:HandledMenuItem" xmi:id="_cz1jwBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.createcert" label="Create Self Signed Certificate" command="_0TF48BkYEeiXffmC_tm0rw">
           <parameters xmi:id="_i2JrgBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.0" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
         </children>
