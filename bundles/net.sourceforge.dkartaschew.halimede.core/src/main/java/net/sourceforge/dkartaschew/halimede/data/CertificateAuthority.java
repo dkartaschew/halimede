@@ -1364,6 +1364,7 @@ public class CertificateAuthority {
 		// If our next CRL serial is less than what we have seen update the internal settings value.
 		if (settings.getCRLSerial() <= maxCRLSerial.get()) {
 			settings.setCRLSerial(maxCRLSerial.incrementAndGet());
+			saveSettings();
 		}
 		// if seenPaths != oldPaths, we have an update.
 		if (!seenPaths.equals(oldPaths)) {
