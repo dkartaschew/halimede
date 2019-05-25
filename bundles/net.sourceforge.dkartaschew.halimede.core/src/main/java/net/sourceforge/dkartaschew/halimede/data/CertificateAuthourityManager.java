@@ -28,13 +28,18 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Singleton;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.eclipse.e4.core.di.annotations.Creatable;
 
 /**
  * Manager class for handling Certificate Authourities.
  *
  */
+@Creatable
+@Singleton
 public class CertificateAuthourityManager implements PropertyChangeListener {
 
 	/*
@@ -153,6 +158,9 @@ public class CertificateAuthourityManager implements PropertyChangeListener {
 	 */
 	public void removePropertyChangeListener(PropertyChangeListener listener) {
 		propertySupport.removePropertyChangeListener(listener);
+		if (!propertySupport.hasListeners(null)) {
+			getCertificateAuthorities().stream().forEach(CertificateAuthority::lock);
+		}
 	}
 
 	@Override

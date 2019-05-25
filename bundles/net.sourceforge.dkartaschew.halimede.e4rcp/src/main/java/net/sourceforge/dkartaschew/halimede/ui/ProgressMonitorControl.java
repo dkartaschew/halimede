@@ -122,18 +122,22 @@ public class ProgressMonitorControl {
 					@Override
 					public void done(IJobChangeEvent event) {
 						sync.syncExec(() -> {
-							if(runningTasks > 0)
+							if (runningTasks > 0)
 								runningTasks--;
 							if (runningTasks > 0) {
 								// --- some tasks are still running ---
-								progressBar.setToolTipText("Currently running " + runningTasks + " Tasks");
-								progressBar.getLblStatus().setText("Currently running " + runningTasks + " Tasks");
+								if (!progressBar.isDisposed()) {
+									progressBar.setToolTipText("Currently running " + runningTasks + " Tasks");
+									progressBar.getLblStatus().setText("Currently running " + runningTasks + " Tasks");
+								}
 
 							} else {
 								// --- all tasks are done (a reset of selection could also be done) ---
-								progressBar.getProgressBar().setToolTipText("No background progress running.");
-								progressBar.getProgressBar().setSelection(0);
-								progressBar.getLblStatus().setText("Ready...");
+								if (!progressBar.isDisposed()) {
+									progressBar.getProgressBar().setToolTipText("No background progress running.");
+									progressBar.getProgressBar().setSelection(0);
+									progressBar.getLblStatus().setText("Ready...");
+								}
 							}
 
 						});

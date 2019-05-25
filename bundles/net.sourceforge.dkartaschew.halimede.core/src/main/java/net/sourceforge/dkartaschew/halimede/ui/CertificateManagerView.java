@@ -84,7 +84,8 @@ public class CertificateManagerView implements PropertyChangeListener {
 	/**
 	 * The Certificate Authority manager.
 	 */
-	private CertificateAuthourityManager manager = new CertificateAuthourityManager();
+	@Inject
+	private CertificateAuthourityManager manager;
 
 	/**
 	 * The CA Listing Pane (The left side).
@@ -266,12 +267,13 @@ public class CertificateManagerView implements PropertyChangeListener {
 	}
 
 	/**
-	 * Lock all CA's that are present.
+	 * Re-register any listeners. 
 	 */
 	@PreDestroy
-	public void lockAllCAs() {
+	public void deregisterListeners() {
 		if (manager != null) {
-			manager.getCertificateAuthorities().stream().forEach(CertificateAuthority::lock);
+			manager.removePropertyChangeListener(this);
+			manager.removePropertyChangeListener(caDetails);
 		}
 	}
 }
