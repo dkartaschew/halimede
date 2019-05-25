@@ -47,6 +47,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.CRLNumber;
@@ -1340,6 +1341,8 @@ public class CertificateAuthority {
 		/*
 		 * CRLs
 		 */
+		// Keep a tally of the largest CRL value...
+		AtomicLong maxCRLSerial = new AtomicLong(0);
 		path = basePath.resolve(X509CRL_PATH);
 		List<CRLProperties> crlsOldValues = new ArrayList<>(crls.values());
 		oldPaths = new HashSet<>(crls.keySet());
@@ -1350,11 +1353,18 @@ public class CertificateAuthority {
 				.forEach(p -> crls.computeIfAbsent(p, (x -> {
 					try {
 						seenPaths.add(x);
-						return CRLProperties.create(this, x);
+						CRLProperties crl = CRLProperties.create(this, x);
+						maxCRLSerial.set(Math.max(maxCRLSerial.get(),
+								Long.parseLong(crl.getProperty(CRLProperties.Key.crlSerialNumber))));
+						return crl;
 					} catch (IOException e) {
 						return null;
 					}
 				})));
+		// If our next CRL serial is less than what we have seen update the internal settings value.
+		if (settings.getCRLSerial() <= maxCRLSerial.get()) {
+			settings.setCRLSerial(maxCRLSerial.incrementAndGet());
+		}
 		// if seenPaths != oldPaths, we have an update.
 		if (!seenPaths.equals(oldPaths)) {
 			crls.keySet().retainAll(seenPaths);
