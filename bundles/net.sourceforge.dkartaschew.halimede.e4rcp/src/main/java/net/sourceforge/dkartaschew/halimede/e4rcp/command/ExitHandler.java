@@ -17,15 +17,25 @@
 
 package net.sourceforge.dkartaschew.halimede.e4rcp.command;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 public class ExitHandler {
 	
 	@Execute
-	public void execute(IWorkbench workbench, Shell shell) {
+	public void execute(IWorkbench workbench, Shell shell, IEclipseContext context) {
+		// Execute the default handler if available.
+		IWindowCloseHandler handler = context.get(IWindowCloseHandler.class);
+		if (handler != null) {
+			ContextInjectionFactory.invoke(handler, Execute.class, context);
+			return;
+		}
+
 		if (MessageDialog.openConfirm(shell, "Quit", "Are you sure you wish to quit the application?")) {
 			workbench.close();
 		}
