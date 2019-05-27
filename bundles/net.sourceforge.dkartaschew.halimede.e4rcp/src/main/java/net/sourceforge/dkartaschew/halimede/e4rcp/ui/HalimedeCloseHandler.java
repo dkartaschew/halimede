@@ -53,10 +53,10 @@ public class HalimedeCloseHandler implements IWindowCloseHandler {
 			shell = context.get(Shell.class);
 		}
 		if (MessageDialog.openConfirm(shell, "Quit", "Are you sure you wish to quit the application?")) {
-			EPartService partService = context.get(EPartService.class);
+			EPartService partService = window.getContext().get(EPartService.class);
 			Collection<MPart> parts = partService.getDirtyParts();
 			if(!parts.isEmpty()) {
-				ISaveHandler saveHandler = context.get(ISaveHandler.class);
+				ISaveHandler saveHandler = window.getContext().get(ISaveHandler.class);
 				if (!saveHandler.saveParts(parts, true)) {
 					return false;
 				}
