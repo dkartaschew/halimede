@@ -15,7 +15,7 @@
  * available at https://www.gnu.org/software/classpath/license.html.
  */
 
-package net.sourceforge.dkartaschew.halimede.command;
+package net.sourceforge.dkartaschew.halimede.e4ide.command;
 
 import java.util.List;
 
@@ -33,11 +33,10 @@ import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService.PartState;
 
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
-import net.sourceforge.dkartaschew.halimede.ui.NewSelfSignedCertificateDetailsPart;
-import net.sourceforge.dkartaschew.halimede.ui.lifecycle.CAManagerProcessor;
+import net.sourceforge.dkartaschew.halimede.ui.CertificateManagerView;
 
 @SuppressWarnings("restriction")
-public class CreateCertifcate {
+public class ShowCertifcateManager {
 
 	@Inject
 	private Logger logger;
@@ -45,23 +44,28 @@ public class CreateCertifcate {
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
-	public static final String ID = "net.sourceforge.dkartaschew.halimede.handler.create.certificate";
-	
-	public static final String COMMAND_PARAM = "net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid";
+	public static final String ID = "net.sourceforge.dkartaschew.halimede.handler.show";
 
 	@Execute
 	public void execute(EPartService partService, MApplication application, EModelService modelService,
 			ParameterizedCommand command) {
-		
+
+		// See if we are already setup.
+		MPart view = partService.findPart(CertificateManagerView.ID);
+		if (view != null) {
+			logger.debug("View already active, switching to existing view instance");
+			partService.showPart(view, PartState.ACTIVATE);
+			return;
+		}
+
 		// Create a new one.
 		MPart part = MBasicFactory.INSTANCE.createPart();
-		part.setLabel(NewSelfSignedCertificateDetailsPart.LABEL);
-		part.setDescription(NewSelfSignedCertificateDetailsPart.DESCRIPTION);
-		part.setContributionURI("bundleclass://" + PluginDefaults.ID + "/" + NewSelfSignedCertificateDetailsPart.class.getName());
-		part.setElementId(NewSelfSignedCertificateDetailsPart.ID);
+		part.setLabel(CertificateManagerView.LABEL);
+		part.setDescription(CertificateManagerView.DESCRIPTION);
+		part.setContributionURI("bundleclass://" + PluginDefaults.ID + "/" + CertificateManagerView.class.getName());
+		part.setElementId(CertificateManagerView.ID);
 		part.setCloseable(true);
 		part.setToBeRendered(true);
-		part.getTags().add(CAManagerProcessor.CLOSE_TAG);
 
 		List<MPartStack> stacks = modelService.findElements(application, null, MPartStack.class, null);
 		if (stacks == null || stacks.isEmpty()) {
@@ -72,7 +76,7 @@ public class CreateCertifcate {
 		// See if we have a command parameter;
 		String editor = PluginDefaults.EDITOR;
 		if(command != null && command.getParameterMap() != null) {
-			Object ed = command.getParameterMap().get(COMMAND_PARAM);
+			Object ed = command.getParameterMap().get(PluginDefaults.COMMAND_PARAM);
 			if(ed != null && ed instanceof String) {
 				String edi = (String)ed;
 				if(!edi.isEmpty()) {
@@ -81,7 +85,7 @@ public class CreateCertifcate {
 			}
 		}
 		// Set the editor we should add to.
-		part.getTransientData().put(NewSelfSignedCertificateDetailsPart.PARTSTACK_EDITOR, editor);
+		part.getPersistedState().put(PluginDefaults.COMMAND_PARAM, editor);
 		
 		// Find the preferred part stack, otherwise just use the first one.
 		int id = 0;

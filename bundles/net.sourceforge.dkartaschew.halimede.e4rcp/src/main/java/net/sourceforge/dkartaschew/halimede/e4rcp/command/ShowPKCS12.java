@@ -15,7 +15,7 @@
  * available at https://www.gnu.org/software/classpath/license.html.
  */
 
-package net.sourceforge.dkartaschew.halimede.command;
+package net.sourceforge.dkartaschew.halimede.e4rcp.command;
 
 import java.nio.file.Paths;
 import java.security.KeyStoreException;

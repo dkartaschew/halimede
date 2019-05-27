@@ -14,10 +14,10 @@
  * with the GNU Classpath Exception which is
  * available at https://www.gnu.org/software/classpath/license.html.
  */
-
-package net.sourceforge.dkartaschew.halimede.command;
+package net.sourceforge.dkartaschew.halimede.e4ide.command;
 
 import java.nio.file.Paths;
+import java.security.cert.X509CRL;
 
 import javax.inject.Inject;
 
@@ -33,14 +33,13 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
-import net.sourceforge.dkartaschew.halimede.data.CertificateRequestProperties;
-import net.sourceforge.dkartaschew.halimede.data.ICertificateRequest;
-import net.sourceforge.dkartaschew.halimede.data.impl.CertificateRequestPKCS10;
-import net.sourceforge.dkartaschew.halimede.ui.actions.ViewCertificateRequestInformationAction;
+import net.sourceforge.dkartaschew.halimede.data.CRLProperties;
+import net.sourceforge.dkartaschew.halimede.data.X509CRLEncoder;
+import net.sourceforge.dkartaschew.halimede.ui.actions.ViewCRLAction;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
 @SuppressWarnings("restriction")
-public class ShowCSR {
+public class ShowCRL {
 	@Inject
 	private Logger logger;
 	@Inject
@@ -50,7 +49,7 @@ public class ShowCSR {
 	/**
 	 * The ID of the view as specified by the extension.
 	 */
-	public static final String ID = "net.sourceforge.dkartaschew.halimede.handler.show.csr";
+	public static final String ID = "net.sourceforge.dkartaschew.halimede.handler.show.crl";
 
 	public static final String COMMAND_PARAM = "net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid";
 
@@ -71,26 +70,27 @@ public class ShowCSR {
 
 		// Get the certificate filename...
 		FileDialog dlg = new FileDialog(shell, SWT.OPEN);
-		dlg.setText("Open CSR File");
+		dlg.setText("Open CRL File");
 		dlg.setOverwrite(true);
-		dlg.setFilterExtensions(new String[] { "*.csr", "*.*" });
-		dlg.setFilterNames(new String[] { "Certificate Request (*.csr)", "All Files (*.*)" });
+		dlg.setFilterExtensions(new String[] { "*.crl", "*.*" });
+		dlg.setFilterNames(new String[] { "Certificate Revoke List (*.crl)", "All Files (*.*)" });
 		String filename = dlg.open();
 		if (filename == null) {
 			return;
 		}
 
 		try {
-			ICertificateRequest csr = CertificateRequestPKCS10.create(Paths.get(filename));
-			CertificateRequestProperties properties = new CertificateRequestProperties(null, csr);
-			ViewCertificateRequestInformationAction action = new ViewCertificateRequestInformationAction(properties, editor);
+			X509CRL crl = X509CRLEncoder.open(Paths.get(filename));
+			CRLProperties p = new CRLProperties(null, crl);
+			ViewCRLAction action = new ViewCRLAction(p,  editor);
 			ContextInjectionFactory.inject(action, context);
 			sync.asyncExec(action);
+
 		} catch (Throwable e) {
 			logger.error(e, ExceptionUtil.getMessage(e));
 			sync.asyncExec(() -> {
-				MessageDialog.openError(shell, "Opening the CSR Failed",
-						"Opening the Certificate Request failed with the following error: " + ExceptionUtil.getMessage(e));
+				MessageDialog.openError(shell, "Opening the CRL Failed",
+						"Opening the Certificate Revoke List failed with the following error: " + ExceptionUtil.getMessage(e));
 			});
 		}
 	}

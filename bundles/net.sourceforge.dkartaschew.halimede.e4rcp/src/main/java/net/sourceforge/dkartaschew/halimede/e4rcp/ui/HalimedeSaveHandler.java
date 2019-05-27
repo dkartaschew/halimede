@@ -1,4 +1,4 @@
-package net.sourceforge.dkartaschew.halimede.ui;
+package net.sourceforge.dkartaschew.halimede.e4rcp.ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
-import net.sourceforge.dkartaschew.halimede.dialogs.ListSelectionDialog;
+import net.sourceforge.dkartaschew.halimede.e4rcp.dialogs.ListSelectionDialog;
 
 @SuppressWarnings("restriction")
 public class HalimedeSaveHandler extends PartServiceSaveHandler {

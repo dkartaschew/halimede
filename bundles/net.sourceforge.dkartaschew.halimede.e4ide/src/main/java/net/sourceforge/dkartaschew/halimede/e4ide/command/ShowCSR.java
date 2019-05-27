@@ -15,7 +15,7 @@
  * available at https://www.gnu.org/software/classpath/license.html.
  */
 
-package net.sourceforge.dkartaschew.halimede.command;
+package net.sourceforge.dkartaschew.halimede.e4ide.command;
 
 import java.nio.file.Paths;
 
@@ -47,7 +47,6 @@ public class ShowCSR {
 	private IEclipseContext context;
 	@Inject 
 	private UISynchronize sync;
-
 	/**
 	 * The ID of the view as specified by the extension.
 	 */

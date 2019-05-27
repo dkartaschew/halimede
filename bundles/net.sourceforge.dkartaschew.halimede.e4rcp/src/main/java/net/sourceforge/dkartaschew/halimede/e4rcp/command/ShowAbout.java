@@ -15,20 +15,17 @@
  * available at https://www.gnu.org/software/classpath/license.html.
  */
 
-package net.sourceforge.dkartaschew.halimede.command;
+package net.sourceforge.dkartaschew.halimede.e4rcp.command;
 
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
-public class PreferencesHandler {
+import net.sourceforge.dkartaschew.halimede.e4rcp.dialogs.AboutDialog;
+
+public class ShowAbout {
 
 	@Execute
-	public void execute(Shell shell) {
-		MessageDialog.openInformation(shell, "Preferences", //
-				"Preferences are set per Certificate Authority. " + System.lineSeparator()
-						+ "Please right-click on the Certificate Authority to "
-						+ "set the preferences for that Certificate Authority." + System.lineSeparator()
-						+ "Halimede currently does not implement a global perference system.");
+	public void showAbout(Shell shell) {
+		new AboutDialog(shell).open();
 	}
 }

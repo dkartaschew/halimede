@@ -22,7 +22,7 @@
  * http://www.vogella.com/tutorials/EclipseJobs/article.html
  * License: EPL
  */
-package net.sourceforge.dkartaschew.halimede.ui;
+package net.sourceforge.dkartaschew.halimede.e4rcp.ui;
 
 import java.util.Objects;
 

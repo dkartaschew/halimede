@@ -15,7 +15,7 @@
  * available at https://www.gnu.org/software/classpath/license.html.
  */
 
-package net.sourceforge.dkartaschew.halimede.command;
+package net.sourceforge.dkartaschew.halimede.e4rcp.command;
 
 import javax.inject.Inject;
 
@@ -30,9 +30,9 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthourityManager;
 import net.sourceforge.dkartaschew.halimede.ui.CertificateManagerView;
-import net.sourceforge.dkartaschew.halimede.ui.actions.OpenCAAction;
+import net.sourceforge.dkartaschew.halimede.ui.actions.CreateNewCAExistingMaterialAction;
 
-public class OpenCAHandler {
+public class CreateCAExistingMaterialHandler {
 
 	/**
 	 * CA Manager
@@ -61,7 +61,7 @@ public class OpenCAHandler {
 			});
 			return;
 		}
-		OpenCAAction action = new OpenCAAction(manager);
+		CreateNewCAExistingMaterialAction action = new CreateNewCAExistingMaterialAction(manager);
 		ContextInjectionFactory.inject(action, context);
 		sync.asyncExec(action);
 	}

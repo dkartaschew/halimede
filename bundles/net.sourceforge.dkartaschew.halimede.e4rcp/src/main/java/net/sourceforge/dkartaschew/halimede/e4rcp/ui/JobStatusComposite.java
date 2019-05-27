@@ -15,7 +15,7 @@
  * available at https://www.gnu.org/software/classpath/license.html.
  */
 
-package net.sourceforge.dkartaschew.halimede.ui;
+package net.sourceforge.dkartaschew.halimede.e4rcp.ui;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.layout.GridLayout;

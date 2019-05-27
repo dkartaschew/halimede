@@ -15,7 +15,7 @@
  * available at https://www.gnu.org/software/classpath/license.html.
  */
 
-package net.sourceforge.dkartaschew.halimede.command;
+package net.sourceforge.dkartaschew.halimede.e4rcp.command;
 
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.workbench.IWorkbench;

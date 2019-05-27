@@ -30,7 +30,7 @@
  * 	   Sebastian Davids <sdavids@gmx.de> - Fix for bug 90273 - [Dialogs]
  * 			ListSelectionDialog dialog alignment
  *******************************************************************************/
-package net.sourceforge.dkartaschew.halimede.dialogs;
+package net.sourceforge.dkartaschew.halimede.e4rcp.dialogs;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;

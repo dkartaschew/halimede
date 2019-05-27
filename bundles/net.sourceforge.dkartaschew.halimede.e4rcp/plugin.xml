@@ -22,7 +22,7 @@
 	     </property>
 	     <property
                name="lifeCycleURI"
-               value="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.ui.SaveHandlerProcessor">
+               value="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.e4rcp.ui.SaveHandlerProcessor">
          </property>
       </product>
     </extension>

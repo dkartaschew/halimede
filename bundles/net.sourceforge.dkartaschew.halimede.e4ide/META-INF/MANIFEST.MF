@@ -20,4 +20,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .
 Bundle-Vendor: net.sourceforge.dkartaschew.halimede
 Automatic-Module-Name: net.sourceforge.dkartaschew.halimede.e4ide
-Export-Package: net.sourceforge.dkartaschew.halimede.command
+Export-Package: net.sourceforge.dkartaschew.halimede.e4ide.command
