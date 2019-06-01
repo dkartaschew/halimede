@@ -47,7 +47,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.CRLNumber;
@@ -1174,7 +1174,7 @@ public class CertificateAuthority {
 	 * @throws IOException If storing the CA state fails.
 	 */
 	public synchronized BigInteger getNextSerialCRLNumber() throws IOException {
-		BigInteger bint = BigInteger.valueOf(settings.getAndIncrementCRLSerial());
+		BigInteger bint = settings.getAndIncrementCRLSerial();
 		saveSettings();
 		return bint;
 	}
@@ -1185,7 +1185,7 @@ public class CertificateAuthority {
 	 * @return The next serial number
 	 */
 	public BigInteger peekNextSerialCRLNumber() {
-		return BigInteger.valueOf(settings.getCRLSerial());
+		return settings.getCRLSerial();
 	}
 
 	/**
@@ -1342,7 +1342,7 @@ public class CertificateAuthority {
 		 * CRLs
 		 */
 		// Keep a tally of the largest CRL value...
-		AtomicLong maxCRLSerial = new AtomicLong(0);
+		final AtomicReference<BigInteger> maxCRLSerial = new AtomicReference<>(BigInteger.ZERO);
 		path = basePath.resolve(X509CRL_PATH);
 		List<CRLProperties> crlsOldValues = new ArrayList<>(crls.values());
 		oldPaths = new HashSet<>(crls.keySet());
@@ -1354,16 +1354,18 @@ public class CertificateAuthority {
 					try {
 						seenPaths.add(x);
 						CRLProperties crl = CRLProperties.create(this, x);
-						maxCRLSerial.set(Math.max(maxCRLSerial.get(),
-								Long.parseLong(crl.getProperty(CRLProperties.Key.crlSerialNumber))));
+						BigInteger crlSerial = new BigInteger(crl.getProperty(CRLProperties.Key.crlSerialNumber));
+						if(maxCRLSerial.get().compareTo(crlSerial) <= 0) {
+							maxCRLSerial.set(crlSerial);
+						}
 						return crl;
 					} catch (IOException e) {
 						return null;
 					}
 				})));
 		// If our next CRL serial is less than what we have seen update the internal settings value.
-		if (settings.getCRLSerial() <= maxCRLSerial.get()) {
-			settings.setCRLSerial(maxCRLSerial.incrementAndGet());
+		if (settings.getCRLSerial().compareTo(maxCRLSerial.get()) <= 0) {
+			settings.setCRLSerial(maxCRLSerial.get().add(BigInteger.ONE));
 			saveSettings();
 		}
 		// if seenPaths != oldPaths, we have an update.

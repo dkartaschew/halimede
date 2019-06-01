@@ -23,10 +23,12 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.math.BigInteger;
 import java.nio.file.Path;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
+import net.sourceforge.dkartaschew.halimede.data.persistence.BigIntegerPersistanceDelegate;
 import net.sourceforge.dkartaschew.halimede.data.persistence.UUIDPersistenceDelegate;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
 
@@ -54,6 +56,7 @@ public class CertificateAuthoritySettings {
 		try (XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(filename.toFile())))) {
 			// Add a specialised persistence delegate for UUIDs
 			encoder.setPersistenceDelegate(UUID.class, new UUIDPersistenceDelegate());
+			encoder.setPersistenceDelegate(BigInteger.class, new BigIntegerPersistanceDelegate());
 			encoder.writeObject(settings);
 		}
 	}
@@ -84,8 +87,7 @@ public class CertificateAuthoritySettings {
 	 */
 	private final AtomicLong serial = new AtomicLong(0);
 	/**
-	 * Incremental Serial denotes if we are using incremental serial (true) or
-	 * timestamp (false) as the serial.
+	 * Incremental Serial denotes if we are using incremental serial (true) or timestamp (false) as the serial.
 	 * <p>
 	 * Default is TRUE.
 	 */
@@ -105,7 +107,7 @@ public class CertificateAuthoritySettings {
 	/**
 	 * The CRL serial number.
 	 */
-	private AtomicLong crlSerial = new AtomicLong(1);
+	private BigInteger crlSerial;
 
 	/**
 	 * Default constructor for java beans.
@@ -120,6 +122,7 @@ public class CertificateAuthoritySettings {
 	 */
 	public CertificateAuthoritySettings(UUID uuid) {
 		this.uuid = uuid;
+		this.crlSerial = BigInteger.ONE;
 	}
 
 	/**
@@ -181,8 +184,32 @@ public class CertificateAuthoritySettings {
 	 * 
 	 * @return the serial
 	 */
-	public long getCRLSerial() {
-		return crlSerial.get();
+	public BigInteger getCRLSerial() {
+		/*
+		 * Do not add in code to return a valid value, allow return of null to allow proper XML serialise as JavaBean.
+		 */
+		return crlSerial;
+	}
+
+	/**
+	 * Set the current crl serial. (next in line)
+	 * 
+	 * @param serial The next serial number to use.
+	 */
+	public void setCRLSerial(BigInteger serial) {
+		if (serial == null) {
+			return;
+		}
+		if (crlSerial != null) {
+			// confirm the new serial is greater than current.
+			if (crlSerial.compareTo(serial) > 0) {
+				return; // new serial is less than current, so ignore.
+			}
+		} else if (serial.compareTo(BigInteger.ZERO) < 0) {
+			// The new serial is negative?
+			serial = BigInteger.ONE;
+		}
+		this.crlSerial = serial;
 	}
 
 	/**
@@ -191,7 +218,7 @@ public class CertificateAuthoritySettings {
 	 * @param serial The next serial number to use.
 	 */
 	public void setCRLSerial(long serial) {
-		this.crlSerial.set(serial);
+		setCRLSerial(BigInteger.valueOf(serial));
 	}
 
 	/**
@@ -250,8 +277,13 @@ public class CertificateAuthoritySettings {
 	 * 
 	 * @return The CRL serial number to use for signing.
 	 */
-	public long getAndIncrementCRLSerial() {
-		return crlSerial.getAndIncrement();
+	public BigInteger getAndIncrementCRLSerial() {
+		if (crlSerial == null) {
+			crlSerial = BigInteger.ONE;
+		}
+		BigInteger oldSerial = crlSerial;
+		crlSerial = crlSerial.add(BigInteger.ONE);
+		return oldSerial;
 	}
 
 	/**
@@ -284,8 +316,7 @@ public class CertificateAuthoritySettings {
 	/**
 	 * Set incremental serial number generation
 	 * 
-	 * @param incrementalSerial TRUE to enable incremental serial numbers or FALSE
-	 *                          for serial number to be timestamp.
+	 * @param incrementalSerial TRUE to enable incremental serial numbers or FALSE for serial number to be timestamp.
 	 */
 	public void setIncrementalSerial(boolean incrementalSerial) {
 		this.incrementalSerial = incrementalSerial;
