@@ -78,7 +78,7 @@ public class TestCertificateAuthoritySettings {
 		CertificateAuthoritySettings settings = CertificateAuthoritySettings.read(path);
 		assertEquals("My CA", settings.getDescription());
 		assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), settings.getUuid());
-		assertEquals(1497931630855l, settings.getSerial());
+		assertEquals(BigInteger.valueOf(1497931630855l), settings.getSerial());
 		assertEquals(BigInteger.valueOf(2l), settings.getCRLSerial());
 	}
 
@@ -160,17 +160,17 @@ public class TestCertificateAuthoritySettings {
 		/*
 		 * Issuing serial.
 		 */
-		assertEquals(0, settings.getAndIncrementSerial());
-		assertEquals(1, settings.getAndIncrementSerial());
-		assertEquals(2, settings.getAndIncrementSerial());
-		assertEquals(3, settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(1l), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(2l), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(3l), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(4l), settings.getAndIncrementSerial());
 
-		long next = new Random().nextLong();
+		long next = Math.abs(new Random().nextLong());
 		settings.setSerial(next);
-		assertEquals(next + 0, settings.getAndIncrementSerial());
-		assertEquals(next + 1, settings.getAndIncrementSerial());
-		assertEquals(next + 2, settings.getAndIncrementSerial());
-		assertEquals(next + 3, settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(next), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(next + 1), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(next + 2), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(next + 3), settings.getAndIncrementSerial());
 
 		/*
 		 * CRL serial.
@@ -195,6 +195,17 @@ public class TestCertificateAuthoritySettings {
 	 * @throws Exception Test failure
 	 */
 	@Test
+	public void defaultSerial() throws Exception {
+		CertificateAuthoritySettings settings = new CertificateAuthoritySettings();
+		assertEquals(BigInteger.valueOf(1l), settings.getAndIncrementSerial());
+	}
+	
+	/**
+	 * Basic test of serial number increment
+	 * 
+	 * @throws Exception Test failure
+	 */
+	@Test
 	public void timestampSerial() throws Exception {
 		CertificateAuthoritySettings settings = new CertificateAuthoritySettings(UUID.randomUUID());
 
@@ -202,33 +213,50 @@ public class TestCertificateAuthoritySettings {
 		/*
 		 * Issuing serial.
 		 */
-		assertEquals(0, settings.getAndIncrementSerial());
-		assertEquals(1, settings.getAndIncrementSerial());
-		assertEquals(2, settings.getAndIncrementSerial());
-		assertEquals(3, settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(1l), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(2l), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(3l), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(4l), settings.getAndIncrementSerial());
 
-		long next = new Random().nextLong();
+		long next = Math.abs(new Random().nextLong());
+		while(next > System.currentTimeMillis()) {
+			next = next / 2;
+		}
 		settings.setSerial(next);
-		assertEquals(next + 0, settings.getAndIncrementSerial());
-		assertEquals(next + 1, settings.getAndIncrementSerial());
-		assertEquals(next + 2, settings.getAndIncrementSerial());
-		assertEquals(next + 3, settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(next), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(next + 1), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(next + 2), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(next + 3), settings.getAndIncrementSerial());
 
 		settings.setIncrementalSerial(false);
 		assertFalse(settings.isIncrementalSerial());
 		
 		long s = System.currentTimeMillis();
-		long i = settings.getAndIncrementSerial();
+		long i = settings.getAndIncrementSerial().longValueExact();
 		long e = System.currentTimeMillis();
 		assertTrue(s <= i && i <= e);
 		
 		Thread.sleep(100);
 		
 		long s2 = System.currentTimeMillis();
-		long i2 = settings.getAndIncrementSerial();
+		long i2 = settings.getAndIncrementSerial().longValueExact();
 		long e2 = System.currentTimeMillis();
 		assertTrue(s2 <= i2 && i2 <= e2);
 		assertTrue(s2 > e);
+		
+		// Set a serial greater than current time.
+		next = e2 * 2;
+		settings.setSerial(next);
+		assertEquals(BigInteger.valueOf(next), settings.getSerial());
+		
+		assertFalse(settings.isIncrementalSerial());
+		// Even though we are using current time, last issued serial is greater
+		// than current time, so all values should be simple incrementals.
+		assertEquals(BigInteger.valueOf(next), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(next + 1), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(next + 2), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(next + 3), settings.getAndIncrementSerial());
+
 	}
 	
 	/**
@@ -296,6 +324,63 @@ public class TestCertificateAuthoritySettings {
 		assertEquals(null, settings.getCRLSerial());
 		assertEquals(BigInteger.valueOf(1), settings.getAndIncrementCRLSerial());
 		assertEquals(BigInteger.valueOf(2), settings.getCRLSerial());
+	}
+	
+	/**
+	 * Confirm that setting null as CRLSerial is a NOP.
+	 */
+	@Test
+	public void setSerialNull() {
+		CertificateAuthoritySettings settings = new CertificateAuthoritySettings();
+		settings.setSerial(BigInteger.valueOf(10));
+		assertEquals(BigInteger.valueOf(10), settings.getSerial());
+		settings.setSerial(null);
+		assertEquals(BigInteger.valueOf(10), settings.getSerial());
+	}
+	
+	/**
+	 * Confirm that setting lower serial as Serial is a NOP.
+	 */
+	@Test
+	public void setSerialLower() {
+		CertificateAuthoritySettings settings = new CertificateAuthoritySettings();
+		settings.setSerial(BigInteger.valueOf(10));
+		assertEquals(BigInteger.valueOf(10), settings.getSerial());
+		settings.setSerial(BigInteger.ONE);
+		assertEquals(BigInteger.valueOf(10), settings.getSerial());
+	}
+	
+	/**
+	 * Confirm that setting negative serial as Serial is a NOP.
+	 */
+	@Test
+	public void setSerialLowerNegative() {
+		CertificateAuthoritySettings settings = new CertificateAuthoritySettings();
+		settings.setSerial(BigInteger.valueOf(10));
+		assertEquals(BigInteger.valueOf(10), settings.getSerial());
+		settings.setSerial(BigInteger.valueOf(-10l));
+		assertEquals(BigInteger.valueOf(10), settings.getSerial());
+	}
+	
+	/**
+	 * Confirm that setting negative serial as Serial is a NOP.
+	 */
+	@Test
+	public void setSerialNegative() {
+		CertificateAuthoritySettings settings = new CertificateAuthoritySettings();
+		settings.setSerial(BigInteger.valueOf(-10l));
+		assertEquals(BigInteger.valueOf(1), settings.getSerial());
+	}
+	
+	/**
+	 * Confirm that setting negative serial as Serial is a NOP.
+	 */
+	@Test
+	public void setgetNextSerial() {
+		CertificateAuthoritySettings settings = new CertificateAuthoritySettings();
+		assertEquals(null, settings.getSerial());
+		assertEquals(BigInteger.valueOf(1), settings.getAndIncrementSerial());
+		assertEquals(BigInteger.valueOf(2), settings.getSerial());
 	}
 
 }

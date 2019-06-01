@@ -1162,7 +1162,7 @@ public class CertificateAuthority {
 	 * @throws IOException If storing the CA state fails.
 	 */
 	public synchronized BigInteger getNextSerialNumber() throws IOException {
-		BigInteger bint = BigInteger.valueOf(settings.getAndIncrementSerial());
+		BigInteger bint = settings.getAndIncrementSerial();
 		saveSettings();
 		return bint;
 	}

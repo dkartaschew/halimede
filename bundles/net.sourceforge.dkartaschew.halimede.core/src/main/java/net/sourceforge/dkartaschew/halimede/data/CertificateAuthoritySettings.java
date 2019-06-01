@@ -26,7 +26,6 @@ import java.io.FileOutputStream;
 import java.math.BigInteger;
 import java.nio.file.Path;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicLong;
 
 import net.sourceforge.dkartaschew.halimede.data.persistence.BigIntegerPersistanceDelegate;
 import net.sourceforge.dkartaschew.halimede.data.persistence.UUIDPersistenceDelegate;
@@ -85,7 +84,7 @@ public class CertificateAuthoritySettings {
 	/**
 	 * The serial number for signing.
 	 */
-	private final AtomicLong serial = new AtomicLong(0);
+	private BigInteger serial;
 	/**
 	 * Incremental Serial denotes if we are using incremental serial (true) or timestamp (false) as the serial.
 	 * <p>
@@ -123,6 +122,7 @@ public class CertificateAuthoritySettings {
 	public CertificateAuthoritySettings(UUID uuid) {
 		this.uuid = uuid;
 		this.crlSerial = BigInteger.ONE;
+		this.serial = BigInteger.ONE;
 	}
 
 	/**
@@ -166,8 +166,8 @@ public class CertificateAuthoritySettings {
 	 * 
 	 * @return the serial
 	 */
-	public long getSerial() {
-		return serial.get();
+	public BigInteger getSerial() {
+		return serial;
 	}
 
 	/**
@@ -176,7 +176,28 @@ public class CertificateAuthoritySettings {
 	 * @param serial The next serial number to use.
 	 */
 	public void setSerial(long serial) {
-		this.serial.set(serial);
+		setSerial(BigInteger.valueOf(serial));
+	}
+
+	/**
+	 * Set the current serial. (next in line)
+	 * 
+	 * @param serial The next serial number to use.
+	 */
+	public void setSerial(BigInteger serial) {
+		if (serial == null) {
+			return;
+		}
+		if (this.serial != null) {
+			// confirm the new serial is greater than current.
+			if (this.serial.compareTo(serial) > 0) {
+				return; // new serial is less than current, so ignore.
+			}
+		} else if (serial.compareTo(BigInteger.ZERO) < 0) {
+			// The new serial is negative?
+			serial = BigInteger.ONE;
+		}
+		this.serial = serial;
 	}
 
 	/**
@@ -262,13 +283,36 @@ public class CertificateAuthoritySettings {
 	 * 
 	 * @return The serial number to use for signing.
 	 */
-	public long getAndIncrementSerial() {
+	public BigInteger getAndIncrementSerial() {
+		if (serial == null) {
+			serial = BigInteger.ONE;
+		}
 		if (incrementalSerial) {
-			return serial.getAndIncrement();
+			// Perform simple increment.
+			BigInteger oldSerial = serial;
+			serial = serial.add(BigInteger.ONE);
+			return oldSerial;
 		} else {
-			final long tm = System.currentTimeMillis();
-			serial.set(tm);
-			return tm;
+			/*
+			 * Get the current timestamp.
+			 */
+			BigInteger time = BigInteger.valueOf(System.currentTimeMillis());
+			BigInteger current = serial;
+			/*
+			 * If the current timestamp is less than or equal the current serial, offer a 1 increment of current serial,
+			 * otherwise offer timestamp. This should guard against clock drift/changes, especially if the clock is
+			 * rewound. This will also guard against cases when System.currentTimeMillis() returns a negative value.
+			 * This basically ensures the serial is only ever incremented in value. (we should never generate a value
+			 * that is less than a value that has already been offered).
+			 */
+			if (time.compareTo(current) <= 0) {
+				BigInteger oldSerial = serial;
+				serial = serial.add(BigInteger.ONE);
+				return oldSerial;
+			} else {
+				serial = time;
+				return serial;
+			}
 		}
 	}
 
