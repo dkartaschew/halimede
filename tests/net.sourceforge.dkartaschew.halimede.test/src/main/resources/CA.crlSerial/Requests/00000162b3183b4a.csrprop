@@ -1,0 +1,7 @@
+#CertificateRequestProperties
+#Wed Apr 11 15:05:32 AEST 2018
+filename=00000162b3183b4a.csrprop
+subject=C\=AU,ST\=Queensland,L\=Gold Coast,O\=Internet Widgits Pty Ltd,CN\=CA Manager
+importDate=2018-04-11T05\:05\:32.491Z
+csrFilename=00000162b3183b4a.csr
+keyType=DSA_2048

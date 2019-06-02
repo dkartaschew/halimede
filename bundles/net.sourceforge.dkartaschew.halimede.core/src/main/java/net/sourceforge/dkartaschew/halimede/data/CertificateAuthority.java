@@ -1243,6 +1243,7 @@ public class CertificateAuthority {
 		/*
 		 * Issued...
 		 */
+		final AtomicReference<BigInteger> maxCertSerial = new AtomicReference<>(BigInteger.ZERO);
 		Path path = basePath.resolve(ISSUED_PATH);
 		List<IssuedCertificateProperties> oldValues = new ArrayList<>(issuedCertificates.values());
 		Set<Path> oldPaths = new HashSet<>(issuedCertificates.keySet());
@@ -1254,7 +1255,14 @@ public class CertificateAuthority {
 				.forEach(p -> issuedCertificates.computeIfAbsent(p, (x -> {
 					try {
 						seenPaths.add(x);
-						return IssuedCertificateProperties.create(this, x);
+						IssuedCertificateProperties icp =  IssuedCertificateProperties.create(this, x);
+						BigInteger serial = new BigInteger(icp.getProperty(IssuedCertificateProperties.Key.certificateSerialNumber));
+						synchronized (maxCertSerial) {
+							if (maxCertSerial.get().compareTo(serial) <= 0) {
+								maxCertSerial.set(serial);
+							}
+						}
+						return icp;
 					} catch (IOException e) {
 						return null;
 					}
@@ -1278,7 +1286,14 @@ public class CertificateAuthority {
 				.forEach(p -> revokedCertificates.computeIfAbsent(p, (x -> {
 					try {
 						seenPaths.add(x);
-						return IssuedCertificateProperties.create(this, x);
+						IssuedCertificateProperties icp =  IssuedCertificateProperties.create(this, x);
+						BigInteger serial = new BigInteger(icp.getProperty(IssuedCertificateProperties.Key.certificateSerialNumber));
+						synchronized (maxCertSerial) {
+							if (maxCertSerial.get().compareTo(serial) <= 0) {
+								maxCertSerial.set(serial);
+							}
+						}
+						return icp;
 					} catch (IOException e) {
 						return null;
 					}
@@ -1287,6 +1302,11 @@ public class CertificateAuthority {
 		if (!seenPaths.equals(oldPaths)) {
 			revokedCertificates.keySet().retainAll(seenPaths);
 			propertySupport.firePropertyChange(PROPERTY_REVOKED, oldValues, revokedCertificates.values());
+		}
+		// If our next  serial is less than what we have seen update the internal settings value.
+		if (settings.getSerial() == null || settings.getSerial().compareTo(maxCertSerial.get()) <= 0) {
+			settings.setSerial(maxCertSerial.get().add(BigInteger.ONE));
+			saveSettings();
 		}
 		/*
 		 * Requests
@@ -1355,8 +1375,10 @@ public class CertificateAuthority {
 						seenPaths.add(x);
 						CRLProperties crl = CRLProperties.create(this, x);
 						BigInteger crlSerial = new BigInteger(crl.getProperty(CRLProperties.Key.crlSerialNumber));
-						if(maxCRLSerial.get().compareTo(crlSerial) <= 0) {
-							maxCRLSerial.set(crlSerial);
+						synchronized (maxCRLSerial) {
+							if (maxCRLSerial.get().compareTo(crlSerial) <= 0) {
+								maxCRLSerial.set(crlSerial);
+							}
 						}
 						return crl;
 					} catch (IOException e) {
@@ -1364,10 +1386,11 @@ public class CertificateAuthority {
 					}
 				})));
 		// If our next CRL serial is less than what we have seen update the internal settings value.
-		if (settings.getCRLSerial().compareTo(maxCRLSerial.get()) <= 0) {
+		if (settings.getCRLSerial() == null || settings.getCRLSerial().compareTo(maxCRLSerial.get()) <= 0) {
 			settings.setCRLSerial(maxCRLSerial.get().add(BigInteger.ONE));
 			saveSettings();
 		}
+		
 		// if seenPaths != oldPaths, we have an update.
 		if (!seenPaths.equals(oldPaths)) {
 			crls.keySet().retainAll(seenPaths);

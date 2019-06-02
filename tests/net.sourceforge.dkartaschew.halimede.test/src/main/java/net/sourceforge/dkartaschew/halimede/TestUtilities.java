@@ -27,8 +27,11 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.KeyPair;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -136,6 +139,42 @@ public class TestUtilities {
 		assertNotNull(keys);
 		System.out.println(keys.getPrivate());
 		System.out.println(keys.getPublic());
+	}
+
+	public static class CopyDir extends SimpleFileVisitor<Path> {
+		private Path sourceDir;
+		private Path targetDir;
+
+		public CopyDir(Path sourceDir, Path targetDir) {
+			this.sourceDir = sourceDir;
+			this.targetDir = targetDir;
+		}
+
+		@Override
+		public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+			try {
+				Path targetFile = targetDir.resolve(sourceDir.relativize(file));
+				Files.copy(file, targetFile);
+			} catch (IOException ex) {
+				System.err.println(ex);
+			}
+			return FileVisitResult.CONTINUE;
+		}
+
+		@Override
+		public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attributes) {
+			try {
+				Path newDir = targetDir.resolve(sourceDir.relativize(dir));
+				Files.createDirectory(newDir);
+			} catch (IOException ex) {
+				System.err.println(ex);
+			}
+			return FileVisitResult.CONTINUE;
+		}
+	}
+
+	public static void copyFolder(Path sourceDir, Path targetDir) throws IOException {
+		Files.walkFileTree(sourceDir, new CopyDir(sourceDir, targetDir));
 	}
 
 }

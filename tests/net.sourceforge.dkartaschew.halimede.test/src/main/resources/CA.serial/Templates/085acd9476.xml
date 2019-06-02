@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java version="1.8.0_162" class="java.beans.XMLDecoder">
+ <object class="net.sourceforge.dkartaschew.halimede.data.impl.CertificateKeyPairTemplate">
+  <void property="creationDate">
+   <object class="java.time.ZonedDateTime" method="parse">
+    <string>2018-04-11T04:52:06.738Z[UTC]</string>
+   </object>
+  </void>
+  <void property="description">
+   <string>Template B</string>
+  </void>
+  <void property="extendedKeyUsage">
+   <object class="java.util.ArrayList">
+    <void method="add">
+     <object class="org.bouncycastle.asn1.x509.KeyPurposeId" method="getInstance">
+      <object class="net.sourceforge.dkartaschew.halimede.data.persistence.ByteArrayPersistenceDelegate" method="decode">
+       <string>BggrBgEFBQcDAw==</string>
+      </object>
+     </object>
+    </void>
+   </object>
+  </void>
+  <void property="keyType">
+   <object class="java.lang.Enum" method="valueOf">
+    <class>net.sourceforge.dkartaschew.halimede.enumeration.KeyType</class>
+    <string>GOST_3410_2012_256_A</string>
+   </object>
+  </void>
+  <void property="keyUsage">
+   <object class="org.bouncycastle.asn1.x509.KeyUsage" method="getInstance">
+    <object class="net.sourceforge.dkartaschew.halimede.data.persistence.ByteArrayPersistenceDelegate" method="decode">
+     <string>AwIHgA==</string>
+    </object>
+   </object>
+  </void>
+  <void property="subject">
+   <object class="org.bouncycastle.asn1.x500.X500Name" method="getInstance">
+    <object class="net.sourceforge.dkartaschew.halimede.data.persistence.ByteArrayPersistenceDelegate" method="decode">
+     <string>MBoxGDAWBgNVBAMMD015IE5ldyBUZW1wbGF0ZQ==</string>
+    </object>
+   </object>
+  </void>
+ </object>
+</java>

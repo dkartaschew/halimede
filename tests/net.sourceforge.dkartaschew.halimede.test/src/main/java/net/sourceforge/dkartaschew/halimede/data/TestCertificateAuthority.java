@@ -234,5 +234,54 @@ public class TestCertificateAuthority {
 	public void openMissingEmpty() throws Exception {
 		CertificateAuthority.open(Paths.get(""));
 	}
+	
+	/**
+	 * Test opening an existing CA, ensuring the serial is reset correctly.
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void autoFixIssuedSerial() throws Exception {
+		Path path = TestUtilities.getFolder("CA.serial");
+		Path dest = Paths.get(TestUtilities.TMP, "CA.serial");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+			// ensure original state.
+			CertificateAuthoritySettings settings = CertificateAuthoritySettings.read(dest.resolve(CertificateAuthoritySettings.DEFAULT_NAME));
+			assertEquals(BigInteger.valueOf(149793163), settings.getSerial());
+			
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertEquals(BigInteger.valueOf(1497931630855l), ca.getNextSerialNumber());
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
 
+	/**
+	 * Test opening an existing CA, ensuring the serial is reset correctly.
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void autoFixCRLSerial() throws Exception {
+		Path path = TestUtilities.getFolder("CA.crlSerial");
+		Path dest = Paths.get(TestUtilities.TMP, "CA.crlSerial");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+			// ensure original state.
+			CertificateAuthoritySettings settings = CertificateAuthoritySettings.read(dest.resolve(CertificateAuthoritySettings.DEFAULT_NAME));
+			assertEquals(BigInteger.valueOf(2), settings.getCRLSerial());
+			
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertEquals(BigInteger.valueOf(101), ca.getNextSerialCRLNumber());
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
 }

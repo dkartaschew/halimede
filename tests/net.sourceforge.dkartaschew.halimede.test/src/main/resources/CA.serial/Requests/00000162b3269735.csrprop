@@ -1,0 +1,7 @@
+#CertificateRequestProperties
+#Wed Apr 11 15:21:13 AEST 2018
+filename=00000162b3269735.csrprop
+subject=C\=AU,ST\=QLD,L\=Gold Coast,O\=Internet Widgits Pty Ltd,OU\=Development,CN\=user@domain.com,E\=user@domain.com
+keyType=RSA_4096
+importDate=2018-04-11T05\:21\:13.526Z
+csrFilename=00000162b3269735.csr

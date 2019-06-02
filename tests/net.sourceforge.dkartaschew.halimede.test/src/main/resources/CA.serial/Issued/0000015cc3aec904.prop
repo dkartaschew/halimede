@@ -1,0 +1,12 @@
+#IssuedCertificateProperties
+#Wed Apr 11 15:22:56 AEST 2018
+filename=0000015cc3aec904.prop
+startDate=2018-04-11T04\:53\:25.115Z
+creationDate=2018-04-11T04\:53\:25.115Z
+endDate=2019-04-11T04\:53\:25.115Z
+keyType=DSA_512
+pkcs12store=0000015cc3aec904.p12
+comments=First 
+certificateSerialNumber=1497931630852
+subject=CN\=TemplateA,E\=first.template@a.com
+description=Template A
