@@ -11,7 +11,7 @@
 
 		<eclipse-repo.url>http://download.eclipse.org/releases/2019-03</eclipse-repo.url>
 		<nebula-repo.url>http://download.eclipse.org/nebula/releases/latest</nebula-repo.url>
-		<orbit-repo.url>http://download.eclipse.org/tools/orbit/downloads/drops/R20190226160451/repository</orbit-repo.url>
+		<orbit-repo.url>http://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository</orbit-repo.url>
 
 		<tycho.version>1.4.0</tycho.version>
 		<compiler.plugin.version>3.8.0</compiler.plugin.version>

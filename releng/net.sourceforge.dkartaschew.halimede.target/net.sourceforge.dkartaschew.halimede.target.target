@@ -10,9 +10,9 @@
 		<unit id="org.eclipse.platform.sdk" version="4.11.0.I20190307-0500"/>
 	</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
-		<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20190226160451/repository"/>
-		<unit id="org.bouncycastle.bcpkix" version="1.60.0.v20181210-2057"/>
-		<unit id="org.bouncycastle.bcprov" version="1.60.0.v20181210-2057"/>
+		<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository"/>
+		<unit id="org.bouncycastle.bcpkix" version="1.61.0.v20190602-1335"/>
+		<unit id="org.bouncycastle.bcprov" version="1.61.0.v20190602-1335"/>
 	</location>
 </locations>
 </target>
