@@ -22,12 +22,12 @@ Otherwise Halimede is completely self-contained.
 
 **Notes**
 
-* Halimede includes Bouncy Castle within the core plugin, however this is
+* Halimede utilises Bouncy Castle within the core plugin, however this is
 **not** exported. If you wish to integrate with the core Certificate 
-Authority classes directly, you will need either expose the included Bouncy
-Castle packages, or provide an alternate instance via the class loader.
-* Only a single instance of the `CertificateManagerView` as a part should be 
-initialised and reused as appropriate. This ensures UI/UX consistancy.
+Authority classes directly, you will need to import Bouncy
+Castle Bundles directly. Additionally, Halimede uses the Bouncy Castle Bundles
+as downloaded directly from the central maven repository, and **not** those 
+made available via Eclipse Orbit. (These have different Bundle IDs).
 * Additional parts that Halimede add to the part stack are not persisted
 to the application's model on shutdown. This is due to these additional parts
 potentially containing passwords and/or decrypted materials.
@@ -36,3 +36,5 @@ potentially containing passwords and/or decrypted materials.
 
 The plugin works fine with Java 9 (both Oracle Java 9 and OpenJDK-9), however the 
 'java.se.ee' module needs to be available. (This is true for any Eclipse plugin running with Java 9).
+
+For Java 11+, the required bundles are automatically included with Eclipse RCP.

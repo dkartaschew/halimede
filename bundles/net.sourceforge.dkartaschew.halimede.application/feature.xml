@@ -60,14 +60,14 @@ version 2 with the GNU Classpath Exception which is available at https://www.gnu
          unpack="false"/>
 
    <plugin
-         id="org.bouncycastle.bcpkix"
+         id="bcpkix"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.bouncycastle.bcprov"
+         id="bcprov"
          download-size="0"
          install-size="0"
          version="0.0.0"
