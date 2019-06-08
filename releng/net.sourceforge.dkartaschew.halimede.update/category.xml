@@ -6,11 +6,18 @@
    <bundle id="net.sourceforge.dkartaschew.halimede.e4ide" version="1.0.0.qualifier">
       <category name="net.sourceforge.dkartaschew.halimede.update"/>
    </bundle>
+   <bundle id="bcpkix" version="1.62.0">
+      <category name="org.bouncycastle"/>
+   </bundle>
+   <bundle id="bcprov" version="1.62.0">
+      <category name="org.bouncycastle"/>
+   </bundle>
    <category-def name="net.sourceforge.dkartaschew.halimede.update" label="Halimede CA Manager">
       <description>
          Halimede Certificate Authority Manager
       </description>
    </category-def>
+   <category-def name="org.bouncycastle" label="Bouncy Castle"/>
    <repository-reference location="http://download.eclipse.org/nebula/releases/latest" enabled="true" />
    <repository-reference location="http://download.eclipse.org/tools/orbit/downloads/drops/R20190226160451/repository" enabled="true" />
 </site>

@@ -26,7 +26,16 @@ Deployment artefacts will be located in:
 * `releng/net.sourceforge.dkartaschew.halimede.update/target` and 
 * `releng/net.sourceforge.dkartaschew.halimede.product/target/products`
 
+Note: This project will utilise the required Bouncy Castle Bundles directly 
+from the local maven repository. If the required JARs are not available, build
+errors may occur. To download the required JARs/Dependencies use:
+`$ mvn dependency:get -DgroupId=org.bouncycastle -DartifactId=bcpkix-jdk15on -Dversion=1.62`
+
+This is done, as while Eclipse Orbit has the required bundles, these tend to lag 3+ months behind releases made by The Legion of the Bouncy Castle.
+
 ## Java 9+
 
 The plugin works fine with Java 9 (both Oracle Java 9 and OpenJDK-9), however the 
-'java.se.ee' module needs to be available. (This is true for any Eclipse plugin running with Java 9).
+'java.se.ee' module needs to be available. (This is true for any Eclipse plugin running with Java 9). 
+
+For Java 11+, the required bundles are automatically included in the build.
