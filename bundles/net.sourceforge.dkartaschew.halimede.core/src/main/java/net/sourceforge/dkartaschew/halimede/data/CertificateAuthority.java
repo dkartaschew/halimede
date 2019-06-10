@@ -68,6 +68,7 @@ import net.sourceforge.dkartaschew.halimede.enumeration.RevokeReasonCode;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
 import net.sourceforge.dkartaschew.halimede.exceptions.DatastoreLockedException;
 import net.sourceforge.dkartaschew.halimede.exceptions.InvalidPasswordException;
+import net.sourceforge.dkartaschew.halimede.log.IActivityLogger;
 import net.sourceforge.dkartaschew.halimede.util.DateTimeUtil;
 
 /**
@@ -95,6 +96,10 @@ public class CertificateAuthority {
 	 * The default folder name where X509CRLs are stored.
 	 */
 	final static String X509CRL_PATH = "CRLs";
+	/**
+	 * The default folder name where logs are stored.
+	 */
+	public final static String LOG_PATH = "Log";
 	/**
 	 * The default filename for the Issuers Certificate.
 	 */
@@ -186,6 +191,10 @@ public class CertificateAuthority {
 	 * Search paths.
 	 */
 	private final List<Path> searchPaths = new ArrayList<>();
+	/**
+	 * The activity logger.
+	 */
+	private final IActivityLogger logger;
 
 	/**
 	 * Create a new Certificate Authority
@@ -303,6 +312,7 @@ public class CertificateAuthority {
 		createSubFolder(basePath.resolve(TEMPLATES_PATH));
 		createSubFolder(basePath.resolve(REVOKED_PATH));
 		createSubFolder(basePath.resolve(X509CRL_PATH));
+		createSubFolder(basePath.resolve(LOG_PATH));
 		searchPaths.add(basePath);
 		searchPaths.add(basePath.resolve(ISSUED_PATH));
 		searchPaths.add(basePath.resolve(REVOKED_PATH));
@@ -318,6 +328,7 @@ public class CertificateAuthority {
 			saveSettings();
 
 		}
+		this.logger = IActivityLogger.createLogger(this);
 		refresh();
 	}
 
@@ -1519,6 +1530,13 @@ public class CertificateAuthority {
 		return filename.toString();
 	}
 
-
+	/**
+	 * Get the activity logger instance.
+	 * 
+	 * @return The activity logger.
+	 */
+	public IActivityLogger getActivityLogger() {
+		return logger;
+	}
 
 }
