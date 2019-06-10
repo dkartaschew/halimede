@@ -139,6 +139,10 @@ public class CertificateAuthority {
 	 * The emitted property for change in incrementalSerial.
 	 */
 	public static final String PROPERTY_INCREMENTAL_SERIAL = "incrementalSerial";
+	/**
+	 * The emitted property for change in enable log.
+	 */
+	public static final String PROPERTY_ENABLE_LOG = "enableLog";
 
 	/**
 	 * The base path for the CA
@@ -490,6 +494,28 @@ public class CertificateAuthority {
 		settings.setIncrementalSerial(incrementalSerial);
 		saveSettings();
 		propertySupport.firePropertyChange(PROPERTY_INCREMENTAL_SERIAL, oldValue, incrementalSerial);
+	}
+	
+	/**
+	 * Return if the activity log for this CA is enabled.
+	 * 
+	 * @return TRUE if the log is enabled.
+	 */
+	public synchronized boolean isEnableLog() {
+		return settings.isEnableLog();
+	}
+
+	/**
+	 * Set if the CA activity log is enabled or not.
+	 * 
+	 * @param enable TRUE to enable the log.
+	 * @throws IOException If saving the configuration fails.
+	 */
+	public synchronized void setEnableLog(boolean enable) throws IOException {
+		boolean oldValue = settings.isEnableLog();
+		settings.setEnableLog(enable);
+		saveSettings();
+		propertySupport.firePropertyChange(PROPERTY_ENABLE_LOG, oldValue, enable);
 	}
 	
 	/**
@@ -1492,5 +1518,7 @@ public class CertificateAuthority {
 		}
 		return filename.toString();
 	}
+
+
 
 }

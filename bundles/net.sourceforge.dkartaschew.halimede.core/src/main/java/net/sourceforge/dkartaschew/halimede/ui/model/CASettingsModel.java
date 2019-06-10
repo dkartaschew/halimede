@@ -65,6 +65,11 @@ public class CASettingsModel {
 	 * timestamp (false) as the serial.
 	 */
 	private boolean incrementalSerial;
+	
+	/**
+	 * Activity Log enable flag.
+	 */
+	private boolean enableLog;
 
 	public UUID getNodeID() {
 		return nodeID;
@@ -129,7 +134,15 @@ public class CASettingsModel {
 	public void setIncrementalSerial(boolean incrementalSerial) {
 		this.incrementalSerial = incrementalSerial;
 	}
-	
+		
+	public boolean isEnableLog() {
+		return enableLog;
+	}
+
+	public void setEnableLog(boolean enableLog) {
+		this.enableLog = enableLog;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -138,6 +151,7 @@ public class CASettingsModel {
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
 		result = prime * result + expiryDays;
 		result = prime * result + (incrementalSerial ? 1231 : 1237);
+		result = prime * result + (enableLog ? 1231 : 1237);
 		result = prime * result + ((nodeID == null) ? 0 : nodeID.hashCode());
 		result = prime * result + ((signatureAlgorithm == null) ? 0 : signatureAlgorithm.hashCode());
 		result = prime * result + Arrays.hashCode(signatureAlgorithms);
@@ -167,6 +181,8 @@ public class CASettingsModel {
 		if (expiryDays != other.expiryDays)
 			return false;
 		if (incrementalSerial != other.incrementalSerial)
+			return false;
+		if (enableLog != other.enableLog)
 			return false;
 		if (nodeID == null) {
 			if (other.nodeID != null)

@@ -107,6 +107,10 @@ public class CertificateAuthoritySettings {
 	 * The CRL serial number.
 	 */
 	private BigInteger crlSerial;
+	/**
+	 * Enable the log.
+	 */
+	private boolean enableLog;
 
 	/**
 	 * Default constructor for java beans.
@@ -123,6 +127,8 @@ public class CertificateAuthoritySettings {
 		this.uuid = uuid;
 		this.crlSerial = BigInteger.ONE;
 		this.serial = BigInteger.ONE;
+		this.enableLog = true;
+		this.incrementalSerial = true;
 	}
 
 	/**
@@ -364,6 +370,22 @@ public class CertificateAuthoritySettings {
 	 */
 	public void setIncrementalSerial(boolean incrementalSerial) {
 		this.incrementalSerial = incrementalSerial;
+	}
+	
+	/**
+	 * Is the log for the CA enabled.
+	 * @return TRUE if the log for the CA is enabled.
+	 */
+	public boolean isEnableLog() {
+		return enableLog;
+	}
+
+	/**
+	 * Set the log for the CA to be enabled/disabled.
+	 * @param enable TRUE to enable the CA log.
+	 */
+	public void setEnableLog(boolean enable) {
+		this.enableLog = enable;
 	}
 
 	/*

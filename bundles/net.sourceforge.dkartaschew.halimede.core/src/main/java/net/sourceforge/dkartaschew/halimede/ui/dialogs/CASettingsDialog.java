@@ -60,6 +60,7 @@ public class CASettingsDialog extends Dialog {
 	private ComboViewer comboViewerSigAlg;
 	private Combo comboSigAlg;
 	private Button chkIncremental;
+	private Button chkEnableLog;
 	
 	private final CASettingsModel model;
 	
@@ -163,6 +164,14 @@ public class CASettingsDialog extends Dialog {
 		chkIncremental.setSelection(model.isIncrementalSerial());
 		chkIncremental.setToolTipText("Use incremental serial numbers for issued Certificates");
 		
+		Label lblEnableLog = new Label(container, SWT.NONE);
+		lblEnableLog.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblEnableLog.setText("Enable Activity Log:");
+		
+		chkEnableLog = new Button(container, SWT.CHECK);
+		chkEnableLog.setSelection(model.isEnableLog());
+		chkEnableLog.setToolTipText("Enable Acivity Log for Certificate Authority.");
+		
 		return area;
 	}
 
@@ -236,6 +245,13 @@ public class CASettingsDialog extends Dialog {
 		IObservableValue<Boolean> serialModel = PojoProperties.value("incrementalSerial").observe(model);
 		bindingContext.bindValue(serialWidget, serialModel, null, null);
 
+		/*
+		 * Enable log
+		 */
+		IObservableValue<?> logWidget = WidgetProperties.selection().observe(chkEnableLog);
+		IObservableValue<Boolean> logModel = PojoProperties.value("enableLog").observe(model);
+		bindingContext.bindValue(logWidget, logModel, null, null);
+		
 		/*
 		 * Bind the OK button for enablement.
 		 */

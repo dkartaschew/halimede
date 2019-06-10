@@ -54,6 +54,7 @@ public class TestCertificateAuthoritySettings {
 		settings.setSignatureAlgorithm(SignatureAlgorithm.SHA512withECDSA);
 		settings.setExpiryDays(265);
 		settings.setIncrementalSerial(false);
+		settings.setEnableLog(false);
 		Path path = Paths.get(TestUtilities.TMP, CertificateAuthoritySettings.DEFAULT_NAME);
 		try {
 			CertificateAuthoritySettings.write(settings, path);
@@ -62,6 +63,7 @@ public class TestCertificateAuthoritySettings {
 			assertEquals(settings, settings2);
 			assertEquals(settings.getSerial(), settings2.getSerial());
 			assertEquals(settings.getCRLSerial(), settings2.getCRLSerial());
+			assertEquals(settings.isEnableLog(), settings2.isEnableLog());
 		} finally {
 			TestUtilities.delete(path);
 		}
