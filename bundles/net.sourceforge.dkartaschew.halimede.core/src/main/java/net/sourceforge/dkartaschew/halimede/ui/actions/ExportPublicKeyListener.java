@@ -18,6 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -78,6 +79,11 @@ public class ExportPublicKeyListener implements SelectionListener {
 		if (e.detail == SWT.ARROW) {
 			return;
 		}
+		if (this.certificate.getCertificateAuthority() != null) {
+			this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+					"Export Certificate Public Key {0}",
+					this.certificate.getProperty(Key.subject));
+		}
 		ExportInformationModel model = new ExportInformationModel();
 		model.setDialogTitle("Export Public Key");
 		model.setSaveDialogTitle("File to save Public Key Information");
@@ -97,6 +103,11 @@ public class ExportPublicKeyListener implements SelectionListener {
 					SubMonitor subMonitor = SubMonitor.convert(monitor, desc, 1);
 					if (logger != null) {
 						logger.info("Exporting to: " + model.getFilename());
+					}
+					if (this.certificate.getCertificateAuthority() != null) {
+						this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+								"Export Certificate Public Key {0} as {1}",
+								new Object[] { this.certificate.getProperty(Key.subject), model.getFilename() });
 					}
 					certificate.loadIssuedCertificate(null).createPublicKey(Paths.get(model.getFilename()), model.getEncoding());
 					subMonitor.worked(1);

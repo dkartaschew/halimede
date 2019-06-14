@@ -17,6 +17,8 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
+import java.util.logging.Level;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -82,6 +84,7 @@ public class UpdateCRLCommentsAction extends Action {
 
 	@Override
 	public void run() {
+		ca.getActivityLogger().log(Level.INFO, "CRL Comment {0}", crl.getProperty(Key.crlSerialNumber));
 		UpdateCommentDialog dialog = new UpdateCommentDialog(shell, "Comment", "CRL Comments:",
 				crl.getProperty(Key.comments));
 		if (dialog.open() == IDialogConstants.OK_ID) {
@@ -92,6 +95,7 @@ public class UpdateCRLCommentsAction extends Action {
 				try {
 					SubMonitor subMonitor = SubMonitor.convert(monitor, "Update Comments - " + desc, 1);
 					crl.setProperty(Key.comments, dialog.getValue());
+					ca.getActivityLogger().log(Level.INFO, "Updated CRL Comment {0}", crl.getProperty(Key.crlSerialNumber));
 					// Get the CA to update the backing store.
 					ca.updateCRLProperties(crl);
 					// And get the Pane to do a refresh. (simple property updates won't propagated through).

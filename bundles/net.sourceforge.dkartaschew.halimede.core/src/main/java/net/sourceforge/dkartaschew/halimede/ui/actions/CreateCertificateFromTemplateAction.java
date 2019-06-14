@@ -20,6 +20,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 import java.security.cert.X509Certificate;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -100,6 +101,8 @@ public class CreateCertificateFromTemplateAction extends Action {
 
 	@Override
 	public void run() {
+		ca.getActivityLogger().log(Level.INFO, "Start create Certificate from Template {0}", element);
+		
 		NewCertificateModel model = new NewCertificateModel(ca, element);
 
 		// Check to ensure we are not past the CA's expiry date

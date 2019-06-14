@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.security.KeyStoreException;
 import java.security.cert.CertificateEncodingException;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -84,6 +85,7 @@ public class LockUnlockAction extends Action {
 			 */
 			try {
 				node.getCertificateAuthority().unlock(null);
+				node.getCertificateAuthority().getActivityLogger().log(Level.INFO, "Unlock CA");
 				view.refresh();
 				return;
 			} catch (Throwable e) {
@@ -96,6 +98,7 @@ public class LockUnlockAction extends Action {
 			while (dialog.open() == IDialogConstants.OK_ID) {
 				try {
 					node.getCertificateAuthority().unlock(dialog.getValue());
+					node.getCertificateAuthority().getActivityLogger().log(Level.INFO, "Unlock CA");
 					view.refresh();
 					return;
 				} catch (KeyStoreException | InvalidPasswordException | CertificateEncodingException e) {
@@ -118,6 +121,7 @@ public class LockUnlockAction extends Action {
 			}
 		} else {
 			node.getCertificateAuthority().lock();
+			node.getCertificateAuthority().getActivityLogger().log(Level.INFO, "Lock CA");
 			view.refresh();
 		}
 	}

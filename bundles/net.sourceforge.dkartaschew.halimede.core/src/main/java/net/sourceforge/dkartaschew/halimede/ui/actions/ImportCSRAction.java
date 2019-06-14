@@ -17,6 +17,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -60,6 +61,7 @@ public class ImportCSRAction extends Action {
 
 	@Override
 	public void run() {
+		ca.getActivityLogger().log(Level.INFO, "Import CSR into CA");
 		FileDialog dialog = new FileDialog(shell);
 		dialog.setText("Import CSR");
 		dialog.setFilterExtensions(new String[] { "*.csr", "*.*" });
@@ -73,6 +75,7 @@ public class ImportCSRAction extends Action {
 					if (logger != null) {
 						logger.info("User selected to import CSR at location: " + path);
 					}
+					ca.getActivityLogger().log(Level.INFO, "Import CSR {0}", path);
 					CertificateRequestProperties csr = ca.addCertificateSigningRequest(Paths.get(path));
 					subMonitor.worked(1);
 					sync.asyncExec(() -> {

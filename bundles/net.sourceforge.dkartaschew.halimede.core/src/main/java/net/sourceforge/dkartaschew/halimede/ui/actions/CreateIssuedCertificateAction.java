@@ -20,6 +20,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 import java.security.cert.X509Certificate;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -127,7 +128,7 @@ public class CreateIssuedCertificateAction extends Action {
 			logger.error("No Part Stacks found, unable to add view to existing Part");
 			return;
 		}
-
+		ca.getActivityLogger().log(Level.INFO, "Start NEW Certificate");
 		// Create a new one.
 		MPart part = MBasicFactory.INSTANCE.createPart();
 		part.setLabel(NewCertificateDetailsPart.LABEL);

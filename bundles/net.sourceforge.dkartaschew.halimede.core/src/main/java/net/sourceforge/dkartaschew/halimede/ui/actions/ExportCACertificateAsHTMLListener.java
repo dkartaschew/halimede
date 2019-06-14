@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -78,6 +79,8 @@ public class ExportCACertificateAsHTMLListener implements SelectionListener {
 		if (e.detail == SWT.ARROW) {
 			return;
 		}
+		ca.getActivityLogger().log(Level.INFO, "Start Export CA Certificate as HTML");
+		
 		FileDialog dialog = new FileDialog(shell, SWT.SAVE);
 		dialog.setText("Save as HTML");
 		dialog.setOverwrite(true);
@@ -95,6 +98,7 @@ public class ExportCACertificateAsHTMLListener implements SelectionListener {
 					if (logger != null) {
 						logger.info("Exporting to: " + dir);
 					}
+					ca.getActivityLogger().log(Level.INFO, "Export CA Certificate as HTML to {0}", dir);
 					
 					CertificateRenderer model = new CertificateRenderer(ca);
 					try (PrintStream out = new PrintStream(dir, StandardCharsets.UTF_8.name())) {

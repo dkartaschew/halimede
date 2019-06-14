@@ -48,8 +48,8 @@ public class TestAuditLog {
 		log1.info("Log 1: Simple Message");
 		log2.info("Log 2: Simple Message");
 		for (int i = 0; i < 10; i++) {
-			log1.info("Log 1: Simple Message " + i);
-			log2.info("Log 2: Simple Message " + i * 2);
+			log1.log(Level.INFO, "Log 1: Simple Message {0}", i);
+			log2.log(Level.INFO, "Log 2: Simple Message {0} = {1}", new Object[] {i, i * 2});
 		}
 	}
 
@@ -68,7 +68,7 @@ public class TestAuditLog {
 				return String.format(format, ZonedDateTime.ofInstant(//
 						Instant.ofEpochMilli(lr.getMillis()), zone), //
 						lr.getLevel().getLocalizedName(), //
-						lr.getMessage());
+						formatMessage(lr));
 			}
 		});
 

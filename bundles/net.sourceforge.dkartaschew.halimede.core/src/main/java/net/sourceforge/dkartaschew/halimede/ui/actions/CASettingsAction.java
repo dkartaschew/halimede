@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.logging.Level;
 import java.security.cert.X509Certificate;
 
 import javax.inject.Inject;
@@ -70,6 +71,7 @@ public class CASettingsAction extends Action {
 	public void run() {
 		CASettingsModel model = new CASettingsModel();
 		try {
+			node.getCertificateAuthority().getActivityLogger().log(Level.INFO, "Accessing Certificate Authority Settings");
 			X509Certificate x509 = (X509Certificate) node.getCertificateAuthority().getCertificate();
 			model.setSubject(x509.getSubjectDN().getName());
 			model.setNodeID(node.getCertificateAuthority().getCertificateAuthorityID());
@@ -93,6 +95,7 @@ public class CASettingsAction extends Action {
 
 		Dialog dialog = new CASettingsDialog(shell, model);
 		if (dialog.open() == IDialogConstants.OK_ID) {
+			node.getCertificateAuthority().getActivityLogger().log(Level.INFO, "Updating Certificate Authority Settings");
 			try {
 				node.getCertificateAuthority().setDescription(model.getDescription());
 				node.getCertificateAuthority().setExpiryDays(model.getExpiryDays());

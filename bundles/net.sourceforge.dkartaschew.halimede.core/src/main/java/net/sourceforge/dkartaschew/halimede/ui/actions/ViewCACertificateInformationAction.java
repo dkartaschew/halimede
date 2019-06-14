@@ -18,6 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -112,6 +113,8 @@ public class ViewCACertificateInformationAction extends Action {
 			return;
 		}
 
+		ca.getActivityLogger().log(Level.INFO, "View CA Certificate Details");
+		
 		// Create a new one.
 		MPart part = MBasicFactory.INSTANCE.createPart();
 		String desc = Strings.trim(ca.getDescription(), PluginDefaults.PART_HEADER_LENGTH);

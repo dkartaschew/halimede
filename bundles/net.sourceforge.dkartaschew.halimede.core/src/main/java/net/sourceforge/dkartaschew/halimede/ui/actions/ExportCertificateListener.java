@@ -18,6 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -84,6 +85,12 @@ public class ExportCertificateListener implements SelectionListener {
 		if (e.detail == SWT.ARROW) {
 			return;
 		}
+		if (this.certificate.getCertificateAuthority() != null) {
+			this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+					"Export Certificate {0}",
+					 this.certificate.getProperty(Key.subject));
+		}
+		
 		ExportInformationModel model = new ExportInformationModel();
 		model.setDialogTitle("Export Certificate");
 		model.setSaveDialogTitle("File to save Certificate Information");
@@ -103,6 +110,11 @@ public class ExportCertificateListener implements SelectionListener {
 					SubMonitor subMonitor = SubMonitor.convert(monitor, desc,  1);
 					if (logger != null) {
 						logger.info("Exporting to: " + model.getFilename());
+					}
+					if (this.certificate.getCertificateAuthority() != null) {
+						this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+								"Export Certificate {0} as {1}",
+								new Object[] { this.certificate.getProperty(Key.subject), model.getFilename() });
 					}
 					if (includeFullChain) {
 						certificate.loadIssuedCertificate(null).createCertificateChain(Paths.get(model.getFilename()),

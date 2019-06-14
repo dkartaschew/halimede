@@ -17,6 +17,8 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
+import java.util.logging.Level;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -83,6 +85,7 @@ public class DeleteCertificateRequestAction extends Action implements SelectionL
 							+ "Missing Certificate Authority Instance");
 			return;
 		}
+		ca.getActivityLogger().log(Level.INFO, "Start Delete CSR {0}", element);
 		if (MessageDialog.openConfirm(shell, "Confirm Delete",
 				"Are you sure you wish to delete this Certificate Request?")) {
 			try {
@@ -106,6 +109,8 @@ public class DeleteCertificateRequestAction extends Action implements SelectionL
 								+ ExceptionUtil.getMessage(e));
 				return;
 			}
+		} else {
+			ca.getActivityLogger().log(Level.INFO, "Cancel delete CSR {0}", element);
 		}
 	}
 	

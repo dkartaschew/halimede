@@ -18,6 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -77,6 +78,7 @@ public class ExportCAPrivateKeyListener implements SelectionListener {
 		if (e.detail == SWT.ARROW) {
 			return;
 		}
+		ca.getActivityLogger().log(Level.INFO, "Export CA Private Key");
 		ExportInformationModel model = new ExportInformationModel();
 		ExportPrivateKeyDialog dialog = new ExportPrivateKeyDialog(shell, model);
 		if (dialog.open() == IDialogConstants.OK_ID) {
@@ -87,6 +89,7 @@ public class ExportCAPrivateKeyListener implements SelectionListener {
 					if (logger != null) {
 						logger.info("Exporting to: " + model.getFilename());
 					}
+					ca.getActivityLogger().log(Level.INFO, "Export CA Private Key as {0}", model.getFilename());
 					ca.exportPrivateKey(Paths.get(model.getFilename()), model.getPassword(), model.getEncoding(), model.getPkcs8Cipher());
 					subMonitor.worked(1);
 					sync.asyncExec(() -> {

@@ -18,6 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.time.ZonedDateTime;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 
@@ -57,6 +58,7 @@ public class CreateTemplateListener implements SelectionListener {
 		Job job = Job.create("Create Template - " + model.getDescription(), monitor -> {
 
 			try {
+				model.getCa().getActivityLogger().log(Level.INFO, "Start Template {0}", model.getDescription());
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Create Template - " + model.getDescription(), 1);
 				ZonedDateTime cDate = model.getCreationDate();
 				model.setCreationDate(ZonedDateTime.now(DateTimeUtil.DEFAULT_ZONE));

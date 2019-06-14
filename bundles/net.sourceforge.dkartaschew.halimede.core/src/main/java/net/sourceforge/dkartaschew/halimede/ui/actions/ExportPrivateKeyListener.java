@@ -18,6 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -78,6 +79,11 @@ public class ExportPrivateKeyListener implements SelectionListener {
 		if (e.detail == SWT.ARROW) {
 			return;
 		}
+		if (this.certificate.getCertificateAuthority() != null) {
+			this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+					"Export Certificate Private Key {0}",
+					this.certificate.getProperty(Key.subject));
+		}
 		ExportInformationModel model = new ExportInformationModel();
 		ExportPrivateKeyDialog dialog = new ExportPrivateKeyDialog(shell, model);
 		if (dialog.open() == IDialogConstants.OK_ID) {
@@ -92,6 +98,11 @@ public class ExportPrivateKeyListener implements SelectionListener {
 					SubMonitor subMonitor = SubMonitor.convert(monitor, desc, 1);
 					if (logger != null) {
 						logger.info("Exporting to: " + model.getFilename());
+					}
+					if (this.certificate.getCertificateAuthority() != null) {
+						this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+								"Export Certificate Private Key {0} as {1}",
+								new Object[] { this.certificate.getProperty(Key.subject), model.getFilename() });
 					}
 					certificate.loadIssuedCertificate(null)//
 							.createPKCS8(Paths.get(model.getFilename()), model.getPassword(), model.getEncoding(),

@@ -18,6 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -79,6 +80,10 @@ public class ExportCRLListener implements SelectionListener {
 		if (e.detail == SWT.ARROW) {
 			return;
 		}
+		if (this.crl.getCertificateAuthority() != null) {
+			this.crl.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+					"Export CRL Details {0}", this.crl.getProperty(Key.crlSerialNumber));
+		}
 		ExportInformationModel model = new ExportInformationModel();
 		model.setDialogTitle("Export CRL#" + crl.getProperty(Key.crlSerialNumber));
 		model.setSaveDialogTitle("File to save CRL Information");
@@ -93,6 +98,11 @@ public class ExportCRLListener implements SelectionListener {
 					SubMonitor subMonitor = SubMonitor.convert(monitor, desc, 1);
 					if (logger != null) {
 						logger.info("Exporting to: " + model.getFilename());
+					}
+					if (this.crl.getCertificateAuthority() != null) {
+						this.crl.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+								"Export CRL Details {0} as HTML to {1}", 
+								new Object[] { this.crl.getProperty(Key.crlSerialNumber), model.getFilename()});
 					}
 					X509CRLEncoder.create(Paths.get(model.getFilename()), model.getEncoding(), crl.getCRL());
 					subMonitor.worked(1);

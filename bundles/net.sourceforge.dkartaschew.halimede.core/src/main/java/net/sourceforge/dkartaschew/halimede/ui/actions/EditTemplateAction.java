@@ -18,6 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 
@@ -98,6 +99,8 @@ public class EditTemplateAction extends Action {
 			return;
 		}
 
+		ca.getActivityLogger().log(Level.INFO, "Start Edit Template {0}", element);
+		
 		// Create a new one.
 		String desc = Strings.trim(model.getDescription(), PluginDefaults.PART_HEADER_LENGTH);
 		MPart part = MBasicFactory.INSTANCE.createPart();

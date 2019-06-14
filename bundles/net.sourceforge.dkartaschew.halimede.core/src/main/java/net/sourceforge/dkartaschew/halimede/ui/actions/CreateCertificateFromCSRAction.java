@@ -20,6 +20,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 import java.security.cert.X509Certificate;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -118,6 +119,7 @@ public class CreateCertificateFromCSRAction extends Action implements SelectionL
 		}
 
 		try {
+			ca.getActivityLogger().log(Level.INFO, "Start create Certificate from CSR {0}", element);
 			NewCertificateModel model = new NewCertificateModel(ca, element);
 
 			// Check to ensure we are not past the CA's expiry date

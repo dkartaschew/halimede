@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -79,6 +80,10 @@ public class ExportCertificateAsTextListener implements SelectionListener {
 		if (e.detail == SWT.ARROW) {
 			return;
 		}
+		if (this.certificate.getCertificateAuthority() != null) {
+			this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+					"Export Certificate Details {0} as Text", this.certificate.getProperty(Key.subject));
+		}
 		FileDialog dialog = new FileDialog(shell, SWT.SAVE);
 		dialog.setText("Save as Text");
 		dialog.setOverwrite(true);
@@ -99,7 +104,11 @@ public class ExportCertificateAsTextListener implements SelectionListener {
 					if (logger != null) {
 						logger.info("Exporting to: " + dir);
 					}
-					
+					if (this.certificate.getCertificateAuthority() != null) {
+						this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+								"Export Certificate Details {0} as Text as {1}",
+								new Object[] { this.certificate.getProperty(Key.subject), dir });
+					}
 					CertificateRenderer model = new CertificateRenderer(certificate);
 					try (PrintStream out = new PrintStream(dir, StandardCharsets.UTF_8.name())) {
 						TextOutputRenderer renderer = new TextOutputRenderer(out);

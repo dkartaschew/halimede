@@ -18,6 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -85,6 +86,11 @@ public class ExportPKCS12Listener implements SelectionListener {
 		if (e != null && e.detail == SWT.ARROW) {
 			return;
 		}
+		if (this.certificate.getCertificateAuthority() != null) {
+			this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+					"Export Certificate {0} as PKCS#12",
+					 this.certificate.getProperty(Key.subject));
+		}
 		ExportInformationModel model = new ExportInformationModel();
 		ExportPKCS12Dialog dialog = new ExportPKCS12Dialog(shell, model);
 		if (dialog.open() == IDialogConstants.OK_ID) {
@@ -99,6 +105,11 @@ public class ExportPKCS12Listener implements SelectionListener {
 					SubMonitor subMonitor = SubMonitor.convert(monitor, desc, 1);
 					if (logger != null) {
 						logger.info("Exporting to: " + model.getFilename());
+					}
+					if (this.certificate.getCertificateAuthority() != null) {
+						this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+								"Export Certificate {0} as PKCS#12 as {1}",
+								new Object[] { this.certificate.getProperty(Key.subject), model.getFilename() });
 					}
 					String alias = certDescription + "#" + certificate.getProperty(Key.certificateSerialNumber);
 					certificate.loadIssuedCertificate(null)//

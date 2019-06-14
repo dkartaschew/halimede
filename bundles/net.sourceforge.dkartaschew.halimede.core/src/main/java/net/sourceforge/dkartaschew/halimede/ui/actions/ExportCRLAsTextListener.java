@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -79,6 +80,10 @@ public class ExportCRLAsTextListener implements SelectionListener {
 		if (e.detail == SWT.ARROW) {
 			return;
 		}
+		if (this.crl.getCertificateAuthority() != null) {
+			this.crl.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+					"Export CRL Details {0} as Text", this.crl.getProperty(Key.crlSerialNumber));
+		}
 		FileDialog dialog = new FileDialog(shell, SWT.SAVE);
 		dialog.setText("Save as Text");
 		dialog.setOverwrite(true);
@@ -94,7 +99,11 @@ public class ExportCRLAsTextListener implements SelectionListener {
 					if (logger != null) {
 						logger.info("Exporting to: " + dir);
 					}
-
+					if (this.crl.getCertificateAuthority() != null) {
+						this.crl.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+								"Export CRL Details {0} as Text to {1}", 
+								new Object[] { this.crl.getProperty(Key.crlSerialNumber), dir});
+					}
 					CRLRenderer model = new CRLRenderer(crl);
 					try (PrintStream out = new PrintStream(dir, StandardCharsets.UTF_8.name())) {
 						TextOutputRenderer renderer = new TextOutputRenderer(out);

@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -66,9 +67,9 @@ public class ExportCertificateAsHTMLListener implements SelectionListener {
 	private UISynchronize sync;
 
 	/**
-	 * Create a new export certificate private key information listener.
+	 * Create a new export certificate information listener.
 	 * 
-	 * @param certificate The Issued Certificate to export it's certificates from
+	 * @param certificate The Issued Certificate to export it's information from
 	 */
 	public ExportCertificateAsHTMLListener(IssuedCertificateProperties certificate) {
 		this.certificate = certificate;
@@ -78,6 +79,10 @@ public class ExportCertificateAsHTMLListener implements SelectionListener {
 	public void widgetSelected(SelectionEvent e) {
 		if (e.detail == SWT.ARROW) {
 			return;
+		}
+		if (this.certificate.getCertificateAuthority() != null) {
+			this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+					"Export Certificate Details {0} as HTML", this.certificate.getProperty(Key.subject));
 		}
 		FileDialog dialog = new FileDialog(shell, SWT.SAVE);
 		dialog.setText("Save as HTML");
@@ -98,6 +103,11 @@ public class ExportCertificateAsHTMLListener implements SelectionListener {
 					SubMonitor subMonitor = SubMonitor.convert(monitor, desc, 1);
 					if (logger != null) {
 						logger.info("Exporting to: " + dir);
+					}
+					if (this.certificate.getCertificateAuthority() != null) {
+						this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+								"Export Certificate Details {0} as HTML as {1}",
+								new Object[] { this.certificate.getProperty(Key.subject), dir });
 					}
 					CertificateRenderer model = new CertificateRenderer(certificate);
 					try (PrintStream out = new PrintStream(dir, StandardCharsets.UTF_8.name())) {

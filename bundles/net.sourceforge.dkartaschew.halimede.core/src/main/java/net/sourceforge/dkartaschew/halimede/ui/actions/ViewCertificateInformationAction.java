@@ -20,6 +20,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 import java.io.IOException;
 import java.security.KeyStoreException;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -200,6 +201,11 @@ public class ViewCertificateInformationAction extends Action implements Selectio
 		}
 		desc = Strings.trim(desc, PluginDefaults.PART_HEADER_LENGTH);
 
+		if (this.certificate.getCertificateAuthority() != null) {
+			this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+					"View Certificate Details {0}", this.certificate.getProperty(Key.subject));
+		}
+		
 		// Create a new one.
 		MPart part = MBasicFactory.INSTANCE.createPart();
 		part.setLabel("Certificate '" + desc + "' Details");

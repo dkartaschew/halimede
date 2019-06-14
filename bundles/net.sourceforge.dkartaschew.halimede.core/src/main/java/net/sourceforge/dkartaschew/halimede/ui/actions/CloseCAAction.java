@@ -17,6 +17,8 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
+import java.util.logging.Level;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -71,6 +73,7 @@ public class CloseCAAction extends Action {
 				logger.info("User selected to close the CA at location: "
 						+ node.getCertificateAuthority().getBasePath().toString());
 			}
+			node.getCertificateAuthority().getActivityLogger().log(Level.INFO, "Closing Certificate Authority");
 			manager.remove(node.getCertificateAuthority());
 		}
 	}

@@ -17,6 +17,8 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
+import java.util.logging.Level;
+
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.Status;
@@ -62,6 +64,7 @@ public class EditTemplateListener implements SelectionListener {
 		Job job = Job.create("Update Template - " + model.getDescription(), monitor -> {
 
 			try {
+				model.getCa().getActivityLogger().log(Level.INFO, "Update Template {0}", model.getDescription());
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Update Template - " + model.getDescription(), 1);
 				model.getCa().addTemplate(model.asTemplate());
 				subMonitor.done();

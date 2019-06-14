@@ -17,6 +17,8 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
+import java.util.logging.Level;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -82,6 +84,7 @@ public class UpdateCertificateCommentsAction extends Action {
 
 	@Override
 	public void run() {
+		ca.getActivityLogger().log(Level.INFO, "Certificate Comment {0}", certificate.getProperty(Key.subject));
 		UpdateCommentDialog dialog = new UpdateCommentDialog(shell, "Comment", "Issued Certificate Comments:", certificate.getProperty(Key.comments));
 		if (dialog.open() == IDialogConstants.OK_ID) {
 
@@ -95,6 +98,7 @@ public class UpdateCertificateCommentsAction extends Action {
 				try {
 					SubMonitor subMonitor = SubMonitor.convert(monitor, d, 1);
 					certificate.setProperty(Key.comments, dialog.getValue());
+					ca.getActivityLogger().log(Level.INFO, "Updated Certificate Comment {0}", certificate.getProperty(Key.subject));
 					// Get the CA to update the backing store.
 					ca.updateIssuedCertificateProperties(certificate);
 					// And get the Pane to do a refresh. (simple property updates won't propagated through).

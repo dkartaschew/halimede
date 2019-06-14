@@ -17,6 +17,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.time.ZonedDateTime;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -82,6 +83,7 @@ public class CreateCRLAction extends Action {
 
 	@Override
 	public void run() {
+		ca.getActivityLogger().log(Level.INFO, "Start create CRL");
 		CACRLModel model = new CACRLModel(ca.getDescription(), ca.peekNextSerialCRLNumber(),
 				ZonedDateTime.now(DateTimeUtil.DEFAULT_ZONE));
 		model.setNextDate(ZonedDateTime.now(DateTimeUtil.DEFAULT_ZONE).plusDays(ca.getExpiryDays()));
@@ -118,6 +120,8 @@ public class CreateCRLAction extends Action {
 
 			job.schedule();
 
+		} else {
+			ca.getActivityLogger().log(Level.INFO, "Cancel create CRL");
 		}
 	}
 }

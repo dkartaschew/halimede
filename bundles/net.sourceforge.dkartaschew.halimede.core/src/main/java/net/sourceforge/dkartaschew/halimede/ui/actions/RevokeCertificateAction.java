@@ -18,6 +18,8 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.time.ZonedDateTime;
+import java.util.logging.Level;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -87,7 +89,7 @@ public class RevokeCertificateAction extends Action implements SelectionListener
 
 	@Override
 	public void run() {
-
+		ca.getActivityLogger().log(Level.INFO, "Revoke Certificate");
 		QuestionDialogWithOptions dialog = new QuestionDialogWithOptions(shell, //
 				"Confirm Revoke", //
 				"Are you sure you wish to revoke this certificate?" + System.lineSeparator() //
@@ -101,6 +103,7 @@ public class RevokeCertificateAction extends Action implements SelectionListener
 				desc = certificate.getProperty(Key.subject);
 			}
 			String d = "Revoke Certificate - " + desc;
+			ca.getActivityLogger().log(Level.INFO, "Revoke Certificate {0}", desc);
 			Job job = Job.create(d, monitor -> {
 
 				try {

@@ -17,6 +17,8 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
+import java.util.logging.Level;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -72,6 +74,7 @@ public class DeleteTemplateAction extends Action {
 							+ "Missing Certificate Authority Instance");
 			return;
 		}
+		ca.getActivityLogger().log(Level.INFO, "Start Delete Template {0}", element);
 		if (MessageDialog.openConfirm(shell, "Confirm Delete", "Are you sure you wish to delete this template?")) {
 			try {
 				if (logger != null) {
@@ -90,6 +93,8 @@ public class DeleteTemplateAction extends Action {
 								+ ExceptionUtil.getMessage(e));
 				return;
 			}
+		} else {
+			ca.getActivityLogger().log(Level.INFO, "Cancel delete Template {0}", element);
 		}
 	}
 }

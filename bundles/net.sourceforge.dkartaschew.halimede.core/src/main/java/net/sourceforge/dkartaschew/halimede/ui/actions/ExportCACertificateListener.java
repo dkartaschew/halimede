@@ -18,6 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.nio.file.Paths;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -83,6 +84,7 @@ public class ExportCACertificateListener implements SelectionListener {
 		if (e.detail == SWT.ARROW) {
 			return;
 		}
+		ca.getActivityLogger().log(Level.INFO, "Export CA Certificate as CER");
 		ExportInformationModel model = new ExportInformationModel();
 		model.setDialogTitle("Export CA Certificate");
 		model.setSaveDialogTitle("File to save Certificate Information");
@@ -98,11 +100,13 @@ public class ExportCACertificateListener implements SelectionListener {
 					if (logger != null) {
 						logger.info("Exporting to: " + model.getFilename());
 					}
+					ca.getActivityLogger().log(Level.INFO, "Export CA Certificate to {0}", model.getFilename());
 					if (includeFullChain) {
 						ca.exportCertificateChain(Paths.get(model.getFilename()), model.getEncoding());
 					} else {
 						ca.exportCertificate(Paths.get(model.getFilename()), model.getEncoding());
 					}
+					
 					subMonitor.worked(1);
 					sync.asyncExec(() -> {
 						MessageDialog.openInformation(shell, "Certificate(s) Exported",

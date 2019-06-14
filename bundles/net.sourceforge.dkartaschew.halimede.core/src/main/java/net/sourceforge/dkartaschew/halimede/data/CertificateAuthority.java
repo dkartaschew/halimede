@@ -48,6 +48,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.CRLNumber;
@@ -329,6 +330,7 @@ public class CertificateAuthority {
 
 		}
 		this.logger = IActivityLogger.createLogger(this);
+		this.logger.log(Level.INFO, "Open Certificate Authority");
 		refresh();
 	}
 
@@ -409,6 +411,7 @@ public class CertificateAuthority {
 	public synchronized void lock() {
 		boolean islocked = isLocked();
 		issuerInformation = null;
+		this.logger.log(Level.INFO, "Locking Certificate Authority");
 		propertySupport.firePropertyChange(PROPERTY_UNLOCK, islocked, false);
 	}
 
@@ -426,11 +429,14 @@ public class CertificateAuthority {
 		if (!isLocked()) {
 			return;
 		}
+		this.logger.log(Level.INFO, "Requesting Unlock of Certificate Authority");
 		issuerInformation = IssuedCertificate.openPKCS12(basePath.resolve(settings.getPkcs12Filename()), password);
 		if (!CertificateFactory.isCACertificate(issuerInformation)) {
 			issuerInformation = null;
+			this.logger.log(Level.INFO, "Unlock of Certificate Authority failed.");
 			throw new IllegalArgumentException("Supplied Issuer Information is not a Certificate Authority");
 		}
+		this.logger.log(Level.INFO, "Unlocked Certificate Authority");
 		propertySupport.firePropertyChange(PROPERTY_UNLOCK, false, true);
 	}
 
@@ -453,6 +459,7 @@ public class CertificateAuthority {
 		String oldValue = settings.getDescription();
 		settings.setDescription(description);
 		saveSettings();
+		this.logger.log(Level.INFO, "Updating Certificate Authority Description {0}", description);
 		propertySupport.firePropertyChange(PROPERTY_DESCRIPTION, oldValue, description);
 	}
 
@@ -479,6 +486,7 @@ public class CertificateAuthority {
 		int oldValue = settings.getExpiryDays();
 		settings.setExpiryDays(expiry);
 		saveSettings();
+		this.logger.log(Level.INFO, "Updating Certificate Authority Expiry days {0}", expiry);
 		propertySupport.firePropertyChange(PROPERTY_EXPIRY, oldValue, expiry);
 	}
 
@@ -504,6 +512,7 @@ public class CertificateAuthority {
 		boolean oldValue = settings.isIncrementalSerial();
 		settings.setIncrementalSerial(incrementalSerial);
 		saveSettings();
+		this.logger.log(Level.INFO, "Updating Certificate Authority Incremental Serial {0}", incrementalSerial);
 		propertySupport.firePropertyChange(PROPERTY_INCREMENTAL_SERIAL, oldValue, incrementalSerial);
 	}
 	
@@ -526,6 +535,7 @@ public class CertificateAuthority {
 		boolean oldValue = settings.isEnableLog();
 		settings.setEnableLog(enable);
 		saveSettings();
+		this.logger.log(Level.INFO, "Setting Activity Log {0}", enable);
 		propertySupport.firePropertyChange(PROPERTY_ENABLE_LOG, oldValue, enable);
 	}
 	
@@ -546,6 +556,7 @@ public class CertificateAuthority {
 	 */
 	public Certificate getCertificate() throws DatastoreLockedException {
 		checkDatastoreLock();
+		this.logger.log(Level.INFO, "Access Certificate Authority Certificate");
 		return issuerInformation.getCertificateChain()[0];
 	}
 
@@ -557,6 +568,7 @@ public class CertificateAuthority {
 	 */
 	public Certificate[] getCertificateChain() throws DatastoreLockedException {
 		checkDatastoreLock();
+		this.logger.log(Level.INFO, "Access Certificate Authority Certificate Chain");
 		return issuerInformation.getCertificateChain();
 	}
 
@@ -570,6 +582,7 @@ public class CertificateAuthority {
 	 */
 	public void exportCertificate(Path filename, EncodingType encoding) throws IOException, DatastoreLockedException {
 		checkDatastoreLock();
+		this.logger.log(Level.INFO, "Export Certificate Authority Certificate to {0}", filename);
 		issuerInformation.createCertificate(filename, encoding);
 	}
 
@@ -584,6 +597,7 @@ public class CertificateAuthority {
 	public void exportCertificateChain(Path filename, EncodingType encoding)
 			throws IOException, DatastoreLockedException {
 		checkDatastoreLock();
+		this.logger.log(Level.INFO, "Export Certificate Authority Certificate Chain to {0}", filename);
 		issuerInformation.createCertificateChain(filename, encoding);
 	}
 
@@ -601,6 +615,7 @@ public class CertificateAuthority {
 	public void exportPrivateKey(Path filename, String password, EncodingType encoding, PKCS8Cipher encryptionAlg)
 			throws IOException, DatastoreLockedException {
 		checkDatastoreLock();
+		this.logger.log(Level.INFO, "Export Certificate Authority Private Key to {0}", filename);
 		issuerInformation.createPKCS8(filename, password, encoding, encryptionAlg);
 	}
 
@@ -618,6 +633,7 @@ public class CertificateAuthority {
 	public void exportPKCS12(Path filename, String password, String alias, PKCS12Cipher cipher)
 			throws IOException, DatastoreLockedException {
 		checkDatastoreLock();
+		this.logger.log(Level.INFO, "Export Certificate Authority Certificate and Keying as PKCS#12 to {0}", filename);
 		issuerInformation.createPKCS12(filename, password, alias, cipher);
 	}
 
@@ -633,6 +649,7 @@ public class CertificateAuthority {
 	public void createPublicKey(Path filename, EncodingType encoding)
 			throws IOException, IllegalStateException, DatastoreLockedException {
 		checkDatastoreLock();
+		this.logger.log(Level.INFO, "Export Certificate Authority Public Key to {0}", filename);
 		issuerInformation.createPublicKey(filename, encoding);
 	}
 
@@ -653,6 +670,7 @@ public class CertificateAuthority {
 			ZonedDateTime expiryDate) throws IOException, DatastoreLockedException, CertIOException,
 			OperatorCreationException, CertificateException {
 		checkDatastoreLock();
+		this.logger.log(Level.INFO, "Request Certificate Authority Sign Certificate Request  {0}", certRequest);
 		return CertificateFactory.signCertificateRequest(this, certRequest, startDate, expiryDate);
 	}
 
@@ -679,7 +697,7 @@ public class CertificateAuthority {
 			NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
 		// Sign the request.
 		Certificate cert = signCertificateRequest(certRequest, startDate, expiryDate);
-
+		this.logger.log(Level.INFO, "Storing Certificate  {0}", cert);
 		// Create a new certificate chain, prepending the new cert to the start of the chain.
 		Certificate[] issuerChain = issuerInformation.getCertificateChain();
 		Certificate[] chain = new Certificate[issuerChain.length + 1];
@@ -754,6 +772,7 @@ public class CertificateAuthority {
 	 * @throws Exception If storing the template fails.
 	 */
 	public void addTemplate(ICertificateKeyPairTemplate template) throws Exception {
+		this.logger.log(Level.INFO, "Storing Template  {0}", template);
 		ZonedDateTime creationDate = template.getCreationDate();
 		String filename = String.format("08%x%s", creationDate.toInstant().getEpochSecond(),
 				ICertificateKeyPairTemplate.DEFAULT_EXTENSION);
@@ -776,6 +795,7 @@ public class CertificateAuthority {
 	 * @throws Exception If removing the template fails.
 	 */
 	public void removeCertificateTemplate(ICertificateKeyPairTemplate template) throws Exception {
+		this.logger.log(Level.INFO, "Removing Template {0}", template);
 		// Find the item in the map of templates.
 		Path path = templates.entrySet().stream()//
 				.filter(e -> e.getValue() == template)//
@@ -805,6 +825,8 @@ public class CertificateAuthority {
 		}
 		// Ensure we can open the CSR
 		ICertificateRequest csr = CertificateRequestPKCS10.create(filename);
+		
+		this.logger.log(Level.INFO, "Adding CSR to Certificate Authority {0}", csr);
 
 		// It opened fine, so let's copy the file to the required location
 		Path destFilename = generateFilename(BigInteger.valueOf(System.currentTimeMillis()), //
@@ -860,6 +882,8 @@ public class CertificateAuthority {
 		if (request == null) {
 			throw new IllegalArgumentException("Missing certificate request details");
 		}
+		
+		this.logger.log(Level.INFO, "Removing CSR {0}", request);
 		// Find the item in the map of CSRs.
 		Path path = requests.entrySet().stream()//
 				.filter(e -> e.getValue() == request)//
@@ -894,6 +918,7 @@ public class CertificateAuthority {
 		if (request == null) {
 			throw new IllegalArgumentException("Missing certificate request details");
 		}
+		this.logger.log(Level.INFO, "Moving CSR {0} for Certificate {1}", new Object[] {request, newCert});
 		// Find the item in the map of CSRs.
 		Path path = requests.entrySet().stream()//
 				.filter(e -> e.getValue() == request)//
@@ -937,6 +962,7 @@ public class CertificateAuthority {
 		if (code == null) {
 			code = RevokeReasonCode.UNSPECIFIED;
 		}
+		this.logger.log(Level.INFO, "Revoke Certificate  {0} for {1}", new Object[] {certificateToRevoke, code});
 		if (certificateToRevoke.getProperty(Key.revokeDate) != null) {
 			throw new IllegalArgumentException("Certificate already revoked?");
 		}
@@ -986,6 +1012,8 @@ public class CertificateAuthority {
 	 * @throws IOException If updating the backing store fails.
 	 */
 	public void updateIssuedCertificateProperties(IssuedCertificateProperties properties) throws IOException {
+		this.logger.log(Level.INFO, "Update Certificate Properties {0}", properties);
+		
 		// Find which element this one represents.
 		Path p = issuedCertificates.entrySet().stream()//
 				.filter(e -> e.getValue().equals(properties))//
@@ -1013,6 +1041,7 @@ public class CertificateAuthority {
 	 * @throws IOException If updating the backing store fails.
 	 */
 	public void updateCertificateRequestProperties(CertificateRequestProperties properties) throws IOException {
+		this.logger.log(Level.INFO, "Update Certificate Request Properties {0}", properties);
 		// Find which element this one represents.
 		Path p = requests.entrySet().stream()//
 				.filter(e -> e.getValue().equals(properties))//
@@ -1033,6 +1062,7 @@ public class CertificateAuthority {
 	 * @throws IOException If updating the backing store fails.
 	 */
 	public void updateCRLProperties(CRLProperties properties) throws IOException {
+		this.logger.log(Level.INFO, "Update CRL Properties {0}", properties);
 		// Find which element this one represents.
 		Path p = crls.entrySet().stream()//
 				.filter(e -> e.getValue().equals(properties))//
@@ -1064,6 +1094,7 @@ public class CertificateAuthority {
 			crlExpiryDate = ZonedDateTime.now(DateTimeUtil.DEFAULT_ZONE).plusDays(getExpiryDays());
 		}
 		X509CRL crl = CertificateFactory.generateCRL(this, crlExpiryDate);
+		this.logger.log(Level.INFO, "Create CRL {0}", crl);
 		X509CRLHolder holder = new X509CRLHolder(crl.getEncoded());
 
 		X500Name issuer = holder.getIssuer();
@@ -1167,6 +1198,7 @@ public class CertificateAuthority {
 		SignatureAlgorithm oldValue = settings.getSignatureAlgorithm();
 		settings.setSignatureAlgorithm(signatureAlg);
 		saveSettings();
+		this.logger.log(Level.INFO, "Updating Certificate Authority Signature Algorithm {0}", signatureAlg);
 		propertySupport.firePropertyChange(PROPERTY_SIGNATURE, oldValue, signatureAlg);
 	}
 
@@ -1178,6 +1210,7 @@ public class CertificateAuthority {
 	 */
 	public KeyPair getKeyPair() throws DatastoreLockedException {
 		checkDatastoreLock();
+		this.logger.log(Level.INFO, "Accessing Certificate Authority Keying Material");
 		return new KeyPair(issuerInformation.getPublicKey(), issuerInformation.getPrivateKey());
 	}
 
@@ -1277,6 +1310,7 @@ public class CertificateAuthority {
 	 * @throws IOException If reading from the backing store fails.
 	 */
 	public synchronized void refresh() throws IOException {
+		this.logger.log(Level.INFO, "Refreshing Certificate Authority Datastore");
 		/*
 		 * Issued...
 		 */

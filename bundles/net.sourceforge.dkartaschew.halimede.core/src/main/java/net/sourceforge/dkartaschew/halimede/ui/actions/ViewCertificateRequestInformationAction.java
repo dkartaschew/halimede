@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -44,6 +45,7 @@ import org.eclipse.swt.widgets.Shell;
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
 import net.sourceforge.dkartaschew.halimede.data.CertificateRequestProperties;
+import net.sourceforge.dkartaschew.halimede.data.CertificateRequestProperties.Key;
 import net.sourceforge.dkartaschew.halimede.data.ICertificateRequest;
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
 import net.sourceforge.dkartaschew.halimede.data.impl.CertificateRequestPKCS10;
@@ -162,6 +164,11 @@ public class ViewCertificateRequestInformationAction extends Action implements S
 						"The Certificate Request information is missing");
 
 			}
+		}
+		
+		if (this.model.getCertificateAuthority() != null) {
+			this.model.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+					"View Certificate Request Details {0}", this.model.getProperty(Key.subject));
 		}
 
 		List<MPartStack> stacks = modelService.findElements(application, null, MPartStack.class, null);

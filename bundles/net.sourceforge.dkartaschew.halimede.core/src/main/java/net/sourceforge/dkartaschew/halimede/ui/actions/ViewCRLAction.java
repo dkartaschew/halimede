@@ -18,6 +18,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -99,6 +100,11 @@ public class ViewCRLAction extends Action implements Runnable {
 			try {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "View CRL - " + crl.getProperty(Key.crlSerialNumber).toString(), 2);
 
+				if (crl.getCertificateAuthority() != null) {
+					crl.getCertificateAuthority().getActivityLogger().log(Level.INFO,
+							"View CRL Details {0}", crl.getProperty(Key.crlSerialNumber));
+				}
+				
 				List<MPartStack> stacks = modelService.findElements(application, null, MPartStack.class, null);
 				if (stacks == null || stacks.isEmpty()) {
 					logger.error("No Part Stacks found, unable to add view to existing Part");

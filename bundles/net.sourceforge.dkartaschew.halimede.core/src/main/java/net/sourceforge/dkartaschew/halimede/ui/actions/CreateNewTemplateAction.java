@@ -17,6 +17,7 @@
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 
@@ -85,6 +86,8 @@ public class CreateNewTemplateAction extends Action {
 			return;
 		}
 
+		ca.getActivityLogger().log(Level.INFO, "Start create Template");
+		
 		// Create a new one.
 		MPart part = MBasicFactory.INSTANCE.createPart();
 		part.setLabel(TemplateDetailsPart.LABEL);

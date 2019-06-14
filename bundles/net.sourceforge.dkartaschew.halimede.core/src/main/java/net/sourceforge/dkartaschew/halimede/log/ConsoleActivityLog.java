@@ -76,7 +76,7 @@ public class ConsoleActivityLog implements IActivityLogger {
 				return String.format(TEMPLATE, ZonedDateTime.ofInstant(//
 						Instant.ofEpochMilli(lr.getMillis()), ZONE), //
 						lr.getLevel().getLocalizedName(), //
-						lr.getMessage());
+						formatMessage(lr));
 			}
 		});
 

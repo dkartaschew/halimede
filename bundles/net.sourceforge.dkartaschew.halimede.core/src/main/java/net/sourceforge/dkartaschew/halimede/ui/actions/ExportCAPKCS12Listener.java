@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 
 import java.nio.file.Paths;
 import java.security.cert.X509Certificate;
+import java.util.logging.Level;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -78,6 +79,7 @@ public class ExportCAPKCS12Listener implements SelectionListener {
 		if (e.detail == SWT.ARROW) {
 			return;
 		}
+		ca.getActivityLogger().log(Level.INFO, "Export CA Certificate as PKCS#12");
 		ExportInformationModel model = new ExportInformationModel();
 		ExportPKCS12Dialog dialog = new ExportPKCS12Dialog(shell, model);
 		if (dialog.open() == IDialogConstants.OK_ID) {
@@ -88,6 +90,7 @@ public class ExportCAPKCS12Listener implements SelectionListener {
 					if (logger != null) {
 						logger.info("Exporting to: " + model.getFilename());
 					}
+					ca.getActivityLogger().log(Level.INFO, "Export CA Certificate as PKCS#12 to {0}", model.getFilename());
 					X509Certificate c = (X509Certificate) ca.getCertificate();
 					ca.exportPKCS12(Paths.get(model.getFilename()), model.getPassword(), ca.getDescription() + "#" + c.getSerialNumber().toString(), model.getPkcs12Cipher());
 					subMonitor.worked(1);

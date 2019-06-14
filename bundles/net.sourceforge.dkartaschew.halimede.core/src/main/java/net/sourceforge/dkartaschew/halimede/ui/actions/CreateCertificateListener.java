@@ -17,6 +17,8 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.actions;
 
+import java.util.logging.Level;
+
 import javax.inject.Inject;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
@@ -88,6 +90,7 @@ public class CreateCertificateListener implements SelectionListener {
 			Job job = Job.create("Create Certificate - " + model.getDescription(), monitor -> {
 
 				try {
+					model.getCa().getActivityLogger().log(Level.INFO, "Start create Certificate");
 					part.setClosable(false);
 					SubMonitor subMonitor = SubMonitor.convert(monitor, "Create Certificate - " + model.getDescription(), 2);
 					ICertificateRequest r = model.asCertificateRequest();
