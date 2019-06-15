@@ -670,7 +670,7 @@ public class CertificateAuthority {
 			ZonedDateTime expiryDate) throws IOException, DatastoreLockedException, CertIOException,
 			OperatorCreationException, CertificateException {
 		checkDatastoreLock();
-		this.logger.log(Level.INFO, "Request Certificate Authority Sign Certificate Request  {0}", certRequest);
+		this.logger.log(Level.INFO, "Request Certificate Authority Sign Certificate Request  {0}", certRequest.getSubject());
 		return CertificateFactory.signCertificateRequest(this, certRequest, startDate, expiryDate);
 	}
 
@@ -697,7 +697,7 @@ public class CertificateAuthority {
 			NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
 		// Sign the request.
 		Certificate cert = signCertificateRequest(certRequest, startDate, expiryDate);
-		this.logger.log(Level.INFO, "Storing Certificate  {0}", cert);
+		this.logger.log(Level.INFO, "Storing Certificate  {0}", certRequest.getSubject());
 		// Create a new certificate chain, prepending the new cert to the start of the chain.
 		Certificate[] issuerChain = issuerInformation.getCertificateChain();
 		Certificate[] chain = new Certificate[issuerChain.length + 1];
@@ -826,7 +826,7 @@ public class CertificateAuthority {
 		// Ensure we can open the CSR
 		ICertificateRequest csr = CertificateRequestPKCS10.create(filename);
 		
-		this.logger.log(Level.INFO, "Adding CSR to Certificate Authority {0}", csr);
+		this.logger.log(Level.INFO, "Adding CSR to Certificate Authority {0}", csr.getSubject());
 
 		// It opened fine, so let's copy the file to the required location
 		Path destFilename = generateFilename(BigInteger.valueOf(System.currentTimeMillis()), //
@@ -883,7 +883,7 @@ public class CertificateAuthority {
 			throw new IllegalArgumentException("Missing certificate request details");
 		}
 		
-		this.logger.log(Level.INFO, "Removing CSR {0}", request);
+		this.logger.log(Level.INFO, "Removing CSR {0}", request.getProperty(CertificateRequestProperties.Key.subject));
 		// Find the item in the map of CSRs.
 		Path path = requests.entrySet().stream()//
 				.filter(e -> e.getValue() == request)//
@@ -918,7 +918,9 @@ public class CertificateAuthority {
 		if (request == null) {
 			throw new IllegalArgumentException("Missing certificate request details");
 		}
-		this.logger.log(Level.INFO, "Moving CSR {0} for Certificate {1}", new Object[] {request, newCert});
+		this.logger.log(Level.INFO, "Moving CSR {0} for Certificate {1}", 
+				new Object[] {request.getProperty(CertificateRequestProperties.Key.subject), 
+						newCert.getProperty(IssuedCertificateProperties.Key.subject)});
 		// Find the item in the map of CSRs.
 		Path path = requests.entrySet().stream()//
 				.filter(e -> e.getValue() == request)//
@@ -962,7 +964,8 @@ public class CertificateAuthority {
 		if (code == null) {
 			code = RevokeReasonCode.UNSPECIFIED;
 		}
-		this.logger.log(Level.INFO, "Revoke Certificate  {0} for {1}", new Object[] {certificateToRevoke, code});
+		this.logger.log(Level.INFO, "Revoke Certificate  {0} for {1}", 
+				new Object[] {certificateToRevoke.getProperty(IssuedCertificateProperties.Key.subject), code});
 		if (certificateToRevoke.getProperty(Key.revokeDate) != null) {
 			throw new IllegalArgumentException("Certificate already revoked?");
 		}
@@ -1012,7 +1015,8 @@ public class CertificateAuthority {
 	 * @throws IOException If updating the backing store fails.
 	 */
 	public void updateIssuedCertificateProperties(IssuedCertificateProperties properties) throws IOException {
-		this.logger.log(Level.INFO, "Update Certificate Properties {0}", properties);
+		this.logger.log(Level.INFO, "Update Certificate Properties {0}", 
+				properties.getProperty(IssuedCertificateProperties.Key.subject));
 		
 		// Find which element this one represents.
 		Path p = issuedCertificates.entrySet().stream()//
@@ -1041,7 +1045,8 @@ public class CertificateAuthority {
 	 * @throws IOException If updating the backing store fails.
 	 */
 	public void updateCertificateRequestProperties(CertificateRequestProperties properties) throws IOException {
-		this.logger.log(Level.INFO, "Update Certificate Request Properties {0}", properties);
+		this.logger.log(Level.INFO, "Update Certificate Request Properties {0}", 
+				properties.getProperty(CertificateRequestProperties.Key.subject));
 		// Find which element this one represents.
 		Path p = requests.entrySet().stream()//
 				.filter(e -> e.getValue().equals(properties))//
@@ -1062,7 +1067,7 @@ public class CertificateAuthority {
 	 * @throws IOException If updating the backing store fails.
 	 */
 	public void updateCRLProperties(CRLProperties properties) throws IOException {
-		this.logger.log(Level.INFO, "Update CRL Properties {0}", properties);
+		this.logger.log(Level.INFO, "Update CRL Properties {0}", properties.getProperty(CRLProperties.Key.crlSerialNumber));
 		// Find which element this one represents.
 		Path p = crls.entrySet().stream()//
 				.filter(e -> e.getValue().equals(properties))//
@@ -1094,7 +1099,7 @@ public class CertificateAuthority {
 			crlExpiryDate = ZonedDateTime.now(DateTimeUtil.DEFAULT_ZONE).plusDays(getExpiryDays());
 		}
 		X509CRL crl = CertificateFactory.generateCRL(this, crlExpiryDate);
-		this.logger.log(Level.INFO, "Create CRL {0}", crl);
+		this.logger.log(Level.INFO, "Create CRL {0}", crlExpiryDate);
 		X509CRLHolder holder = new X509CRLHolder(crl.getEncoded());
 
 		X500Name issuer = holder.getIssuer();
