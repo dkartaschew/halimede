@@ -23,6 +23,7 @@ import java.security.PublicKey;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
@@ -51,6 +52,17 @@ public class Strings {
 	 */
 	public static String toHexString(byte[] data) {
 		return Hex.toHexString(data);
+	}
+	
+	/**
+	 * Decode the given value as a byte array
+	 * 
+	 * @param value The value to decode.
+	 * @return The value as a byte array
+	 */
+	public static byte[] fromHexString(String value) {
+		Objects.requireNonNull(value, "No digest value");
+		return Hex.decode(value);
 	}
 
 	/**
@@ -395,4 +407,6 @@ public class Strings {
 		}
 		return "0x" + s.toString(16) + " (" + s.toString() + ")";
 	}
+
+
 }

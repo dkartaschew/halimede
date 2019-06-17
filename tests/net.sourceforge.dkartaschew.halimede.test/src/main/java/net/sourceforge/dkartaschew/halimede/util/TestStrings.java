@@ -17,6 +17,7 @@
 
 package net.sourceforge.dkartaschew.halimede.util;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -129,6 +130,21 @@ public class TestStrings {
 	@Test(expected=NullPointerException.class)
 	public void testToHexSimpleNull() {
 		Strings.toHexString(null);
+	}
+	
+	@Test
+	public void testFromHextSimple() {
+		assertArrayEquals(data, Strings.fromHexString("0001020304"));
+	}
+	
+	@Test
+	public void testFromHextSimpleEmpty() {
+		assertArrayEquals(new byte[0], Strings.fromHexString(""));
+	}
+	
+	@Test(expected=NullPointerException.class)
+	public void testFromHexSimpleNull() {
+		Strings.fromHexString(null);
 	}
 	
 	@Test
