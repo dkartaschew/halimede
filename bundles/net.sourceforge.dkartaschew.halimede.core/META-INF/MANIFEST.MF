@@ -30,6 +30,7 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .
 Export-Package: net.sourceforge.dkartaschew.halimede,
+ net.sourceforge.dkartaschew.halimede.backup,
  net.sourceforge.dkartaschew.halimede.data,
  net.sourceforge.dkartaschew.halimede.data.impl,
  net.sourceforge.dkartaschew.halimede.data.persistence,

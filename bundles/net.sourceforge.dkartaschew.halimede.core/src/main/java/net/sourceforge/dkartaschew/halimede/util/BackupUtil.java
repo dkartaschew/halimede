@@ -38,9 +38,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+
 import net.sourceforge.dkartaschew.halimede.backup.BackupManifest;
 import net.sourceforge.dkartaschew.halimede.backup.BackupManifestEntry;
-import net.sourceforge.dkartaschew.halimede.backup.IBackupProgressListener;
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
 
 /**
@@ -58,8 +59,7 @@ public class BackupUtil {
 	 * @param listener The activity listener. (may be NULL).
 	 * @throws IOException If the operation fails.
 	 */
-	public static void backup(CertificateAuthority ca, Path filename, IBackupProgressListener listener)
-			throws IOException {
+	public static void backup(CertificateAuthority ca, Path filename, IProgressMonitor listener) throws IOException {
 		Objects.requireNonNull(ca, "Certificate Authority not defined");
 		Objects.requireNonNull(filename, "Target filename not defined");
 		if (Files.exists(filename)) {
@@ -78,14 +78,16 @@ public class BackupUtil {
 			}
 		});
 
-		boolean continueActivity = true;
-		int currentFileCount = 0;
-		final int totalFileCount = entries.size();
+		boolean cancelActivity = false;
 
 		BackupManifest manifest = new BackupManifest();
 		manifest.setCreationDate(ZonedDateTime.now());
 		manifest.setUuid(ca.getCertificateAuthorityID());
 		manifest.setDescription(ca.getDescription());
+
+		if (listener != null) {
+			listener.beginTask("Backup of '" + ca.getDescription() + "'", entries.size());
+		}
 
 		try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(filename.toFile()))) {
 			zip.setComment(ca.getCertificateAuthorityID().toString());
@@ -101,9 +103,10 @@ public class BackupUtil {
 				entry = manifest.getDescription() + "/" + entry;
 
 				if (listener != null) {
-					continueActivity = listener.progress(entry, currentFileCount++, totalFileCount);
+					listener.subTask(entry);
+					cancelActivity = listener.isCanceled();
 				}
-				if (!continueActivity) {
+				if (cancelActivity) {
 					break;
 				}
 				ZipEntry e = new ZipEntry(entry);
@@ -117,6 +120,9 @@ public class BackupUtil {
 							Strings.toHexString(Digest.sha512(data))));
 				} finally {
 					zip.closeEntry();
+				}
+				if (listener != null) {
+					listener.worked(1);
 				}
 			}
 			// Add in the manifest.
@@ -133,9 +139,10 @@ public class BackupUtil {
 			}
 		} finally {
 			if (listener != null) {
-				continueActivity = listener.progress("", totalFileCount, totalFileCount);
+				listener.subTask("Complete");
+				listener.done();
 			}
-			if (!continueActivity) {
+			if (cancelActivity) {
 				Files.delete(filename);
 			}
 		}
@@ -149,20 +156,22 @@ public class BackupUtil {
 	 * @param listener The activity listener. (may be NULL).
 	 * @throws IOException If reading the backup file fails, or restoring operation fails.
 	 */
-	public static void restore(Path filename, Path destination, IBackupProgressListener listener) throws IOException {
+	public static void restore(Path filename, Path destination, IProgressMonitor listener) throws IOException {
 		Objects.requireNonNull(filename, "Backup filename not defined");
 		Objects.requireNonNull(destination, "Destination Location not defined");
-		if (!Files.exists(filename) || !Files.isReadable(filename)) {
+		if (!Files.exists(filename) || !Files.isReadable(filename) || !Files.isRegularFile(filename)) {
 			throw new IOException("Backup file '" + filename.toString() + "' does not exist or is not readable");
 		}
 		if (!Files.isDirectory(destination) || !Files.isWritable(destination)) {
 			throw new IOException("Destination Location '" + filename.toString()
 					+ "' does not exist, is not a Directory or is not writable");
 		}
-		boolean continueActivity = true;
-		int currentFileCount = 0;
-		int totalFileCount = 0;
+		boolean cancelActivity = false;
 		Path basePath = null;
+
+		if (listener != null) {
+			listener.setTaskName("Start Restoration");
+		}
 
 		// Open the zip container.
 		try (ZipFile zip = new ZipFile(filename.toFile())) {
@@ -186,13 +195,16 @@ public class BackupUtil {
 			if (Files.exists(basePath)) {
 				throw new IOException("Restore function will overwrite existing files, aborting");
 			}
-			totalFileCount = manifest.getEntries().size();
+			if (listener != null) {
+				listener.beginTask("Restoring '" + manifest.getDescription() + "'", manifest.getEntries().size());
+			}
 			for (BackupManifestEntry e : manifest.getEntries()) {
 				// Notification listener.
 				if (listener != null) {
-					continueActivity = listener.progress(e.getFilename(), currentFileCount++, totalFileCount);
+					listener.subTask(e.getFilename());
+					cancelActivity = listener.isCanceled();
 				}
-				if (!continueActivity) {
+				if (cancelActivity) {
 					break;
 				}
 
@@ -223,13 +235,18 @@ public class BackupUtil {
 					out.write(data);
 					out.flush();
 				}
+				if (listener != null) {
+					listener.worked(1);
+				}
 
 			}
 		} finally {
 			if (listener != null) {
-				continueActivity = listener.progress("", totalFileCount, totalFileCount);
+				listener.subTask("Complete");
+				listener.done();
 			}
-			if (!continueActivity) {
+
+			if (cancelActivity) {
 				// Cleanup...
 				if (basePath != null && Files.exists(basePath)) {
 					Files.walk(basePath)//
