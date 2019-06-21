@@ -22,6 +22,8 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,7 +32,10 @@ import java.security.cert.CertificateEncodingException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Random;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.junit.Test;
@@ -359,7 +364,7 @@ public class TestBackupRestore {
 			TestUtilities.cleanup(destination);
 		}
 	}
-	
+
 	@Test(expected = IOException.class)
 	public void restoreEmptyZipFile() throws IOException {
 		Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
@@ -367,7 +372,7 @@ public class TestBackupRestore {
 		Files.createFile(zipFile);
 		BackupUtil.restore(zipFile, destination, null);
 	}
-	
+
 	@Test
 	public void restoreCancelRestore() throws SecurityException, IOException, CertificateEncodingException {
 		TestMonitor monitor = new TestMonitor();
@@ -384,7 +389,7 @@ public class TestBackupRestore {
 			// Now restore the file to TMP, but cancel
 			Path destination = Paths.get(TestUtilities.TMP);
 			BackupUtil.restore(zipFile, destination, new TestMonitor(10));
-			
+
 			assertFalse(Files.exists(destination.resolve(CA_DESCRIPTION)));
 		} finally {
 			// cleanup.
@@ -392,6 +397,267 @@ public class TestBackupRestore {
 			Path destination = Paths.get(TestUtilities.TMP, CA_DESCRIPTION);
 			TestUtilities.cleanup(zipFile);
 			TestUtilities.cleanup(destination);
+		}
+	}
+
+	@Test(expected=IOException.class)
+	public void restoreMissingManifest() throws SecurityException, IOException, CertificateEncodingException {
+		try {
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(zipFile.toFile()))) {
+				String entry = "SingleEntry.bin";
+				ZipEntry e = new ZipEntry(entry);
+				try {
+					zip.putNextEntry(e);
+					byte[] data = new byte[32];
+					new Random().nextBytes(data);
+					zip.write(data, 0, data.length);
+
+				} finally {
+					zip.closeEntry();
+				}
+			}
+			BackupUtil.restore(zipFile, Paths.get(TestUtilities.TMP), null);
+		} finally {
+			// cleanup.
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			TestUtilities.cleanup(zipFile);
+		}
+	}
+	
+	@Test(expected=IOException.class)
+	public void restoreMissingZipUUID() throws IOException {
+		try {
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			BackupManifest manifest = new BackupManifest();
+			manifest.setCreationDate(ZonedDateTime.now());
+			manifest.setUuid(UUID.randomUUID());
+			manifest.setDescription("Test");
+
+			try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(zipFile.toFile()))) {
+				// No zip comment...
+				
+				createEntryAndManifest(manifest, zip);
+			}
+			BackupUtil.restore(zipFile, Paths.get(TestUtilities.TMP), null);
+		} finally {
+			// cleanup.
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			TestUtilities.cleanup(zipFile);
+		}
+	}
+	
+	@Test(expected=IOException.class)
+	public void restoreMismatchedManifestUUID() throws IOException {
+		try {
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			BackupManifest manifest = new BackupManifest();
+			manifest.setCreationDate(ZonedDateTime.now());
+			manifest.setUuid(UUID.randomUUID());
+			manifest.setDescription("Test");
+
+			try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(zipFile.toFile()))) {
+				// Set the Zip comment to be different from the manifest UUID.
+				zip.setComment(UUID.randomUUID().toString());
+				createEntryAndManifest(manifest, zip);
+			}
+			BackupUtil.restore(zipFile, Paths.get(TestUtilities.TMP), null);
+		} finally {
+			// cleanup.
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			TestUtilities.cleanup(zipFile);
+		}
+	}
+	
+	@Test(expected=IOException.class)
+	public void restoreMissingManifestUUID() throws IOException {
+		try {
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			BackupManifest manifest = new BackupManifest();
+			manifest.setCreationDate(ZonedDateTime.now());
+			//manifest.setUuid(UUID.randomUUID());
+			manifest.setDescription("Test");
+
+			try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(zipFile.toFile()))) {
+				// Set the Zip comment to be different from the manifest UUID.
+				zip.setComment(UUID.randomUUID().toString());
+				createEntryAndManifest(manifest, zip);
+			}
+			BackupUtil.restore(zipFile, Paths.get(TestUtilities.TMP), null);
+		} finally {
+			// cleanup.
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			TestUtilities.cleanup(zipFile);
+		}
+	}
+	
+	@Test(expected=IOException.class)
+	public void restoreEmptyManifestDescription() throws IOException {
+		try {
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			BackupManifest manifest = new BackupManifest();
+			manifest.setCreationDate(ZonedDateTime.now());
+			manifest.setUuid(UUID.randomUUID());
+			manifest.setDescription("");
+
+			try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(zipFile.toFile()))) {
+				// Set the Zip comment to be different from the manifest UUID.
+				zip.setComment(manifest.getUuid().toString());
+				createEntryAndManifest(manifest, zip);
+			}
+			BackupUtil.restore(zipFile, Paths.get(TestUtilities.TMP), null);
+		} finally {
+			// cleanup.
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			TestUtilities.cleanup(zipFile);
+		}
+	}
+	
+	@Test(expected=IOException.class)
+	public void restoreNullManifestDescription() throws IOException {
+		try {
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			BackupManifest manifest = new BackupManifest();
+			manifest.setCreationDate(ZonedDateTime.now());
+			manifest.setUuid(UUID.randomUUID());
+			manifest.setDescription(null);
+
+			try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(zipFile.toFile()))) {
+				zip.setComment(manifest.getUuid().toString());
+				createEntryAndManifest(manifest, zip);
+			}
+			BackupUtil.restore(zipFile, Paths.get(TestUtilities.TMP), null);
+		} finally {
+			// cleanup.
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			TestUtilities.cleanup(zipFile);
+		}
+	}
+	
+	@Test(expected=IOException.class)
+	public void restoreManifestBadDescription() throws IOException {
+		try {
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			BackupManifest manifest = new BackupManifest();
+			manifest.setCreationDate(ZonedDateTime.now());
+			manifest.setUuid(UUID.randomUUID());
+			manifest.setDescription("../etc/passwd");
+
+			try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(zipFile.toFile()))) {
+				zip.setComment(manifest.getUuid().toString());
+				createEntryAndManifest(manifest, zip);
+			}
+			BackupUtil.restore(zipFile, Paths.get(TestUtilities.TMP), null);
+		} finally {
+			// cleanup.
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			TestUtilities.cleanup(zipFile);
+		}
+	}
+	
+	@Test(expected=IOException.class)
+	public void restoreLocationExistsFolder() throws IOException {
+		try {
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			BackupManifest manifest = new BackupManifest();
+			manifest.setCreationDate(ZonedDateTime.now());
+			manifest.setUuid(UUID.randomUUID());
+			manifest.setDescription("tmp00");
+
+			try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(zipFile.toFile()))) {
+				zip.setComment(manifest.getUuid().toString());
+				createEntryAndManifest(manifest, zip);
+			}
+			
+			Files.createDirectories(Paths.get(TestUtilities.TMP, "tmp00"));
+			BackupUtil.restore(zipFile, Paths.get(TestUtilities.TMP), null);
+		} finally {
+			// cleanup.
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			TestUtilities.cleanup(zipFile);
+			TestUtilities.cleanup(Paths.get(TestUtilities.TMP, "tmp00"));
+		}
+	}
+	
+	@Test(expected=IOException.class)
+	public void restoreLocationExistsFile() throws IOException {
+		try {
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			BackupManifest manifest = new BackupManifest();
+			manifest.setCreationDate(ZonedDateTime.now());
+			manifest.setUuid(UUID.randomUUID());
+			manifest.setDescription("tmp00");
+
+			try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(zipFile.toFile()))) {
+				zip.setComment(manifest.getUuid().toString());
+				createEntryAndManifest(manifest, zip);
+			}
+			
+			Files.createFile(Paths.get(TestUtilities.TMP, "tmp00"));
+			BackupUtil.restore(zipFile, Paths.get(TestUtilities.TMP), null);
+		} finally {
+			// cleanup.
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			TestUtilities.cleanup(zipFile);
+			TestUtilities.cleanup(Paths.get(TestUtilities.TMP, "tmp00"));
+		}
+	}
+
+	@Test(expected=IOException.class)
+	public void restoreManifestTooSmall() throws IOException {
+		try {
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			BackupManifest manifest = new BackupManifest();
+			manifest.setCreationDate(ZonedDateTime.now());
+			manifest.setUuid(UUID.randomUUID());
+			manifest.setDescription("tmp00");
+
+			try (ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(zipFile.toFile()))) {
+				zip.setComment(manifest.getUuid().toString());
+				createEntryAndManifest(manifest, zip);
+			}
+			
+			BackupUtil.restore(zipFile, Paths.get(TestUtilities.TMP), null);
+		} finally {
+			// cleanup.
+			Path zipFile = Paths.get(TestUtilities.TMP, "CA.zip");
+			TestUtilities.cleanup(zipFile);
+		}
+	}
+	
+	/**
+	 * Create a single entry, and a manifest entry
+	 * @param manifest The manifest
+	 * @param zip The Zip container
+	 * @throws IOException If writing failed.
+	 */
+	private void createEntryAndManifest(BackupManifest manifest, ZipOutputStream zip) throws IOException {
+		ZipEntry e = new ZipEntry("SingleEntry.bin");
+		try {
+			zip.putNextEntry(e);
+			byte[] data = new byte[32];
+			new Random().nextBytes(data);
+			zip.write(data, 0, data.length);
+			
+			manifest.addEntry(new BackupManifestEntry(e.getName(), //
+					data.length, //
+					Strings.toHexString(Digest.sha512(data))));
+
+		} finally {
+			zip.closeEntry();
+		}
+		
+		// Add in the manifest.
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		BackupManifest.write(stream, manifest);
+
+		e = new ZipEntry(BackupUtil.MANIFEST);
+		try {
+			zip.putNextEntry(e);
+			byte[] data = stream.toByteArray();
+			zip.write(data, 0, data.length);
+		} finally {
+			zip.closeEntry();
 		}
 	}
 }

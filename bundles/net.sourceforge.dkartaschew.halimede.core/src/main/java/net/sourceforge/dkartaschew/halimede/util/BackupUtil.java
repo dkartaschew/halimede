@@ -20,10 +20,12 @@ package net.sourceforge.dkartaschew.halimede.util;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -168,6 +170,11 @@ public class BackupUtil {
 		}
 		boolean cancelActivity = false;
 		Path basePath = null;
+		try {
+			destination = destination.toAbsolutePath().normalize();
+		} catch (IOError e) {
+			throw new IOException("Destination path normalisation failed.", e);
+		}
 
 		if (listener != null) {
 			listener.setTaskName("Start Restoration");
@@ -182,18 +189,32 @@ public class BackupUtil {
 			}
 			// Read in the manifest and compare the CA UUID to the zip comment.
 			BackupManifest manifest = BackupManifest.read(zip.getInputStream(zipEntry));
-			UUID uuid = UUID.fromString(zip.getComment());
-			if (!manifest.getUuid().equals(uuid)) {
+			UUID uuid = null;
+			try {
+				uuid = UUID.fromString(zip.getComment());
+			} catch (NullPointerException | IllegalArgumentException e) {
+				throw new IOException(
+						"File does not appear to be a Halimede Backup file. " + "Missing UUID identifier.", e);
+			}
+			if (manifest.getUuid() == null || !manifest.getUuid().equals(uuid)) {
 				throw new IOException("File does not appear to be a Halimede Backup file. "
 						+ "Certificate Authority UUID doesn't match backup file UUID.");
 			}
 			// Start extraction
-			basePath = destination.resolve(manifest.getDescription()).toAbsolutePath();
+			try {
+				basePath = destination.resolve(manifest.getDescription()).toAbsolutePath().normalize();
+			} catch (NullPointerException | InvalidPathException | IOError e) {
+				throw new IOException("Invalid entry in backup manifest found", e);
+			}
 			if (!basePath.startsWith(destination)) {
 				throw new IOException("Invalid entry in backup manifest found");
 			}
 			if (Files.exists(basePath)) {
 				throw new IOException("Restore function will overwrite existing files, aborting");
+			}
+			if (manifest.getEntries().size() < 2) {
+				// We MUST have at least 2 entries...
+				throw new IOException("Backup Manifest appears malformed?");
 			}
 			if (listener != null) {
 				listener.beginTask("Restoring '" + manifest.getDescription() + "'", manifest.getEntries().size());
@@ -211,18 +232,28 @@ public class BackupUtil {
 				/*
 				 * Get the target location. Ensure the target location is strictly in the destination folder.
 				 */
-				Path target = destination.resolve(e.getFilename()).toAbsolutePath();
-				if (!target.startsWith(destination)) {
+				Path target = destination.resolve(e.getFilename()).toAbsolutePath().normalize();
+				if (!target.startsWith(basePath)) {
 					throw new IOException("Invalid entry in backup file found");
+				}
+				zipEntry = zip.getEntry(e.getFilename());
+				if (zipEntry == null) {
+					throw new IOException("Invalid entry in backup file found. Backup Container is missing entry '"
+							+ e.getFilename() + "'");
+				}
+				if (zipEntry.getSize() != e.getSize()) {
+					throw new IOException("Invalid entry in backup file found. File entry size is different for entry '"
+							+ e.getFilename() + "'");
 				}
 				if (!Files.exists(target.getParent())) {
 					Files.createDirectories(target.getParent());
 				}
+
 				/*
 				 * Extract the contents of file, verify the contents, and then write out...
 				 */
 				try (FileOutputStream out = new FileOutputStream(target.toFile(), false);
-						InputStream in = zip.getInputStream(zip.getEntry(e.getFilename()))) {
+						InputStream in = zip.getInputStream(zipEntry)) {
 					byte[] data = new byte[(int) e.getSize()];
 					int read = in.read(data);
 					if (read != e.getSize()) {
