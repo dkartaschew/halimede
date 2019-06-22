@@ -214,6 +214,7 @@ public class BackupUtil {
 			}
 			if (manifest.getEntries().size() < 2) {
 				// We MUST have at least 2 entries...
+				cancelActivity = true;
 				throw new IOException("Backup Manifest appears malformed?");
 			}
 			if (listener != null) {
@@ -232,16 +233,24 @@ public class BackupUtil {
 				/*
 				 * Get the target location. Ensure the target location is strictly in the destination folder.
 				 */
-				Path target = destination.resolve(e.getFilename()).toAbsolutePath().normalize();
-				if (!target.startsWith(basePath)) {
+				String entry = e.getFilename();
+				if (entry == null || entry.trim().isEmpty()) {
+					cancelActivity = true;
 					throw new IOException("Invalid entry in backup file found");
 				}
-				zipEntry = zip.getEntry(e.getFilename());
+				Path target = destination.resolve(entry).toAbsolutePath().normalize();
+				if (!target.startsWith(basePath)) {
+					cancelActivity = true;
+					throw new IOException("Invalid entry in backup file found");
+				}
+				zipEntry = zip.getEntry(entry);
 				if (zipEntry == null) {
+					cancelActivity = true;
 					throw new IOException("Invalid entry in backup file found. Backup Container is missing entry '"
 							+ e.getFilename() + "'");
 				}
 				if (zipEntry.getSize() != e.getSize()) {
+					cancelActivity = true;
 					throw new IOException("Invalid entry in backup file found. File entry size is different for entry '"
 							+ e.getFilename() + "'");
 				}
@@ -255,12 +264,14 @@ public class BackupUtil {
 				try (FileOutputStream out = new FileOutputStream(target.toFile(), false);
 						InputStream in = zip.getInputStream(zipEntry)) {
 					byte[] data = new byte[(int) e.getSize()];
-					int read = in.read(data);
+					int read = read(in, data);
 					if (read != e.getSize()) {
+						cancelActivity = true;
 						throw new IOException("Entry '" + e.getFilename() + "' not read fully?");
 					}
 					String sha512 = Strings.toHexString(Digest.sha512(data));
 					if (!sha512.equalsIgnoreCase(e.getSha512())) {
+						cancelActivity = true;
 						throw new IOException("Entry '" + e.getFilename() + "' fails digest verification?");
 					}
 					out.write(data);
@@ -287,6 +298,31 @@ public class BackupUtil {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Read from the input stream filling the buffer until EOF.
+	 * 
+	 * @param in The Inputstream to read from.
+	 * @param data The data buffer to read into.
+	 * @return The number of bytes read.
+	 * @throws IOException If reading from the stream fails.
+	 */
+	private static int read(InputStream in, byte[] data) throws IOException {
+		int toRead = data.length;
+		int offset = 0;
+		int read = 0;
+		while (toRead > 0) {
+			int r = in.read(data, offset, data.length - offset);
+			if (r == -1) {
+				// EOF
+				return read;
+			}
+			offset += r;
+			toRead -= r;
+			read += r;
+		}
+		return read;
 	}
 
 }
