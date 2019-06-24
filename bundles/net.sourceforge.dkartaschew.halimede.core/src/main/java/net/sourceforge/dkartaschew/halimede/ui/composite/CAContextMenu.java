@@ -43,6 +43,7 @@ import net.sourceforge.dkartaschew.halimede.ui.actions.ImportCSRAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.LockUnlockAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.OpenCAAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.ViewCACertificateInformationAction;
+import net.sourceforge.dkartaschew.halimede.ui.actions.BackupCAAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.CASettingsAction;
 import net.sourceforge.dkartaschew.halimede.ui.node.CertificateAuthorityElement;
 import net.sourceforge.dkartaschew.halimede.ui.node.CertificateAuthorityNode;
@@ -99,6 +100,7 @@ public class CAContextMenu implements IMenuListener {
 					manager.add(toACI(new CASettingsAction(element)));
 				}
 				manager.add(toACI(new LockUnlockAction(viewer, element)));
+				manager.add(toACI(new BackupCAAction(element)));
 				manager.add(toACI(new CloseCAAction(this.manager, element)));
 				manager.add(toACI(new DeleteCAAction(this.manager, element)));
 				manager.add(new Separator());

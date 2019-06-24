@@ -501,7 +501,7 @@ Certificate.
 
 ### Certificate Templates
 
-Halimede during Certificate Creation, create a Template based on the current
+Halimede during Certificate Creation, can create a Template based on the current
 input in Certificate Details pane.
 
 To create a new Template, perform:
@@ -530,8 +530,22 @@ the appropriate option from the menu.
 
 ### Backup and Restoration
 
+Halimede provides simple methods to backup and restore the Certificate
+Authority to/from ZIP files. 
+
+To backup the Certificate Authority, perform:
+
+1. Right-click on the Certificate Authority, and select "Backup Certificate Authority".
+2. Select the file to backup to, and click on "Save".
+
+A progress dialog will be displayed during the operation.
+
+#### Alternative method
+
 All data files for each Certificate Authority are contained with the single
 nominated folder which hosts the Certificate Authority.
+
+Therefore backup can be performed by simply archiving/copying the folder.
 
 Note: Recovery of passwords for any keying material for a Certificate 
 Authority is currently not possible. (Unless you know of a method of 

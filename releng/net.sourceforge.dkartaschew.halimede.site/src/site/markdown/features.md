@@ -340,3 +340,15 @@ For data stored in byte array formats, these are base64 encoded before storage.
 Some fields in particular Subject, KeyUsage and Subject Alternate Names are 
 stored in ASN.1 format when required (base64 encoded).
 
+### Backup File Format
+
+The default Backup file format is a simple Zip container with the Certificate
+Authority contents included. (All entries are compressed).
+
+An additional `manifest.xml` file is included containing a complete
+manifest of all files, including file sizes and SHA512 digests for integrity.
+
+The Zip container will also have a Zip Comment equal to the UUID of the 
+Certificate Authority to add as an additional marker as a valid backup
+file.
+
