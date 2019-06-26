@@ -2,6 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
 	<extension id="certmgrext.e4rcp" point="org.eclipse.e4.workbench.model">
-	    <fragment apply="notexists" uri="net.sourceforge.dkartaschew.halimede.e4ide.e4xmi" />
+	    <fragment apply="always" uri="net.sourceforge.dkartaschew.halimede.e4ide.e4xmi" />
 	</extension>
 </plugin>
