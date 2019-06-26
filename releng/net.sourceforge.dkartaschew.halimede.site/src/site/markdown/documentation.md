@@ -540,6 +540,15 @@ To backup the Certificate Authority, perform:
 
 A progress dialog will be displayed during the operation.
 
+To restore a Certificate Authority, perform:
+
+1. Right-click on the left pane, and select "Restore Certificate Authority".
+2. On the Restore Dialog, select the backup file name, the location to restore to,
+and if you wish to automatically open the Certificate Authority on completion.
+3. Click OK to restore from the Backup File.
+
+A progress dialog will be displayed during the operation.
+
 #### Alternative method
 
 All data files for each Certificate Authority are contained with the single

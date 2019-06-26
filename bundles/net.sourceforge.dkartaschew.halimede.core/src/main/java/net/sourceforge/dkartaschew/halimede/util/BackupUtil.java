@@ -156,9 +156,10 @@ public class BackupUtil {
 	 * @param filename The filename of the backup file
 	 * @param destination The destination location
 	 * @param listener The activity listener. (may be NULL).
+	 * @return The base location of the CA. (Will be NULL is operation cancelled or failed).
 	 * @throws IOException If reading the backup file fails, or restoring operation fails.
 	 */
-	public static void restore(Path filename, Path destination, IProgressMonitor listener) throws IOException {
+	public static Path restore(Path filename, Path destination, IProgressMonitor listener) throws IOException {
 		Objects.requireNonNull(filename, "Backup filename not defined");
 		Objects.requireNonNull(destination, "Destination Location not defined");
 		if (!Files.exists(filename) || !Files.isReadable(filename) || !Files.isRegularFile(filename)) {
@@ -295,9 +296,11 @@ public class BackupUtil {
 							.sorted(Comparator.reverseOrder())//
 							.map(Path::toFile)//
 							.forEach(File::delete);
+					basePath = null;
 				}
 			}
 		}
+		return basePath;
 	}
 
 	/**

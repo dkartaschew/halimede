@@ -8,33 +8,34 @@
     </children>
     <mainMenu xmi:id="_ZZJQcBkXEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menu.0">
       <children xsi:type="menu:Menu" xmi:id="_bZTKUBkXEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menu.file" label="File">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_vT7JEOFyEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.createCA" label="Create New Certificate Authority" command="_iyQ_UOFyEeiEkIwtzvWRLQ"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="__MDfYOFyEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.createCAEM" label="Create New Certificate Authority from Existing Material" command="_kkIlkOFyEeiEkIwtzvWRLQ"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_BcuzcOFxEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.openca" label="Open Certificate Authority" command="_7OPQ4OFwEeiEkIwtzvWRLQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_vT7JEOFyEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.createCA" label="Create New Certificate Authority" tooltip="Create a New Certificate Authority" command="_iyQ_UOFyEeiEkIwtzvWRLQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="__MDfYOFyEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.createCAEM" label="Create New Certificate Authority from Existing Material" tooltip="Create a New Certificate Authority from Existing Keying Material" command="_kkIlkOFyEeiEkIwtzvWRLQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_BcuzcOFxEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.openca" label="Open Certificate Authority" tooltip="Open an existing Certificate Authority" command="_7OPQ4OFwEeiEkIwtzvWRLQ"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_KydHwJf_EemjS9e9rACQyg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.restoreCA" label="Restore Certificate Authority" tooltip="Restore a Certficate Authority from a Backup File" command="_84km0Jf-EemjS9e9rACQyg"/>
         <children xsi:type="menu:MenuSeparator" xmi:id="_qXW94OFxEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menuseparator.file"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_dcIkwBkXEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.quit" label="Quit" command="_-cxscBkdEeiXffmC_tm0rw"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_dcIkwBkXEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.quit" label="Quit" tooltip="Quit the application" command="_-cxscBkdEeiXffmC_tm0rw"/>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_hPg6UBkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menu.utility" label="Utilities">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_znCfwH9BEems4uQuJw18GQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.preferences" label="Preferences" command="_NzWK0Iv-EeizKMQexdsaNg"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_znCfwH9BEems4uQuJw18GQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.preferences" label="Preferences" tooltip="Open application preferences" command="_NzWK0Iv-EeizKMQexdsaNg"/>
         <children xsi:type="menu:MenuSeparator" xmi:id="_6VdfkH9BEems4uQuJw18GQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menuseparator.0"/>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_cz1jwBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.createcert" label="Create Self Signed Certificate" command="_0TF48BkYEeiXffmC_tm0rw">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_cz1jwBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.createcert" label="Create Self Signed Certificate" tooltip="Create a new Self Signed Certificate" command="_0TF48BkYEeiXffmC_tm0rw">
           <parameters xmi:id="_i2JrgBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.0" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
         </children>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_l7r5EBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.viewcert" label="Open Certificate" command="_5Ov6oBkYEeiXffmC_tm0rw">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_l7r5EBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.viewcert" label="Open Certificate" tooltip="View a Certificate" command="_5Ov6oBkYEeiXffmC_tm0rw">
           <parameters xmi:id="_7tKoYBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.1" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
         </children>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_w69qEBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.viewpkcs12" label="Open PKCS#12 File" command="_HwcCcBkZEeiXffmC_tm0rw">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_w69qEBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.viewpkcs12" label="Open PKCS#12 File" tooltip="View Contents of a PKCS#12 File" command="_HwcCcBkZEeiXffmC_tm0rw">
           <parameters xmi:id="_9aVU0BkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.2" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
         </children>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_uqmxABkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.viewcsr" label="Open CSR" command="_CG8DUBkZEeiXffmC_tm0rw">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_uqmxABkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.viewcsr" label="Open CSR" tooltip="View a Certificate Signing Request" command="_CG8DUBkZEeiXffmC_tm0rw">
           <parameters xmi:id="_ARr8cBkaEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.3" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
         </children>
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_rqjgYBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.viewcrl" label="Open CRL" command="_-9BsEBkYEeiXffmC_tm0rw">
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_rqjgYBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.viewcrl" label="Open CRL" tooltip="View a Certificate Revocation List" command="_-9BsEBkYEeiXffmC_tm0rw">
           <parameters xmi:id="_BrGmcBkaEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.4" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
         </children>
       </children>
       <children xsi:type="menu:Menu" xmi:id="_liUzUBkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.menu.Help" label="Help">
-        <children xsi:type="menu:HandledMenuItem" xmi:id="_qeLpgBk9Eei8Q6UTeYzyjA" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.about" label="About" command="_h1vNABk9Eei8Q6UTeYzyjA"/>
+        <children xsi:type="menu:HandledMenuItem" xmi:id="_qeLpgBk9Eei8Q6UTeYzyjA" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledmenuitem.about" label="About" tooltip="About this application" command="_h1vNABk9Eei8Q6UTeYzyjA"/>
       </children>
     </mainMenu>
     <trimBars xmi:id="_AyOf0BntEeiyk-m9meRZbg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.trimbar.status" side="Bottom">
@@ -52,6 +53,7 @@
   <handlers xmi:id="_9VDzcOFwEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.openca" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.e4rcp.command.OpenCAHandler" command="_7OPQ4OFwEeiEkIwtzvWRLQ"/>
   <handlers xmi:id="_pIKKYOFyEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.createCA" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.e4rcp.command.CreateCAHandler" command="_iyQ_UOFyEeiEkIwtzvWRLQ"/>
   <handlers xmi:id="_r0cxgOFyEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.createCAEM" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.e4rcp.command.CreateCAExistingMaterialHandler" command="_kkIlkOFyEeiEkIwtzvWRLQ"/>
+  <handlers xmi:id="_CYlSwJf_EemjS9e9rACQyg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.restoreca" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.e4rcp.command.RestoreCAHandler" command="_84km0Jf-EemjS9e9rACQyg"/>
   <commands xmi:id="_0TF48BkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.command.createCert" commandName="Create Certificate">
     <parameters xmi:id="_28lDsBkYEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" name="EditorID"/>
   </commands>
@@ -73,6 +75,7 @@
   <commands xmi:id="_7OPQ4OFwEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.command.openCA" commandName="OpenCA"/>
   <commands xmi:id="_iyQ_UOFyEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.command.createCA" commandName="CreateCA"/>
   <commands xmi:id="_kkIlkOFyEeiEkIwtzvWRLQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.command.createCAEM" commandName="CreateCAExistingMaterial"/>
+  <commands xmi:id="_84km0Jf-EemjS9e9rACQyg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.command.restoreCA" commandName="Restore CA"/>
   <addons xmi:id="_E01GkRkREeiXffmC_tm0rw" elementId="org.eclipse.e4.core.commands.service" contributionURI="bundleclass://org.eclipse.e4.core.commands/org.eclipse.e4.core.commands.CommandServiceAddon"/>
   <addons xmi:id="_E01GkhkREeiXffmC_tm0rw" elementId="org.eclipse.e4.ui.contexts.service" contributionURI="bundleclass://org.eclipse.e4.ui.services/org.eclipse.e4.ui.services.ContextServiceAddon"/>
   <addons xmi:id="_E01GkxkREeiXffmC_tm0rw" elementId="org.eclipse.e4.ui.bindings.service" contributionURI="bundleclass://org.eclipse.e4.ui.bindings/org.eclipse.e4.ui.bindings.BindingServiceAddon"/>

@@ -27,12 +27,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthourityManager;
-import net.sourceforge.dkartaschew.halimede.ui.actions.CreateNewCAExistingMaterialAction;
+import net.sourceforge.dkartaschew.halimede.ui.actions.RestoreCAAction;
 
-public class CreateCAExistingMaterialHandler {
+public class RestoreCAHandler {
 
 	/**
-	 * CA Manager
+	 * The Certificate Authority manager.
 	 */
 	@Inject
 	private CertificateAuthourityManager manager;
@@ -45,14 +45,14 @@ public class CreateCAExistingMaterialHandler {
 		/*
 		 * Find our manager
 		 */
-		if(manager == null) {
+		if (manager == null) {
 			sync.asyncExec(() -> {
-				MessageDialog.openError(shell, "Opening the CA Failed",
-						"Opening the CA failed with the following error: Manager not available?");
+				MessageDialog.openError(shell, "Restore Operation Failed",
+						"The restore operation failed with the following error: Manager not available?");
 			});
 			return;
 		}
-		CreateNewCAExistingMaterialAction action = new CreateNewCAExistingMaterialAction(manager);
+		RestoreCAAction action = new RestoreCAAction(manager);
 		ContextInjectionFactory.inject(action, context);
 		sync.asyncExec(action);
 	}

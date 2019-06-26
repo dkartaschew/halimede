@@ -263,7 +263,7 @@ can be prepended to the name to act as a negation option.
 For example:
 
 * "```EC*```" will select all ECDSA ciphers to be made available.
-* "```* -RSA* -DSA*```" will select all ciphers, except all RSA and RSA ciphers.
+* "```* -RSA* -DSA*```" will select all ciphers, except all RSA and DSA ciphers.
 * "```RSA -RSA_512 -RSA_1024```" will select all RSA ciphers except RSA 512 and 
 RSA 1024. (Allow all RSA ciphers with a key strength of at least 2028 bits).
 

@@ -42,6 +42,7 @@ import net.sourceforge.dkartaschew.halimede.ui.actions.DeleteCAAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.ImportCSRAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.LockUnlockAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.OpenCAAction;
+import net.sourceforge.dkartaschew.halimede.ui.actions.RestoreCAAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.ViewCACertificateInformationAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.BackupCAAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.CASettingsAction;
@@ -87,6 +88,7 @@ public class CAContextMenu implements IMenuListener {
 			manager.add(toACI(new CreateNewCAAction(this.manager)));
 			manager.add(toACI(new CreateNewCAExistingMaterialAction(this.manager)));
 			manager.add(toACI(new OpenCAAction(this.manager)));
+			manager.add(toACI(new RestoreCAAction(this.manager)));
 			injectMenuItems(manager);
 			return;
 		}
@@ -107,6 +109,7 @@ public class CAContextMenu implements IMenuListener {
 				manager.add(toACI(new CreateNewCAAction(this.manager)));
 				manager.add(toACI(new CreateNewCAExistingMaterialAction(this.manager)));
 				manager.add(toACI(new OpenCAAction(this.manager)));
+				manager.add(toACI(new RestoreCAAction(this.manager)));
 				manager.add(new Separator());
 				if (!element.getCertificateAuthority().isLocked()) {
 					manager.add(toACI(new CreateIssuedCertificateAction(element.getCertificateAuthority(), editor)));
