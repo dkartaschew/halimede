@@ -26,6 +26,7 @@ import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.cryptopro.CryptoProObjectIdentifiers;
+import org.bouncycastle.asn1.edec.EdECObjectIdentifiers;
 import org.bouncycastle.asn1.gm.GMObjectIdentifiers;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
@@ -118,6 +119,15 @@ public enum SignatureAlgorithm {
 	 * DSTU4145
 	 */
 	GOST3411withDSTU4145("GOST3411withDSTU4145", UAObjectIdentifiers.dstu4145be, false),
+	
+	/**
+	 * EdDSA Ed25519
+	 */
+	ED25519("Ed25519", EdECObjectIdentifiers.id_Ed25519, true),
+	/**
+	 * EdDSA Eds448
+	 */
+	ED448("Ed448", EdECObjectIdentifiers.id_Ed448, true),
 
 	/*
 	 * Rainbow PQC
@@ -136,18 +146,18 @@ public enum SignatureAlgorithm {
 	/*
 	 * XMSS PQC
 	 */
-	XMSSwithSHA256("SHA256WITHXMSS", PQCObjectIdentifiers.xmss_with_SHA256, true),
-	XMSSwithSHA512("SHA512WITHXMSS", PQCObjectIdentifiers.xmss_with_SHA512, true),
-	XMSSwithSHAKE128("SHAKE128WITHXMSS", PQCObjectIdentifiers.xmss_with_SHAKE128, true),
-	XMSSwithSHAKE256("SHAKE256WITHXMSS", PQCObjectIdentifiers.xmss_with_SHAKE256, true),
+	XMSSwithSHA256("SHA256WITHXMSS", PQCObjectIdentifiers.xmss_SHA256ph, true),
+	XMSSwithSHA512("SHA512WITHXMSS", PQCObjectIdentifiers.xmss_SHA512ph, true),
+	XMSSwithSHAKE128("SHAKE128WITHXMSS", PQCObjectIdentifiers.xmss_SHAKE128ph, true),
+	XMSSwithSHAKE256("SHAKE256WITHXMSS", PQCObjectIdentifiers.xmss_SHAKE256ph, true),
 
 	/*
 	 * XMSSMT PQC
 	 */
-	XMSSMTwithSHA256("SHA256WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_with_SHA256, true),
-	XMSSMTwithSHA512("SHA512WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_with_SHA512, true),
-	XMSSMTwithSHAKE128("SHAKE128WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_with_SHAKE128, true),
-	XMSSMTwithSHAKE256("SHAKE256WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_with_SHAKE256, true);
+	XMSSMTwithSHA256("SHA256WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_SHA256ph, true),
+	XMSSMTwithSHA512("SHA512WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_SHA512ph, true),
+	XMSSMTwithSHAKE128("SHAKE128WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_SHAKE128ph, true),
+	XMSSMTwithSHAKE256("SHAKE256WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_SHAKE256ph, true);
 
 	private final String algID;
 	private final ASN1ObjectIdentifier oid;
@@ -249,15 +259,16 @@ public enum SignatureAlgorithm {
 		if (key == KeyType.EC_sm2p256v1) {
 			return Arrays.asList(new SignatureAlgorithm[] { //
 					SM3withSM2, //
-//					SHA1withSM2, //
-//					SHA256withSM2, //
-//					SHA512withSM2, //
-//					SHA224withSM2, //
-//					SHA384withSM2, //
-//					RIPEMD160withSM2, //
-//					WHIRLPOOLwithSM2, //
-//					BLAKE2B512withSM2, //
-//					BLAKE2S256withSM2 
+			});
+		}
+		if (key == KeyType.ED25519) {
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					ED25519, //
+			});
+		}
+		if (key == KeyType.ED448) {
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					ED448, //
 			});
 		}
 		switch (key.getType()) {
@@ -400,26 +411,8 @@ public enum SignatureAlgorithm {
 					SHA3_512withECDSA });
 
 		case SM3withSM2:
-//		case SHA1withSM2:
-//		case SHA256withSM2:
-//		case SHA512withSM2:
-//		case SHA224withSM2:
-//		case SHA384withSM2:
-//		case RIPEMD160withSM2:
-//		case WHIRLPOOLwithSM2:
-//		case BLAKE2B512withSM2:
-//		case BLAKE2S256withSM2:
 			return Arrays.asList(new SignatureAlgorithm[] { //
 					SM3withSM2, //
-//					SHA1withSM2, //
-//					SHA256withSM2, //
-//					SHA512withSM2, //
-//					SHA224withSM2, //
-//					SHA384withSM2, //
-//					RIPEMD160withSM2, //
-//					WHIRLPOOLwithSM2, //
-//					BLAKE2B512withSM2, //
-//					BLAKE2S256withSM2 
 			});
 
 		case SHA1withDSA:
@@ -492,6 +485,15 @@ public enum SignatureAlgorithm {
 					RIPEMD160withRSA, //
 					RIPEMD256withRSA });
 
+		case ED25519:
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					ED25519, //
+			});
+		case ED448:
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					ED448, //
+			});
+			
 		case RAINBOWwithSHA224:
 		case RAINBOWwithSHA256:
 		case RAINBOWwithSHA384:
@@ -567,6 +569,10 @@ public enum SignatureAlgorithm {
 			return SignatureAlgorithm.SHA1withDSA;
 		case "RSA":
 			return SignatureAlgorithm.SHA256withRSA;
+		case "Ed25519":
+			return SignatureAlgorithm.ED25519;
+		case "Ed448":
+			return SignatureAlgorithm.ED448;
 		case "Rainbow":
 			return SignatureAlgorithm.RAINBOWwithSHA512;
 		case "SPHINCS-256":

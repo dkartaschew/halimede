@@ -550,6 +550,14 @@ public enum KeyType {
 	 */
 	DSTU4145_9("DSTU 4145-2002-9", "DSTU4145", 431, "1.2.804.2.1.1.1.1.3.1.1.2.9"),
 	/**
+	 * EdDSA ED25519
+	 */
+	ED25519("EdDSA Ed25519", "Ed25519", 256, null),
+	/**
+	 * EdDSA ED448
+	 */
+	ED448("EdDSA Ed448", "Ed448", 448, null),
+	/**
 	 * PQC Rainbow
 	 */
 	Rainbow("Rainbow", "Rainbow", 1024, null),
@@ -1085,6 +1093,12 @@ public enum KeyType {
 			}
 			break;
 
+		case "Ed25519":
+			return KeyType.ED25519;
+			
+		case "Ed448":
+			return KeyType.ED448;
+			
 		case "Rainbow":
 			return KeyType.Rainbow;
 

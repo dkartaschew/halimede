@@ -295,6 +295,34 @@ public class TestTextHTMLExport {
 
 		
 		/*
+		 * Request 9 - Ed25519
+		 */
+
+		CertificateRequest req9 = createRequest(KeyType.ED25519);
+
+		IssuedCertificateProperties c9 = ca.signAndStoreCertificateRequest(req9, ZonedDateTime.now().plusSeconds(10),
+				ZonedDateTime.now().plusSeconds(360), PASSWORD);
+
+		assertNotNull(c9);
+
+		c9.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(),	BouncyCastleProvider.PROVIDER_NAME);
+
+		
+		/*
+		 * Request 10 - Ed448
+		 */
+
+		CertificateRequest req10 = createRequest(KeyType.ED448);
+
+		IssuedCertificateProperties c10 = ca.signAndStoreCertificateRequest(req10, ZonedDateTime.now().plusSeconds(10),
+				ZonedDateTime.now().plusSeconds(360), PASSWORD);
+
+		assertNotNull(c10);
+
+		c10.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(),	BouncyCastleProvider.PROVIDER_NAME);
+
+		
+		/*
 		 * Test Renderers
 		 */
 
@@ -315,6 +343,8 @@ public class TestTextHTMLExport {
 		render(c6);
 		render(c7);
 		render(c8);
+		render(c9);
+		render(c10);
 		
 		// CSR
 		CSRRenderer csrr = new CSRRenderer(csr);

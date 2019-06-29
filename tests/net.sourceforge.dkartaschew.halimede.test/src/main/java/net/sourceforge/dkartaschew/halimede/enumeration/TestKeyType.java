@@ -344,6 +344,16 @@ public class TestKeyType {
 	public void testDSTU4145Allowed() {
 		testAllowedByType("DSTU4145");
 	}
+	
+	@Test
+	public void testED25519Allowed() {
+		testAllowedByType("Ed25519");
+	}
+	
+	@Test
+	public void testED448Allowed() {
+		testAllowedByType("Ed448");
+	}
 
 	@Test
 	public void testRainbowAllowed() {

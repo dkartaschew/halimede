@@ -12,9 +12,9 @@ Halimede support multiple CA (Certificate Authorities) from a single interface,
 with each CA is stored within it's own datastore instance.
 
 Halimede supports a large range of public key ciphers, including RSA, DSA, 
-ECDSA (NIST/SEC/ANSI X9.62/Brainpool Curves), GOST R34.10, DSTU 4145-2002 
-and numerous Post-Quantum Ciphers for X509 Certificate generation. Full 
-list of supported ciphers is listed under 
+ECDSA (NIST/SEC/ANSI X9.62/Brainpool Curves), GOST R34.10, DSTU 4145-2002,
+EdDSA Ed25519 and Ed448 and numerous Post-Quantum Ciphers for X509 
+Certificate generation. Full list of supported ciphers is listed under 
 [Supported Asymmetric Ciphers](#Supported_Asymmetric_Ciphers) below.
 
 Halimede supports the following functions:
@@ -179,6 +179,13 @@ NOTE: sm2p256v1 uses the "SM3 with SM2" Signature Algorithm.
 |                 | 1.2.804.2.1.1.1.1.3.1.1.2.7  |                           |
 |                 | 1.2.804.2.1.1.1.1.3.1.1.2.8  |                           |
 |                 | 1.2.804.2.1.1.1.1.3.1.1.2.9  |                           |
+
+#### EdDSA
+
+| Revision | Signature Algorithms |
+|----------|----------------------|
+| Ed25519  | Ed25519              |
+| Ed448    | Ed448                |
 
 #### Rainbow
 

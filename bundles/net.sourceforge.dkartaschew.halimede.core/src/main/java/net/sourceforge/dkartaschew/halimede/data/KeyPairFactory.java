@@ -37,6 +37,8 @@ import org.bouncycastle.asn1.ua.DSTU4145NamedCurves;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
+import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jce.ECGOST3410NamedCurveTable;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.interfaces.GOST3410PublicKey;
@@ -114,6 +116,10 @@ public class KeyPairFactory {
 			ECNamedCurveParameterSpec ecParams = new ECNamedCurveParameterSpec(type.getParameters(), params.getCurve(),
 					params.getG(), params.getN(), params.getH(), params.getSeed());
 			keyGen.initialize(ecParams, random);
+			break;
+		case "Ed25519":
+		case "Ed448":
+			keyGen.initialize(new EdDSAParameterSpec(type.getType()), random);
 			break;
 		case "Rainbow":
 			keyGen.initialize(type.getBitLength(), random);
@@ -200,6 +206,15 @@ public class KeyPairFactory {
 			GOST3410PublicKey gost = (GOST3410PublicKey) publicKey;
 			int length = gost.getY().bitLength();
 			return ((length + 127) / 128) * 128;
+		}
+		if (publicKey instanceof BCEdDSAPublicKey) {
+			BCEdDSAPublicKey eddsa = (BCEdDSAPublicKey) publicKey;
+			switch (eddsa.getAlgorithm()) {
+			case "Ed25519":
+				return 256;
+			case "Ed448":
+				return 448;
+			}
 		}
 		if(publicKey instanceof RainbowPublicKey || publicKey instanceof BCRainbowPublicKey) {
 			return 1024;

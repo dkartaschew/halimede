@@ -27,6 +27,7 @@ import java.util.Objects;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jce.interfaces.GOST3410PublicKey;
 import org.bouncycastle.jce.provider.JCEECPublicKey;
 import org.bouncycastle.pqc.crypto.xmss.XMSSMTPublicKeyParameters;
@@ -266,6 +267,13 @@ public class Strings {
 			StringBuilder sb = new StringBuilder();
 			sb.append("Y: ");
 			sb.append(toHexString(gost.getY().toByteArray(), " ", WRAP, "   "));
+			return sb.toString();
+		}
+		if (pkey instanceof BCEdDSAPublicKey) {
+			BCEdDSAPublicKey eddsa = (BCEdDSAPublicKey) pkey;
+			StringBuilder sb = new StringBuilder();
+			sb.append("Key Data: ");
+			sb.append(toHexString(eddsa.getEncoded(), " ", WRAP, "          "));
 			return sb.toString();
 		}
 		if (pkey instanceof BCRainbowPublicKey) {

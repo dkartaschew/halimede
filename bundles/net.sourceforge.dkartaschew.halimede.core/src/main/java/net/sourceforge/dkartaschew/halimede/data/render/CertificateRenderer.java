@@ -51,6 +51,8 @@ import org.bouncycastle.asn1.x509.KeyUsage;
 import org.bouncycastle.asn1.x509.SubjectKeyIdentifier;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.jcajce.provider.asymmetric.dstu.BCDSTU4145PrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey;
+import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jce.interfaces.GOST3410PrivateKey;
 import org.bouncycastle.jce.interfaces.GOST3410PublicKey;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
@@ -214,7 +216,9 @@ public class CertificateRenderer {
 					}
 				}
 			}
-			
+			if (pkey instanceof BCEdDSAPrivateKey) {
+				r.addContentLine("Curve Name:", pkey.getAlgorithm());
+			}
 			if(pkey instanceof BCSphincs256PrivateKey) {
 				BCSphincs256PrivateKey sphincs = (BCSphincs256PrivateKey) pkey;
 				try {
@@ -337,6 +341,9 @@ public class CertificateRenderer {
 					r.addContentLine("GOST 34.10:", t.getDescription());
 				}
 			}
+		}
+		if(pkey instanceof BCEdDSAPublicKey) {
+			r.addContentLine("Curve Name:", pkey.getAlgorithm());
 		}
 		if(pkey instanceof BCSphincs256PublicKey) {
 			BCSphincs256PublicKey sphincs = (BCSphincs256PublicKey) pkey;

@@ -22,9 +22,9 @@ Halimede supports running multiple Certificate Authorities from a single
 interface.
 
 Halimede supports a large range of public key ciphers, including RSA, DSA, 
-ECDSA (NIST/SEC/ANSI X9.62/Brainpool Curves), GOST R34.10, DSTU 4145-2002 
-and numerous Post-Quantum Ciphers including Rainbow, SPHINCS-256, XMSS and
-XMSS-MT for X509 Certificate generation.
+ECDSA (NIST/SEC/ANSI X9.62/Brainpool Curves), GOST R34.10, DSTU 4145-2002,
+EdDSA Ed25519 and Ed448 and numerous Post-Quantum Ciphers including Rainbow, 
+SPHINCS-256, XMSS and XMSS-MT for X509 Certificate generation.
 
 Halimede Supports Certificate Templates, Import and Issuing external 
 Certificate Requests, Certificate Revocation and issuing Certificate 

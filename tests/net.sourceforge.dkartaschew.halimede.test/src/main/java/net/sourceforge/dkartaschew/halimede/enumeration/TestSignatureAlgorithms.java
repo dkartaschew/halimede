@@ -100,6 +100,12 @@ public class TestSignatureAlgorithms {
 		assertEquals(SignatureAlgorithm.GOST3411withDSTU4145, SignatureAlgorithm
 				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.DSTU4145_0).getPublic()));
 		
+		assertEquals(SignatureAlgorithm.ED25519, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.ED25519).getPublic()));
+		
+		assertEquals(SignatureAlgorithm.ED448, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.ED448).getPublic()));
+		
 		assertEquals(SignatureAlgorithm.RAINBOWwithSHA512, SignatureAlgorithm
 				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.Rainbow).getPublic()));
 		
