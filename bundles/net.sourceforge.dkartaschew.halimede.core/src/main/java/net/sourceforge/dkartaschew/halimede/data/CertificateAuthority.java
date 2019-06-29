@@ -670,6 +670,12 @@ public class CertificateAuthority {
 			ZonedDateTime expiryDate) throws IOException, DatastoreLockedException, CertIOException,
 			OperatorCreationException, CertificateException {
 		checkDatastoreLock();
+		if (certRequest == null) {
+			throw new IllegalArgumentException("No Certificate Request Provided");
+		}
+		if (startDate == null || expiryDate == null) {
+			throw new IllegalArgumentException("Missing Certificate Date information");
+		}
 		this.logger.log(Level.INFO, "Request Certificate Authority Sign Certificate Request  {0}", certRequest.getSubject());
 		return CertificateFactory.signCertificateRequest(this, certRequest, startDate, expiryDate);
 	}

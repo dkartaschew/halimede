@@ -123,11 +123,11 @@ public enum SignatureAlgorithm {
 	/**
 	 * EdDSA Ed25519
 	 */
-	ED25519("Ed25519", EdECObjectIdentifiers.id_Ed25519, true),
+	ED25519("Ed25519", EdECObjectIdentifiers.id_Ed25519, false),
 	/**
 	 * EdDSA Eds448
 	 */
-	ED448("Ed448", EdECObjectIdentifiers.id_Ed448, true),
+	ED448("Ed448", EdECObjectIdentifiers.id_Ed448, false),
 
 	/*
 	 * Rainbow PQC
