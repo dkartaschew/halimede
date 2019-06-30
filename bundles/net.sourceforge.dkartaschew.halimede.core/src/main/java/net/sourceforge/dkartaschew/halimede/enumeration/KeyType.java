@@ -751,23 +751,23 @@ public enum KeyType {
 	/**
 	 * qTELSA-I
 	 */
-	qTESLA_I("qTELSA-I", "qTESLA-I", 1216 * 8, "qTESLA-I"),
+	qTESLA_I("qTELSA-I", "qTESLA", 1216 * 8, "qTESLA-I"),
 	/**
 	 * qTELSA-III Size
 	 */
-	qTESLA_III_size("qTESLA-III-Size", "qTESLA-III-size", 2368 * 8, "qTESLA-III-size"),
+	qTESLA_III_size("qTESLA-III-Size", "qTESLA", 2368 * 8, "qTESLA-III-size"),
 	/**
 	 * qTELSA-III Speed
 	 */
-	qTESLA_III_speed("qTESLA-III-Speed", "qTESLA-III-speed", 2368 * 8, "qTESLA-III-speed"),
+	qTESLA_III_speed("qTESLA-III-Speed", "qTESLA", 2368 * 8, "qTESLA-III-speed"),
 	/**
 	 * qTELSA-p-I
 	 */
-	qTESLA_P_I("qTESLA-p-I", "qTESLA-p-I", 5184 * 8, "qTESLA-p-I"),
+	qTESLA_P_I("qTESLA-p-I", "qTESLA", 5184 * 8, "qTESLA-p-I"),
 	/**
 	 * qTELSA-p-III
 	 */
-	qTESLA_P_III("qTELSA-p-III", "qTESLA-p-III", 12352 * 8, "qTESLA-p-III");
+	qTESLA_P_III("qTELSA-p-III", "qTESLA", 12352 * 8, "qTESLA-p-III");
 
 	/**
 	 * System Properties key (allowed key types)
@@ -902,11 +902,7 @@ public enum KeyType {
 		case "XMSS":
 		case "XMSSMT":
 		case "SPHINCS256":
-		case "qTESLA-I":
-		case "qTESLA-III-size":
-		case "qTESLA-III-speed":
-		case "qTESLA-p-I":
-		case "qTESLA-p-III":
+		case "qTESLA":
 			return BouncyCastlePQCProvider.PROVIDER_NAME;
 		}
 		return BouncyCastleProvider.PROVIDER_NAME;

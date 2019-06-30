@@ -33,6 +33,7 @@ import java.security.cert.Certificate;
 import java.security.interfaces.ECPrivateKey;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.bouncycastle.crypto.CryptoServicesRegistrar;
@@ -75,16 +76,18 @@ public class TestGenerateKeyingMaterial {
 	
 	@Parameters(name = "{0}")
 	public static Collection<KeyType> data() {
+		return Collections.singletonList(KeyType.qTESLA_I);
+		
 		// Always do all key type here.
-		if(!SHORT)
-			return Arrays.stream(KeyType.values()).collect(Collectors.toList());
-
-		// Only do for keying material of 2048 bits or less.
-		KeyTypeWarningValidator v = new KeyTypeWarningValidator();
-		Collection<KeyType> data = Arrays.stream(KeyType.values())//
-				.filter(key -> (v.validate(key) == ValidationStatus.ok()))//
-				.collect(Collectors.toList());
-		return data;
+//		if(!SHORT)
+//			return Arrays.stream(KeyType.values()).collect(Collectors.toList());
+//
+//		// Only do for keying material of 2048 bits or less.
+//		KeyTypeWarningValidator v = new KeyTypeWarningValidator();
+//		Collection<KeyType> data = Arrays.stream(KeyType.values())//
+//				.filter(key -> (v.validate(key) == ValidationStatus.ok()))//
+//				.collect(Collectors.toList());
+//		return data;
 	}
 
 	private final String PASSWORD = "changeme";

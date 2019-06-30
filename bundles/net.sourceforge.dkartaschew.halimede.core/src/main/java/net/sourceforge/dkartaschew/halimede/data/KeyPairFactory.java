@@ -135,20 +135,8 @@ public class KeyPairFactory {
 		case "XMSSMT":
 			keyGen.initialize(new XMSSMTParameterSpec(type.getHeight(), type.getLayers(), type.getParameters()), random);
 			break;
-		case "qTESLA-I":
-			keyGen.initialize(new QTESLAParameterSpec(QTESLAParameterSpec.HEURISTIC_I), random);
-			break;
-		case "qTESLA-III-size":
-			keyGen.initialize(new QTESLAParameterSpec(QTESLAParameterSpec.HEURISTIC_III_SIZE), random);
-			break;
-		case "qTESLA-III-speed":
-			keyGen.initialize(new QTESLAParameterSpec(QTESLAParameterSpec.HEURISTIC_III_SPEED), random);
-			break;
-		case "qTESLA-p-I":
-			keyGen.initialize(new QTESLAParameterSpec(QTESLAParameterSpec.PROVABLY_SECURE_I), random);
-			break;
-		case "qTESLA-p-III":
-			keyGen.initialize(new QTESLAParameterSpec(QTESLAParameterSpec.PROVABLY_SECURE_III), random);
+		case "qTESLA":
+			keyGen.initialize(new QTESLAParameterSpec(type.getParameters()), random);
 			break;
 		}
 		return keyGen.generateKeyPair();
