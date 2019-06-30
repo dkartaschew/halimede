@@ -120,7 +120,21 @@ public class TestSignatureAlgorithms {
 		
 		assertEquals(SignatureAlgorithm.SPHICS256withSHA512, SignatureAlgorithm
 				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.SPHINCS_SHA512_256).getPublic()));
-
+		
+		assertEquals(SignatureAlgorithm.qTESLA_I, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.qTESLA_I).getPublic()));
+		
+		assertEquals(SignatureAlgorithm.qTESLA_III_size, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.qTESLA_III_size).getPublic()));
+		
+		assertEquals(SignatureAlgorithm.qTESLA_III_speed, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.qTESLA_III_speed).getPublic()));
+		
+		assertEquals(SignatureAlgorithm.qTESLA_P_I, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.qTESLA_P_I).getPublic()));
+		
+		assertEquals(SignatureAlgorithm.qTESLA_P_III, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.qTESLA_P_III).getPublic()));
 	}
 
 	@Test

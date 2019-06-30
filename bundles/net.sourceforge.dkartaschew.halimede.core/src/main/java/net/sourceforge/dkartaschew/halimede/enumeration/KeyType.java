@@ -747,7 +747,27 @@ public enum KeyType {
 	/**
 	 * XMSSMT 60/12 SHAKE256
 	 */
-	XMSSMT_SHAKE_60_12_512("XMSSMT 60/12 SHAKE256", "XMSSMT", 512, "SHAKE256", 60, 12);
+	XMSSMT_SHAKE_60_12_512("XMSSMT 60/12 SHAKE256", "XMSSMT", 512, "SHAKE256", 60, 12),
+	/**
+	 * qTELSA-I
+	 */
+	qTESLA_I("qTELSA-I", "qTESLA-I", 1216 * 8, "qTESLA-I"),
+	/**
+	 * qTELSA-III Size
+	 */
+	qTESLA_III_size("qTESLA-III-Size", "qTESLA-III-size", 2368 * 8, "qTESLA-III-size"),
+	/**
+	 * qTELSA-III Speed
+	 */
+	qTESLA_III_speed("qTESLA-III-Speed", "qTESLA-III-speed", 2368 * 8, "qTESLA-III-speed"),
+	/**
+	 * qTELSA-p-I
+	 */
+	qTESLA_P_I("qTESLA-p-I", "qTESLA-p-I", 5184 * 8, "qTESLA-p-I"),
+	/**
+	 * qTELSA-p-III
+	 */
+	qTESLA_P_III("qTELSA-p-III", "qTESLA-p-III", 12352 * 8, "qTESLA-p-III");
 
 	/**
 	 * System Properties key (allowed key types)
@@ -882,6 +902,11 @@ public enum KeyType {
 		case "XMSS":
 		case "XMSSMT":
 		case "SPHINCS256":
+		case "qTESLA-I":
+		case "qTESLA-III-size":
+		case "qTESLA-III-speed":
+		case "qTESLA-p-I":
+		case "qTESLA-p-III":
 			return BouncyCastlePQCProvider.PROVIDER_NAME;
 		}
 		return BouncyCastleProvider.PROVIDER_NAME;
@@ -1147,6 +1172,16 @@ public enum KeyType {
 				}
 			}
 			break;
+		case "qTESLA-I":
+			return KeyType.qTESLA_I;
+		case "qTESLA-III-size":
+			return KeyType.qTESLA_III_size;
+		case "qTESLA-III-speed":
+			return KeyType.qTESLA_III_speed;
+		case "qTESLA-p-I":
+			return KeyType.qTESLA_P_I;
+		case "qTESLA-p-III":
+			return KeyType.qTESLA_P_III;
 		}
 		throw new UnknownKeyTypeException("Public Key doesn't match a known KeyType");
 	}

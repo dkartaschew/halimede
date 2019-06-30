@@ -157,7 +157,16 @@ public enum SignatureAlgorithm {
 	XMSSMTwithSHA256("SHA256WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_SHA256ph, true),
 	XMSSMTwithSHA512("SHA512WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_SHA512ph, true),
 	XMSSMTwithSHAKE128("SHAKE128WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_SHAKE128ph, true),
-	XMSSMTwithSHAKE256("SHAKE256WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_SHAKE256ph, true);
+	XMSSMTwithSHAKE256("SHAKE256WITHXMSSMT", PQCObjectIdentifiers.xmss_mt_SHAKE256ph, true),
+	
+	/*
+	 * qTELSA PQC
+	 */
+	qTESLA_I("qTESLA-I", PQCObjectIdentifiers.qTESLA_I, true),
+	qTESLA_III_speed("qTESLA-III-Speed", PQCObjectIdentifiers.qTESLA_III_speed, true),
+	qTESLA_III_size("qTESLA-III-Size", PQCObjectIdentifiers.qTESLA_III_size, true),
+	qTESLA_P_I("qTESLA-p-I", PQCObjectIdentifiers.qTESLA_p_I, true),
+	qTESLA_P_III("qTESLA-p-III", PQCObjectIdentifiers.qTESLA_p_III, true);
 
 	private final String algID;
 	private final ASN1ObjectIdentifier oid;
@@ -269,6 +278,31 @@ public enum SignatureAlgorithm {
 		if (key == KeyType.ED448) {
 			return Arrays.asList(new SignatureAlgorithm[] { //
 					ED448, //
+			});
+		}
+		if (key == KeyType.qTESLA_I) {
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					qTESLA_I, //
+			});
+		}
+		if (key == KeyType.qTESLA_III_speed) {
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					qTESLA_III_speed, //
+			});
+		}
+		if (key == KeyType.qTESLA_III_size) {
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					qTESLA_III_size, //
+			});
+		}
+		if (key == KeyType.qTESLA_P_I) {
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					qTESLA_P_I, //
+			});
+		}
+		if (key == KeyType.qTESLA_P_III) {
+			return Arrays.asList(new SignatureAlgorithm[] { //
+					qTESLA_P_III, //
 			});
 		}
 		switch (key.getType()) {
@@ -530,6 +564,27 @@ public enum SignatureAlgorithm {
 					XMSSMTwithSHA512, //
 					XMSSMTwithSHAKE128, //
 					XMSSMTwithSHAKE256 });
+		
+		case qTESLA_I:
+		return Arrays.asList(new SignatureAlgorithm[] { //
+				qTESLA_I, //
+		});
+		case qTESLA_III_size:
+		return Arrays.asList(new SignatureAlgorithm[] { //
+				qTESLA_III_size, //
+		});
+		case qTESLA_III_speed:
+		return Arrays.asList(new SignatureAlgorithm[] { //
+				qTESLA_III_speed, //
+		});
+		case qTESLA_P_I:
+		return Arrays.asList(new SignatureAlgorithm[] { //
+				qTESLA_P_I, //
+		});
+		case qTESLA_P_III:
+		return Arrays.asList(new SignatureAlgorithm[] { //
+				qTESLA_P_III, //
+		});
 		}
 		return Collections.emptyList();
 	}
@@ -588,6 +643,16 @@ public enum SignatureAlgorithm {
 			return SignatureAlgorithm.XMSSwithSHA512;
 		case "XMSSMT":
 			return SignatureAlgorithm.XMSSMTwithSHA512;
+		case "qTESLA-I":
+			return SignatureAlgorithm.qTESLA_I;
+		case "qTESLA-III-size":
+			return SignatureAlgorithm.qTESLA_III_size;
+		case "qTESLA-III-speed":
+			return SignatureAlgorithm.qTESLA_III_speed;
+		case "qTESLA-p-I":
+			return SignatureAlgorithm.qTESLA_P_I;
+		case "qTESLA-p-III":
+			return SignatureAlgorithm.qTESLA_P_III;
 		}
 		return null;
 	}

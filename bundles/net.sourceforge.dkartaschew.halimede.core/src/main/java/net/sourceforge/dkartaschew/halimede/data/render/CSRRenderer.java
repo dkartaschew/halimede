@@ -174,7 +174,7 @@ public class CSRRenderer {
 					r.addContentLine("Height:", Integer.toString(xmss.getHeight()));
 					r.addContentLine("Layers:", Integer.toString(xmss.getLayers()));
 				}
-				
+				// NOP for qTESLA
 				r.addContentLine("Public Key:", Strings.prettyPrint(pkey), true);
 			}
 

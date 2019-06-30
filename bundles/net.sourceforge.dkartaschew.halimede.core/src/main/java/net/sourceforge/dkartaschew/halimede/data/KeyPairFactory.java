@@ -50,10 +50,12 @@ import org.bouncycastle.pqc.asn1.RainbowPublicKey;
 import org.bouncycastle.pqc.asn1.XMSSMTPublicKey;
 import org.bouncycastle.pqc.asn1.XMSSPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.bouncycastle.pqc.jcajce.provider.qtesla.BCqTESLAPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.rainbow.BCRainbowPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.sphincs.BCSphincs256PublicKey;
 import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSMTPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSPublicKey;
+import org.bouncycastle.pqc.jcajce.spec.QTESLAParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.SPHINCS256KeyGenParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSMTParameterSpec;
 import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
@@ -133,7 +135,21 @@ public class KeyPairFactory {
 		case "XMSSMT":
 			keyGen.initialize(new XMSSMTParameterSpec(type.getHeight(), type.getLayers(), type.getParameters()), random);
 			break;
-			
+		case "qTESLA-I":
+			keyGen.initialize(new QTESLAParameterSpec(QTESLAParameterSpec.HEURISTIC_I), random);
+			break;
+		case "qTESLA-III-size":
+			keyGen.initialize(new QTESLAParameterSpec(QTESLAParameterSpec.HEURISTIC_III_SIZE), random);
+			break;
+		case "qTESLA-III-speed":
+			keyGen.initialize(new QTESLAParameterSpec(QTESLAParameterSpec.HEURISTIC_III_SPEED), random);
+			break;
+		case "qTESLA-p-I":
+			keyGen.initialize(new QTESLAParameterSpec(QTESLAParameterSpec.PROVABLY_SECURE_I), random);
+			break;
+		case "qTESLA-p-III":
+			keyGen.initialize(new QTESLAParameterSpec(QTESLAParameterSpec.PROVABLY_SECURE_III), random);
+			break;
 		}
 		return keyGen.generateKeyPair();
 	}
@@ -250,6 +266,21 @@ public class KeyPairFactory {
 				}
 			}
 			return 256;
+		}
+		if (publicKey instanceof BCqTESLAPublicKey) {
+			BCqTESLAPublicKey pkey = (BCqTESLAPublicKey) publicKey;
+			switch (pkey.getAlgorithm()) {
+			case "qTESLA-I":
+				return KeyType.qTESLA_I.getBitLength();
+			case "qTESLA-III-size":
+				return KeyType.qTESLA_III_size.getBitLength();
+			case "qTESLA-III-speed":
+				return KeyType.qTESLA_III_speed.getBitLength();
+			case "qTESLA-p-I":
+				return KeyType.qTESLA_P_I.getBitLength();
+			case "qTESLA-p-III":
+				return KeyType.qTESLA_P_III.getBitLength();
+			}
 		}
 		return 0;
 	}

@@ -249,6 +249,7 @@ public class CertificateRenderer {
 				r.addContentLine("Height:", Integer.toString(xmss.getHeight()));
 				r.addContentLine("Layers:", Integer.toString(xmss.getLayers()));
 			}
+			// NOP for qTESLA
 
 			r.addContentLine("SHA1 Fingerprint:", //
 					Strings.toHexString(Digest.sha1(keys.getPrivate().getEncoded()), " ", WRAP), true);
@@ -375,7 +376,9 @@ public class CertificateRenderer {
 			r.addContentLine("Height:", Integer.toString(xmss.getHeight()));
 			r.addContentLine("Layers:", Integer.toString(xmss.getLayers()));
 		}
+		// NOP for qTELSA
 		
+		// Add key material
 		r.addContentLine("Public Key:", Strings.prettyPrint(pkey), true);
 
 		/*

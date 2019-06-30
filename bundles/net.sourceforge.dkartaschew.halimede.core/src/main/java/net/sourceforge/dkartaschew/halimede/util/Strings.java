@@ -30,8 +30,10 @@ import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey;
 import org.bouncycastle.jce.interfaces.GOST3410PublicKey;
 import org.bouncycastle.jce.provider.JCEECPublicKey;
+import org.bouncycastle.pqc.crypto.qtesla.QTESLAPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSMTPublicKeyParameters;
 import org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters;
+import org.bouncycastle.pqc.jcajce.provider.qtesla.BCqTESLAPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.rainbow.BCRainbowPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.sphincs.BCSphincs256PublicKey;
 import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSMTPublicKey;
@@ -368,6 +370,23 @@ public class Strings {
 				sb.append(System.lineSeparator());
 				sb.append("Root: ");
 				sb.append(toHexString(keyParams.getRoot(), " ", WRAP, "      "));
+			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+				// Ignore here...
+			}
+			return sb.toString();
+		}
+		if (pkey instanceof BCqTESLAPublicKey) {
+			BCqTESLAPublicKey qtesla = (BCqTESLAPublicKey) pkey;
+			StringBuilder sb = new StringBuilder();
+			try {
+				/*
+				 * NASTY, but to determine the key, when need the keyParams.
+				 */
+				Field f = qtesla.getClass().getDeclaredField("keyParams");
+				f.setAccessible(true);
+				QTESLAPublicKeyParameters keyParams = (QTESLAPublicKeyParameters) f.get(qtesla);
+				sb.append("Key Data: ");
+				sb.append(toHexString(keyParams.getPublicData(), " ", WRAP, "          "));
 			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 				// Ignore here...
 			}

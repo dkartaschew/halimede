@@ -255,6 +255,16 @@ Halimede supports all configurations as noted in IETF
 |                        | XMSSMT-SHAKE_60/6_512  | |
 |                        | XMSSMT-SHAKE_60/12_512 | |
 
+#### qTELSA
+
+| Revision          | Signature Algorithms      |
+|-------------------|---------------------------|
+| qTELSA-I          | qTESLA-I                  |
+| qTESLA-III-size   | qTESLA-III-size           |
+| qTESLA-III-speed  | qTESLA-III-speed          |
+| qTESLA-p-I        | qTESLA-p-I                |
+| qTESLA-p-III      | qTESLA-p-III              |
+
 #### Cipher Restriction
 
 Users and System Administrators can limit the types of Asymmetric Ciphers made
