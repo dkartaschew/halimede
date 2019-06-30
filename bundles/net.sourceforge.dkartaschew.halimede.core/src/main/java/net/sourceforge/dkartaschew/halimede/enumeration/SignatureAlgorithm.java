@@ -162,11 +162,11 @@ public enum SignatureAlgorithm {
 	/*
 	 * qTELSA PQC
 	 */
-	qTESLA_I("qTESLA-I", PQCObjectIdentifiers.qTESLA_I, true),
-	qTESLA_III_speed("qTESLA-III-Speed", PQCObjectIdentifiers.qTESLA_III_speed, true),
-	qTESLA_III_size("qTESLA-III-Size", PQCObjectIdentifiers.qTESLA_III_size, true),
-	qTESLA_P_I("qTESLA-p-I", PQCObjectIdentifiers.qTESLA_p_I, true),
-	qTESLA_P_III("qTESLA-p-III", PQCObjectIdentifiers.qTESLA_p_III, true);
+	qTESLA_I("QTESLA-I", PQCObjectIdentifiers.qTESLA_I, true),
+	qTESLA_III_speed("QTESLA-III-SPEED", PQCObjectIdentifiers.qTESLA_III_speed, true),
+	qTESLA_III_size("QTESLA-III-SIZE", PQCObjectIdentifiers.qTESLA_III_size, true),
+	qTESLA_P_I("QTESLA-P-I", PQCObjectIdentifiers.qTESLA_p_I, true),
+	qTESLA_P_III("QTESLA-P-III", PQCObjectIdentifiers.qTESLA_p_III, true);
 
 	private final String algID;
 	private final ASN1ObjectIdentifier oid;
@@ -225,7 +225,7 @@ public enum SignatureAlgorithm {
 	 * @return The provider.
 	 */
 	public String getProvider() {
-		if (algID.contains("RAINBOW") || algID.contains("XMSS") || algID.contains("SPHINCS256")) {
+		if (algID.contains("RAINBOW") || algID.contains("XMSS") || algID.contains("SPHINCS256") || algID.contains("QTESLA")) {
 			return BouncyCastlePQCProvider.PROVIDER_NAME;
 		}
 		return BouncyCastleProvider.PROVIDER_NAME;

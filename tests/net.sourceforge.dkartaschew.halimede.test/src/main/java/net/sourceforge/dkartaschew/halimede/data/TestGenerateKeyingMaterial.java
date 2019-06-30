@@ -76,18 +76,18 @@ public class TestGenerateKeyingMaterial {
 	
 	@Parameters(name = "{0}")
 	public static Collection<KeyType> data() {
-		return Collections.singletonList(KeyType.qTESLA_I);
+		//return Collections.singletonList(KeyType.qTESLA_I);
 		
 		// Always do all key type here.
-//		if(!SHORT)
-//			return Arrays.stream(KeyType.values()).collect(Collectors.toList());
-//
-//		// Only do for keying material of 2048 bits or less.
-//		KeyTypeWarningValidator v = new KeyTypeWarningValidator();
-//		Collection<KeyType> data = Arrays.stream(KeyType.values())//
-//				.filter(key -> (v.validate(key) == ValidationStatus.ok()))//
-//				.collect(Collectors.toList());
-//		return data;
+		if(!SHORT)
+			return Arrays.stream(KeyType.values()).collect(Collectors.toList());
+
+		// Only do for keying material of 2048 bits or less.
+		KeyTypeWarningValidator v = new KeyTypeWarningValidator();
+		Collection<KeyType> data = Arrays.stream(KeyType.values())//
+				.filter(key -> (v.validate(key) == ValidationStatus.ok()))//
+				.collect(Collectors.toList());
+		return data;
 	}
 
 	private final String PASSWORD = "changeme";
