@@ -29,7 +29,6 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
-import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -53,7 +52,6 @@ import org.bouncycastle.cert.CertIOException;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.OperatorCreationException;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.junit.After;
 import org.junit.Before;
@@ -75,6 +73,7 @@ import net.sourceforge.dkartaschew.halimede.enumeration.KeyUsageEnum;
 import net.sourceforge.dkartaschew.halimede.enumeration.PKCS12Cipher;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
 import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 /**
  * Tests for storage of PKCS#12 and PKCS#7 for completeness.
@@ -100,8 +99,7 @@ public class TestCertificateChainPKCS {
 
 	@BeforeClass
 	public static void setupClass() {
-		Security.addProvider(new BouncyCastleProvider());
-		Security.addProvider(new BouncyCastlePQCProvider());
+		ProviderUtil.setupProviders();
 	}
 
 	// @Parameters(name = "{0}")

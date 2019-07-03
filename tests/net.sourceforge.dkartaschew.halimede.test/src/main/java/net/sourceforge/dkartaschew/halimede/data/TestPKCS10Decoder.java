@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.security.Security;
 import java.util.Iterator;
 
 import org.bouncycastle.asn1.ASN1Encodable;
@@ -32,8 +31,6 @@ import org.bouncycastle.asn1.DLSequence;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.KeyUsage;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -44,6 +41,7 @@ import net.sourceforge.dkartaschew.halimede.data.render.CSRRenderer;
 import net.sourceforge.dkartaschew.halimede.data.render.HTMLOutputRenderer;
 import net.sourceforge.dkartaschew.halimede.data.render.TextOutputRenderer;
 import net.sourceforge.dkartaschew.halimede.exceptions.InvalidPasswordException;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestPKCS10Decoder {
@@ -53,8 +51,7 @@ public class TestPKCS10Decoder {
 
 	@BeforeClass
 	public static void setup() {
-		Security.addProvider(new BouncyCastleProvider());
-		Security.addProvider(new BouncyCastlePQCProvider());
+		ProviderUtil.setupProviders();
 	}
 
 	@Test

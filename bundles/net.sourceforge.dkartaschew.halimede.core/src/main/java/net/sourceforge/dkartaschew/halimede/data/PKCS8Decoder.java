@@ -25,8 +25,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyPair;
-import java.security.Security;
-
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -56,6 +54,7 @@ import org.bouncycastle.pkcs.jcajce.JcePKCSPBEInputDecryptorProviderBuilder;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 import net.sourceforge.dkartaschew.halimede.exceptions.InvalidPasswordException;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 /**
  * A PKCS8/PKCS1 decoder
@@ -73,12 +72,7 @@ public class PKCS8Decoder {
 	 * Setup BC crypto provider.
 	 */
 	static {
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
-		}
-		if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastlePQCProvider());
-		}
+		ProviderUtil.setupProviders();
 	}
 
 	/**

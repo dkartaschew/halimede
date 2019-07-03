@@ -33,7 +33,6 @@ import java.security.cert.Certificate;
 import java.security.interfaces.ECPrivateKey;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.bouncycastle.crypto.CryptoServicesRegistrar;
@@ -76,7 +75,6 @@ public class TestGenerateKeyingMaterial {
 	
 	@Parameters(name = "{0}")
 	public static Collection<KeyType> data() {
-		//return Collections.singletonList(KeyType.qTESLA_I);
 		
 		// Always do all key type here.
 		if(!SHORT)

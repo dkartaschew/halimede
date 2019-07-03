@@ -24,16 +24,12 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.Security;
-
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-
 import net.sourceforge.dkartaschew.halimede.data.impl.CertificateRequestPKCS10;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 public class PKCS10Decoder {
 
@@ -41,12 +37,7 @@ public class PKCS10Decoder {
 	 * Setup BC crypto provider.
 	 */
 	static {
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
-		}
-		if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastlePQCProvider());
-		}
+		ProviderUtil.setupProviders();
 	}
 	
 	/**

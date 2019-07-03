@@ -26,7 +26,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
@@ -42,14 +41,12 @@ import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jce.ECGOST3410NamedCurveTable;
 import org.bouncycastle.jce.ECNamedCurveTable;
 import org.bouncycastle.jce.interfaces.GOST3410PublicKey;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.provider.JCEECPublicKey;
 import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec;
 import org.bouncycastle.jce.spec.GOST3410ParameterSpec;
 import org.bouncycastle.pqc.asn1.RainbowPublicKey;
 import org.bouncycastle.pqc.asn1.XMSSMTPublicKey;
 import org.bouncycastle.pqc.asn1.XMSSPublicKey;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.provider.qtesla.BCqTESLAPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.rainbow.BCRainbowPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.sphincs.BCSphincs256PublicKey;
@@ -62,6 +59,7 @@ import org.bouncycastle.pqc.jcajce.spec.XMSSParameterSpec;
 
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.exceptions.UnknownKeyTypeException;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 /**
  * Private/Public key Factory.
@@ -77,12 +75,7 @@ public class KeyPairFactory {
 	 * Setup BC crypto provider.
 	 */
 	static {
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
-		}
-		if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastlePQCProvider());
-		}
+		ProviderUtil.setupProviders();
 	}
 
 	/**

@@ -27,14 +27,11 @@ import java.math.BigInteger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyPair;
-import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -45,6 +42,7 @@ import net.sourceforge.dkartaschew.halimede.TestUtilities;
 import net.sourceforge.dkartaschew.halimede.data.impl.IssuedCertificate;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestCertificateAuthority {
@@ -56,8 +54,7 @@ public class TestCertificateAuthority {
 
 	@BeforeClass
 	public static void setup() {
-		Security.addProvider(new BouncyCastleProvider());
-		Security.addProvider(new BouncyCastlePQCProvider());
+		ProviderUtil.setupProviders();
 	}
 
 	/**

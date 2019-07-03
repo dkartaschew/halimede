@@ -26,14 +26,12 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
-import java.security.Security;
 import java.security.cert.Certificate;
 import java.util.Enumeration;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-
 import net.sourceforge.dkartaschew.halimede.exceptions.InvalidPasswordException;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 public class PKCS12Decoder {
 
@@ -41,12 +39,7 @@ public class PKCS12Decoder {
 	 * Setup BC crypto provider.
 	 */
 	static {
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
-		}
-		if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastlePQCProvider());
-		}
+		ProviderUtil.setupProviders();
 	}
 	
 	/**

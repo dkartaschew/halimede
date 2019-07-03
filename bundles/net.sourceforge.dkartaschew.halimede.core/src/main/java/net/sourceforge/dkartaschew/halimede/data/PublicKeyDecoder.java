@@ -29,7 +29,6 @@ import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
-import java.security.Security;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Hashtable;
@@ -43,11 +42,9 @@ import org.bouncycastle.crypto.params.AsymmetricKeyParameter;
 import org.bouncycastle.crypto.util.PublicKeyFactory;
 import org.bouncycastle.jcajce.util.DefaultJcaJceHelper;
 import org.bouncycastle.jcajce.util.JcaJceHelper;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMParser;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
-
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 public class PublicKeyDecoder {
 
@@ -57,12 +54,7 @@ public class PublicKeyDecoder {
 	 * Setup BC crypto provider.
 	 */
 	static {
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
-		}
-		if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastlePQCProvider());
-		}
+		ProviderUtil.setupProviders();
 		//
 		// key types
 		//

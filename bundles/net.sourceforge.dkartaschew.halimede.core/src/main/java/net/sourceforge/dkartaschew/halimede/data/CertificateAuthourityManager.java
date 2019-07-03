@@ -22,7 +22,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.security.Security;
 import java.security.cert.CertificateEncodingException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -30,9 +29,9 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.eclipse.e4.core.di.annotations.Creatable;
+
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 /**
  * Manager class for handling Certificate Authourities.
@@ -46,12 +45,7 @@ public class CertificateAuthourityManager implements PropertyChangeListener {
 	 * Setup BC crypto provider.
 	 */
 	static {
-		if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastleProvider());
-		}
-		if (Security.getProvider(BouncyCastlePQCProvider.PROVIDER_NAME) == null) {
-			Security.addProvider(new BouncyCastlePQCProvider());
-		}
+		ProviderUtil.setupProviders();
 	}
 
 	/**

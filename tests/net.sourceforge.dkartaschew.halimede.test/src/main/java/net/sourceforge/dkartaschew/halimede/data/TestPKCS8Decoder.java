@@ -22,13 +22,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.security.KeyPair;
 import java.security.PrivateKey;
-import java.security.Security;
 import java.security.interfaces.DSAPrivateKey;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.RSAPrivateKey;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -37,6 +34,7 @@ import org.junit.runners.MethodSorters;
 
 import net.sourceforge.dkartaschew.halimede.TestUtilities;
 import net.sourceforge.dkartaschew.halimede.exceptions.InvalidPasswordException;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestPKCS8Decoder {
@@ -45,8 +43,7 @@ public class TestPKCS8Decoder {
 
 	@BeforeClass
 	public static void setup() {
-		Security.addProvider(new BouncyCastleProvider());
-		Security.addProvider(new BouncyCastlePQCProvider());
+		ProviderUtil.setupProviders();
 	}
 
 	@Test

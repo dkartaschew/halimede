@@ -19,14 +19,12 @@ package net.sourceforge.dkartaschew.halimede.data;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.security.Security;
 import java.security.cert.Certificate;
 import org.junit.runners.MethodSorters;
 
 import net.sourceforge.dkartaschew.halimede.TestUtilities;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -36,8 +34,7 @@ public class TestPKCS7Decoder {
 
 	@BeforeClass
 	public static void setup() {
-		Security.addProvider(new BouncyCastleProvider());
-		Security.addProvider(new BouncyCastlePQCProvider());
+		ProviderUtil.setupProviders();
 	}
 
 	/*
