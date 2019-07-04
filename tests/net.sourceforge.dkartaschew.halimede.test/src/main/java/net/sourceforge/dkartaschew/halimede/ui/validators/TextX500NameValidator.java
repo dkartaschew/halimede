@@ -117,6 +117,20 @@ public class TextX500NameValidator {
 		IStatus s = v.validate("O=Me,C=AU");
 		assertEquals(ValidationStatus.error("").getSeverity(), s.getSeverity());
 	}
+	
+	@Test
+	public void testEmptyCN() {
+		X500NameValidator v = new X500NameValidator(null);
+		IStatus s = v.validate("CN=,O=Me,C=AU");
+		assertEquals(ValidationStatus.error("").getSeverity(), s.getSeverity());
+	}
+	
+	@Test
+	public void testInavlidRDN() {
+		X500NameValidator v = new X500NameValidator(null);
+		IStatus s = v.validate("CN=,O=Me,C=AU,EMAIL_SUP=a@b.com");
+		assertEquals(ValidationStatus.error("").getSeverity(), s.getSeverity());
+	}
 
 	@Test
 	public void testValidNameEmptyIssuerList() {

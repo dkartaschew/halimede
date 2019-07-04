@@ -61,6 +61,26 @@ public class TestExistingCAValidator {
 		ExistingCAValidator v = new ExistingCAValidator(name, loc);
 		assertEquals(ValidationStatus.ok().getSeverity(), v.validate().getSeverity());
 	}
+	
+	@Test
+	public void testNullNameValues() {
+		IObservableValue<String> name = mock(IObservableValue.class);
+		when(name.getValue()).thenReturn(null);
+		IObservableValue<String> loc = mock(IObservableValue.class);
+		when(loc.getValue()).thenReturn("");
+		ExistingCAValidator v = new ExistingCAValidator(name, loc);
+		assertEquals(ValidationStatus.ok().getSeverity(), v.validate().getSeverity());
+	}
+	
+	@Test
+	public void testNullLocValues() {
+		IObservableValue<String> name = mock(IObservableValue.class);
+		when(name.getValue()).thenReturn("");
+		IObservableValue<String> loc = mock(IObservableValue.class);
+		when(loc.getValue()).thenReturn(null);
+		ExistingCAValidator v = new ExistingCAValidator(name, loc);
+		assertEquals(ValidationStatus.ok().getSeverity(), v.validate().getSeverity());
+	}
 
 	@Test
 	public void testEmptyValues() {
@@ -74,12 +94,32 @@ public class TestExistingCAValidator {
 
 	@Test
 	public void testGoodValues() {
-		IObservableValue<String> name = mock(IObservableValue.class);
-		when(name.getValue()).thenReturn(System.getProperty("java.io.tmpdir"));
 		IObservableValue<String> loc = mock(IObservableValue.class);
-		when(loc.getValue()).thenReturn("ABC");
+		when(loc.getValue()).thenReturn(System.getProperty("java.io.tmpdir"));
+		IObservableValue<String> name = mock(IObservableValue.class);
+		when(name.getValue()).thenReturn("ABC");
 		ExistingCAValidator v = new ExistingCAValidator(name, loc);
 		assertEquals(ValidationStatus.ok().getSeverity(), v.validate().getSeverity());
+	}
+	
+	@Test
+	public void testBadNameValues() {
+		IObservableValue<String> loc = mock(IObservableValue.class);
+		when(loc.getValue()).thenReturn(System.getProperty("java.io.tmpdir"));
+		IObservableValue<String> name = mock(IObservableValue.class);
+		when(name.getValue()).thenReturn("file::\\/\u0000\\!@#$%^&*()..//..\\.\\.\\\n\t \u0007 \u0002 \u0001");
+		ExistingCAValidator v = new ExistingCAValidator(name, loc);
+		assertEquals(ValidationStatus.error("").getSeverity(), v.validate().getSeverity());
+	}
+	
+	@Test
+	public void testLocationNameValues() {
+		IObservableValue<String> loc = mock(IObservableValue.class);
+		when(loc.getValue()).thenReturn("/file::\\/\u0000\\!@#$%^&*()..//..\\.\\.\\\n\t \u0007 \u0002 \u0001");
+		IObservableValue<String> name = mock(IObservableValue.class);
+		when(name.getValue()).thenReturn("ABC");
+		ExistingCAValidator v = new ExistingCAValidator(name, loc);
+		assertEquals(ValidationStatus.error("").getSeverity(), v.validate().getSeverity());
 	}
 
 	@Test
