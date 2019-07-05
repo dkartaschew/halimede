@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
@@ -46,6 +47,16 @@ import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
  * Adhoc testing for audit log implementation
  */
 public class TestAuditLog {
+	
+	@Before
+	public void setup() {
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		try {
+			TestUtilities.cleanup(dest);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	@Test
 	public void basicDualLogSetup() throws SecurityException, IOException {
@@ -71,6 +82,13 @@ public class TestAuditLog {
 		// Copy to /tmp
 		try {
 			TestUtilities.copyFolder(path, dest);
+			Path dest2 = Paths.get(TestUtilities.TMP, "CA", "Log");
+			try {
+				TestUtilities.cleanup(dest2);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
 			// ensure original state.
 			CertificateAuthority ca = CertificateAuthority.open(dest);
 			assertNotNull(ca);
@@ -146,6 +164,12 @@ public class TestAuditLog {
 		// Copy to /tmp
 		try {
 			TestUtilities.copyFolder(path, dest);
+			Path dest2 = Paths.get(TestUtilities.TMP, "CA", "Log");
+			try {
+				TestUtilities.cleanup(dest2);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			// Create a log file to cause IOException on creation of log file.
 			Path logLock = dest.resolve(CertificateAuthority.LOG_PATH);
 			Files.createFile(logLock);
