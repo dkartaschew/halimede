@@ -50,4 +50,48 @@ public class RestoreCAModel {
 		this.addToManager = addToManager;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (addToManager ? 1231 : 1237);
+		result = prime * result + ((baseLocation == null) ? 0 : baseLocation.hashCode());
+		result = prime * result + ((filename == null) ? 0 : filename.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RestoreCAModel other = (RestoreCAModel) obj;
+		if (addToManager != other.addToManager)
+			return false;
+		if (baseLocation == null) {
+			if (other.baseLocation != null)
+				return false;
+		} else if (!baseLocation.equals(other.baseLocation))
+			return false;
+		if (filename == null) {
+			if (other.filename != null)
+				return false;
+		} else if (!filename.equals(other.filename))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getFilename());
+		sb.append(" => ");
+		sb.append(getBaseLocation());
+		sb.append(" : ");
+		sb.append(isAddToManager());
+		return sb.toString();
+	}
 }

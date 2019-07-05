@@ -50,6 +50,8 @@ public class TestCASettingsModel {
 		assertNull(model.getSignatureAlgorithm());
 		assertNull(model.getSignatureAlgorithms());
 		assertNull(model.getSubject());
+		assertFalse(model.isEnableLog());
+		assertFalse(model.isIncrementalSerial());
 
 		assertFalse(model.equals(null));
 		assertFalse(model.equals(new Object()));
@@ -306,5 +308,69 @@ public class TestCASettingsModel {
 		assertArrayEquals(SignatureAlgorithm.forType(SignatureAlgorithm.MD2withRSA).toArray(new SignatureAlgorithm[0]),
 				model.getSignatureAlgorithms());
 
+	}
+	
+	@Test
+	public void testEnableLog() {
+		CASettingsModel model = new CASettingsModel();
+		CASettingsModel model2 = new CASettingsModel();
+
+		model.setNodeID(UUID.randomUUID());
+		model2.setNodeID(model.getNodeID());
+
+		model.setEnableLog(true);
+		assertNotEquals(model, model2);
+		assertNotEquals(model2, model);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+
+		model2.setEnableLog(false);
+		assertNotEquals(model, model2);
+		assertNotEquals(model2, model);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+
+		model2.setEnableLog(true);
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+
+		assertEquals(true, model.isEnableLog());
+		assertEquals(true, model2.isEnableLog());
+
+		assertNull(model.getDescription());
+		assertEquals(0, model.getExpiryDays());
+		assertNull(model.getSignatureAlgorithm());
+		assertNull(model.getSignatureAlgorithms());
+		assertNull(model.getSubject());
+	}
+	
+	@Test
+	public void testIncrementalSerial() {
+		CASettingsModel model = new CASettingsModel();
+		CASettingsModel model2 = new CASettingsModel();
+
+		model.setNodeID(UUID.randomUUID());
+		model2.setNodeID(model.getNodeID());
+
+		model.setIncrementalSerial(true);
+		assertNotEquals(model, model2);
+		assertNotEquals(model2, model);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+
+		model2.setIncrementalSerial(false);
+		assertNotEquals(model, model2);
+		assertNotEquals(model2, model);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+
+		model2.setIncrementalSerial(true);
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+
+		assertEquals(true, model.isIncrementalSerial());
+		assertEquals(true, model2.isIncrementalSerial());
+
+		assertNull(model.getDescription());
+		assertEquals(0, model.getExpiryDays());
+		assertNull(model.getSignatureAlgorithm());
+		assertNull(model.getSignatureAlgorithms());
+		assertNull(model.getSubject());
 	}
 }
