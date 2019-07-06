@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.ui.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -27,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyPair;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -44,6 +46,7 @@ import org.bouncycastle.asn1.x509.KeyPurposeId;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.mockito.Mockito;
 
 import net.sourceforge.dkartaschew.halimede.TestUtilities;
 import net.sourceforge.dkartaschew.halimede.data.CertificateRequestProperties;
@@ -77,6 +80,26 @@ public class TestNewCertificateModel {
 		assertFalse(model.equals(new Object()));
 		assertEquals(model.hashCode(), model.hashCode());
 		assertFalse(model.toString().contains("null"));
+	}
+	
+	@Test
+	public void testCertificateTemplageInstance() {
+		ICertificateKeyPairTemplate t = Mockito.mock(ICertificateKeyPairTemplate.class);
+		NewCertificateModel model = new NewCertificateModel(null, t);
+		assertFalse(model.toString().contains("null"));
+	}
+	
+	@Test
+	public void testObjectSubClassNotEqualsInstance() {
+		NewCertificateModel model2 = new NewCertificateModel(null) {
+			@Override
+			public String toString() {
+				return "HA, HA";
+			}
+		};
+		NewCertificateModel model = new NewCertificateModel(null);
+		assertFalse(model.toString().contains("null"));
+		assertNotEquals(model, model2);
 	}
 
 	@Test
@@ -1133,5 +1156,224 @@ public class TestNewCertificateModel {
 		assertEquals(X500n, n.getSubject());
 		assertEquals(subjAltNames, n.getSubjectAltNames());
 		assertEquals(ext, n.getExtendedKeyUsage());
+	}
+	
+	@Test
+	public void testDescriptionEquality() throws Throwable {
+		NewCertificateModel model = new NewCertificateModel(null);
+		NewCertificateModel model2 = new NewCertificateModel(null);
+		
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+		
+		model.setDescription(STR);
+		assertEquals(STR, model.getDescription());
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model2.setDescription("STR");
+		assertEquals("STR", model2.getDescription());
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model.setDescription(null);
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model.setDescription(STR);
+		model2.setDescription(STR);
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+
+	}
+	
+	@Test
+	public void testStartDateEquality() throws Throwable {
+		NewCertificateModel model = new NewCertificateModel(null);
+		NewCertificateModel model2 = new NewCertificateModel(null);
+		
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+		
+		model.setStartDate(ZonedDateTime.now());
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model2.setStartDate(ZonedDateTime.now().plus(20, ChronoUnit.HOURS));
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model.setStartDate(null);
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model.setStartDate(ZonedDateTime.now());
+		model2.setStartDate(model.getStartDate());
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+
+	}
+	
+	@Test
+	public void testExpiryDateEquality() throws Throwable {
+		NewCertificateModel model = new NewCertificateModel(null);
+		NewCertificateModel model2 = new NewCertificateModel(null);
+		
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+		
+		model.setExpiryDate(ZonedDateTime.now());
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model2.setExpiryDate(ZonedDateTime.now().plus(20, ChronoUnit.HOURS));
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model.setExpiryDate(null);
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model.setExpiryDate(ZonedDateTime.now());
+		model2.setExpiryDate(model.getExpiryDate());
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+
+	}
+	
+	@Test
+	public void testPasswordEquality() throws Throwable {
+		NewCertificateModel model = new NewCertificateModel(null);
+		NewCertificateModel model2 = new NewCertificateModel(null);
+		
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+		
+		model.setPassword(STR);
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model2.setPassword("abc");
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model.setPassword(null);
+		assertEquals(null, model2.getDescription());
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model.setPassword(STR);
+		model2.setPassword(model.getPassword());
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+
+	}
+	
+	@Test
+	public void testUseCAPasswordEquality() throws Throwable {
+		NewCertificateModel model = new NewCertificateModel(null);
+		NewCertificateModel model2 = new NewCertificateModel(null);
+		
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+		
+		model.setUseCAPassword(false);
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model2.setUseCAPassword(false);
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+	}
+	
+	@Test
+	public void testNotBeforeEquality() throws Throwable {
+		NewCertificateModel model = new NewCertificateModel(null);
+		NewCertificateModel model2 = new NewCertificateModel(null);
+		
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+		
+		model.setNotBefore(ZonedDateTime.now());
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model2.setNotBefore(ZonedDateTime.now().plus(20, ChronoUnit.HOURS));
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model.setNotBefore(null);
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model.setNotBefore(ZonedDateTime.now());
+		model2.setNotBefore(model.getNotBefore());
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+
+	}
+	
+	@Test
+	public void testNotAfterEquality() throws Throwable {
+		NewCertificateModel model = new NewCertificateModel(null);
+		NewCertificateModel model2 = new NewCertificateModel(null);
+		
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+		
+		model.setNotAfter(ZonedDateTime.now());
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model2.setNotAfter(ZonedDateTime.now().plus(20, ChronoUnit.HOURS));
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model.setNotAfter(null);
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model.setNotAfter(ZonedDateTime.now());
+		model2.setNotAfter(model.getNotAfter());
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+
+	}
+	
+	@Test
+	public void testRepresentTemplateEquality() throws Throwable {
+		NewCertificateModel model = new NewCertificateModel(null);
+		NewCertificateModel model2 = new NewCertificateModel(null);
+		
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
+		
+		model.setRepresentsTemplateOnly(true);
+		
+		assertNotEquals(model, model2);
+		assertNotEquals(model.hashCode(), model2.hashCode());
+		
+		model2.setRepresentsTemplateOnly(true);
+		assertEquals(model, model2);
+		assertEquals(model.hashCode(), model2.hashCode());
 	}
 }

@@ -352,8 +352,8 @@ public class NewCertificateModel extends CertificateRequest {
 			return true;
 		if (!super.equals(obj))
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+//		if (getClass() != obj.getClass())
+//			return false;
 		NewCertificateModel other = (NewCertificateModel) obj;
 		if (expiryDate == null) {
 			if (other.expiryDate != null)
