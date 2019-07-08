@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.NoSuchElementException;
 
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.bouncycastle.pqc.jcajce.provider.gmss.BCGMSSPublicKey;
 import org.junit.Test;
 
@@ -99,6 +101,9 @@ public class TestSignatureAlgorithms {
 		
 		assertEquals(SignatureAlgorithm.GOST3411withDSTU4145, SignatureAlgorithm
 				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.DSTU4145_0).getPublic()));
+		
+		assertEquals(SignatureAlgorithm.SM3withSM2, SignatureAlgorithm
+				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.EC_sm2p256v1).getPublic()));
 		
 		assertEquals(SignatureAlgorithm.ED25519, SignatureAlgorithm
 				.getDefaultSignature(KeyPairFactory.generateKeyPair(KeyType.ED25519).getPublic()));
@@ -372,7 +377,91 @@ public class TestSignatureAlgorithms {
 		assertFalse(alg.contains(SignatureAlgorithm.GOST3411withECGOST3410_2012_256));
 		assertFalse(alg.contains(SignatureAlgorithm.GOST3411withDSTU4145));
 	}
+	
+	@Test
+	public void testSignatureForSig_DSTU() {
+		Collection<SignatureAlgorithm> alg = SignatureAlgorithm
+				.forType(SignatureAlgorithm.GOST3411withDSTU4145);
+		assertTrue(alg.contains(SignatureAlgorithm.GOST3411withDSTU4145));
+		assertFalse(alg.contains(SignatureAlgorithm.SHA1withDSA));
+		assertFalse(alg.contains(SignatureAlgorithm.SHA512withRSA));
+		assertFalse(alg.contains(SignatureAlgorithm.SHA1withRSA));
+		assertFalse(alg.contains(SignatureAlgorithm.SHA1withECDSA));
+		assertFalse(alg.contains(SignatureAlgorithm.GOST3411withGOST3410));
+		assertFalse(alg.contains(SignatureAlgorithm.GOST3411withECGOST3410));
+		assertFalse(alg.contains(SignatureAlgorithm.GOST3411withECGOST3410_2012_256));
+	}
+	
+	@Test
+	public void testSignatureForSig_SM2() {
+		Collection<SignatureAlgorithm> alg = SignatureAlgorithm
+				.forType(SignatureAlgorithm.SM3withSM2);
+		assertTrue(alg.contains(SignatureAlgorithm.SM3withSM2));
+		assertFalse(alg.contains(SignatureAlgorithm.SHA1withDSA));
+		assertFalse(alg.contains(SignatureAlgorithm.SHA512withRSA));
+		assertFalse(alg.contains(SignatureAlgorithm.SHA1withRSA));
+		assertFalse(alg.contains(SignatureAlgorithm.SHA1withECDSA));
+		assertFalse(alg.contains(SignatureAlgorithm.GOST3411withGOST3410));
+		assertFalse(alg.contains(SignatureAlgorithm.GOST3411withECGOST3410));
+		assertFalse(alg.contains(SignatureAlgorithm.GOST3411withECGOST3410_2012_256));
+		assertFalse(alg.contains(SignatureAlgorithm.GOST3411withDSTU4145));
+	}
 
+	@Test
+	public void testSignatureForSig_ED25519() {
+		Collection<SignatureAlgorithm> alg = SignatureAlgorithm.forType(SignatureAlgorithm.ED25519);
+		assertTrue(alg.contains(SignatureAlgorithm.ED25519));
+		assertEquals(1, alg.size());
+	}
+	
+	@Test
+	public void testSignatureForSig_ED448() {
+		Collection<SignatureAlgorithm> alg = SignatureAlgorithm.forType(SignatureAlgorithm.ED448);
+		assertTrue(alg.contains(SignatureAlgorithm.ED448));
+		assertEquals(1, alg.size());
+	}
+	
+	@Test
+	public void testSignatureForSig_Rainbow() {
+		Collection<SignatureAlgorithm> alg = SignatureAlgorithm.forType(SignatureAlgorithm.RAINBOWwithSHA512);
+		assertTrue(alg.contains(SignatureAlgorithm.RAINBOWwithSHA224));
+		assertTrue(alg.contains(SignatureAlgorithm.RAINBOWwithSHA256));
+		assertTrue(alg.contains(SignatureAlgorithm.RAINBOWwithSHA384));
+		assertTrue(alg.contains(SignatureAlgorithm.RAINBOWwithSHA512));
+		assertEquals(4, alg.size());
+	}
+	
+	@Test
+	public void testSignatureForSig_SPHINCS() {
+		Collection<SignatureAlgorithm> alg = SignatureAlgorithm.forType(SignatureAlgorithm.SPHICS256withSHA512);
+		assertTrue(alg.contains(SignatureAlgorithm.SPHICS256withSHA512));
+		assertEquals(1, alg.size());
+		
+		alg = SignatureAlgorithm.forType(SignatureAlgorithm.SPHINCS256withSHA3_512);
+		assertTrue(alg.contains(SignatureAlgorithm.SPHINCS256withSHA3_512));
+		assertEquals(1, alg.size());
+	}
+	
+	@Test
+	public void testSignatureForSig_XMSS() {
+		Collection<SignatureAlgorithm> alg = SignatureAlgorithm.forType(SignatureAlgorithm.XMSSwithSHA256);
+		assertTrue(alg.contains(SignatureAlgorithm.XMSSwithSHA256));
+		assertTrue(alg.contains(SignatureAlgorithm.XMSSwithSHA512));
+		assertTrue(alg.contains(SignatureAlgorithm.XMSSwithSHAKE128));
+		assertTrue(alg.contains(SignatureAlgorithm.XMSSwithSHAKE256));
+		assertEquals(4, alg.size());
+	}
+	
+	@Test
+	public void testSignatureForSig_XMSSMT() {
+		Collection<SignatureAlgorithm> alg = SignatureAlgorithm.forType(SignatureAlgorithm.XMSSMTwithSHA256);
+		assertTrue(alg.contains(SignatureAlgorithm.XMSSMTwithSHA256));
+		assertTrue(alg.contains(SignatureAlgorithm.XMSSMTwithSHA512));
+		assertTrue(alg.contains(SignatureAlgorithm.XMSSMTwithSHAKE128));
+		assertTrue(alg.contains(SignatureAlgorithm.XMSSMTwithSHAKE256));
+		assertEquals(4, alg.size());
+	}
+	
 	@Test
 	public void testEnum() {
 		for (SignatureAlgorithm t : SignatureAlgorithm.values()) {
@@ -381,5 +470,52 @@ public class TestSignatureAlgorithms {
 			assertTrue(t.equals(t));
 			System.out.println(t.toString());
 		}
+	}
+	
+	@Test
+	public void testSignatureForSig_qTELSA() {
+		Collection<SignatureAlgorithm> alg = SignatureAlgorithm.forType(SignatureAlgorithm.qTESLA_I);
+		assertTrue(alg.contains(SignatureAlgorithm.qTESLA_I));
+		assertEquals(1, alg.size());
+		
+		alg = SignatureAlgorithm.forType(SignatureAlgorithm.qTESLA_III_size);
+		assertTrue(alg.contains(SignatureAlgorithm.qTESLA_III_size));
+		assertEquals(1, alg.size());
+		
+		alg = SignatureAlgorithm.forType(SignatureAlgorithm.qTESLA_III_speed);
+		assertTrue(alg.contains(SignatureAlgorithm.qTESLA_III_speed));
+		assertEquals(1, alg.size());
+		
+		alg = SignatureAlgorithm.forType(SignatureAlgorithm.qTESLA_P_I);
+		assertTrue(alg.contains(SignatureAlgorithm.qTESLA_P_I));
+		assertEquals(1, alg.size());
+		
+		alg = SignatureAlgorithm.forType(SignatureAlgorithm.qTESLA_P_III);
+		assertTrue(alg.contains(SignatureAlgorithm.qTESLA_P_III));
+		assertEquals(1, alg.size());
+	}
+	
+	@Test
+	public void testProvider() {
+		assertEquals(BouncyCastleProvider.PROVIDER_NAME, SignatureAlgorithm.MD5withRSA.getProvider());
+		assertEquals(BouncyCastleProvider.PROVIDER_NAME, SignatureAlgorithm.SHA1withDSA.getProvider());
+		assertEquals(BouncyCastleProvider.PROVIDER_NAME, SignatureAlgorithm.SHA3_512withECDSA.getProvider());
+		assertEquals(BouncyCastleProvider.PROVIDER_NAME, SignatureAlgorithm.GOST3411withDSTU4145.getProvider());
+		assertEquals(BouncyCastleProvider.PROVIDER_NAME, SignatureAlgorithm.SM3withSM2.getProvider());
+		assertEquals(BouncyCastleProvider.PROVIDER_NAME, SignatureAlgorithm.GOST3411withECGOST3410.getProvider());
+		assertEquals(BouncyCastlePQCProvider.PROVIDER_NAME, SignatureAlgorithm.XMSSMTwithSHA256.getProvider());
+		assertEquals(BouncyCastlePQCProvider.PROVIDER_NAME, SignatureAlgorithm.XMSSwithSHA256.getProvider());
+		assertEquals(BouncyCastlePQCProvider.PROVIDER_NAME, SignatureAlgorithm.RAINBOWwithSHA224.getProvider());
+		assertEquals(BouncyCastlePQCProvider.PROVIDER_NAME, SignatureAlgorithm.qTESLA_I.getProvider());
+		assertEquals(BouncyCastlePQCProvider.PROVIDER_NAME, SignatureAlgorithm.SPHICS256withSHA512.getProvider());
+	}
+	
+	@Test
+	public void testInDirectory() {
+		assertTrue(SignatureAlgorithm.SHA1withRSA.isInBCCentralDirectory());
+		assertTrue(SignatureAlgorithm.qTESLA_P_III.isInBCCentralDirectory());
+		assertFalse(SignatureAlgorithm.ED25519.isInBCCentralDirectory());
+		assertFalse(SignatureAlgorithm.GOST3411withDSTU4145.isInBCCentralDirectory());
+		assertFalse(SignatureAlgorithm.RAINBOWwithSHA224.isInBCCentralDirectory());
 	}
 }
