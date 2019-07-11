@@ -40,7 +40,7 @@ public class RevokedCertificateColumnLabelProvider extends CADetailsLabelProvide
 		case RevokedCertificatesPane.COLUMN_KEY_TYPE:
 			try {
 				return KeyType.getKeyTypeDescription(element.getProperty(Key.keyType));
-			} catch (NoSuchElementException | NullPointerException e) {
+			} catch (NoSuchElementException | NullPointerException | IllegalArgumentException e) {
 				return null;
 			}
 		case RevokedCertificatesPane.COLUMN_START_DATE:
@@ -51,8 +51,12 @@ public class RevokedCertificateColumnLabelProvider extends CADetailsLabelProvide
 			return element.getProperty(Key.revokeDate);
 		case RevokedCertificatesPane.COLUMN_REVOKE_REASON:
 			String el = element.getProperty(Key.revokeCode);
-			if(el != null) {
-				el = RevokeReasonCode.valueOf(el).getDescription();
+			if (el != null) {
+				try {
+					el = RevokeReasonCode.valueOf(el).getDescription();
+				} catch (NoSuchElementException | NullPointerException | IllegalArgumentException e) {
+					return null;
+				}
 			}
 			return el;
 		case RevokedCertificatesPane.COLUMN_ISSUE_DATE:

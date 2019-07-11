@@ -39,7 +39,7 @@ public class IssuedCertificateColumnLabelProvider extends CADetailsLabelProvider
 		case IssuedCertificatesPane.COLUMN_KEY_TYPE:
 			try {
 				return KeyType.getKeyTypeDescription(element.getProperty(Key.keyType));
-			} catch (NoSuchElementException | NullPointerException e) {
+			} catch (NoSuchElementException | NullPointerException | IllegalArgumentException e) {
 				return null;
 			}
 		case IssuedCertificatesPane.COLUMN_START_DATE:
