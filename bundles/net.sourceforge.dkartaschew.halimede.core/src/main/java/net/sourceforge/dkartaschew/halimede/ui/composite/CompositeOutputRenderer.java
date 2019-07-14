@@ -17,43 +17,55 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.composite;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 
 import net.sourceforge.dkartaschew.halimede.data.render.ICertificateOutputRenderer;
-import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
+import net.sourceforge.dkartaschew.halimede.ui.util.SWTFontUtils;
 
 public class CompositeOutputRenderer extends Composite implements ICertificateOutputRenderer {
 
 	/**
 	 * The widget to display the contents
 	 */
-	private Browser textArea;
+	private StyledText textArea;
 	/**
-	 * The HTML renderer
+	 * Header font.
 	 */
-	private CompositeHTMLRenderer renderer;
+	private Font headerFont;
 	/**
-	 * The stream we capture the render to pass to the browser.
+	 * System monospace font.
 	 */
-	private ByteArrayOutputStream stream;
+	private Font monospace;
+	/**
+	 * The current length.
+	 */
+	private int currentLength;
+	/**
+	 * Current EOL
+	 */
+	private final String EOL = System.lineSeparator();
+	/**
+	 * EOL Length.
+	 */
+	private final int EOLLength = EOL.length();
+	/**
+	 * Size of the header font.
+	 */
+	private final static int HEADER_FONT_HEIGHT_ADJUSTMENT = 2;
 
 	/**
 	 * Create the composite based renderer.
 	 * 
 	 * @param parent The parent composite.
-	 * @param style  The applied style.
-	 * @param title  The title.
+	 * @param style The applied style.
+	 * @param title The title.
 	 */
 	public CompositeOutputRenderer(Composite parent, int style, String title) {
 		super(parent, SWT.BORDER);
@@ -64,32 +76,31 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	 * Initialise the composite
 	 * 
 	 * @param parent The parent instance.
-	 * @param title  The title.
+	 * @param title The title.
 	 */
 	private void init(Composite parent, String title) {
+
+		this.monospace = SWTFontUtils.getMonospacedFont(getDisplay());
+		FontData[] font = parent.getFont().getFontData();
+		font[0].setHeight(font[0].getHeight() + HEADER_FONT_HEIGHT_ADJUSTMENT);
+		font[0].setStyle(SWT.BOLD);
+		this.headerFont = new Font(getDisplay(), font[0]);
 		/*
 		 * Start layout.
 		 */
 		setLayout(new GridLayout(1, false));
-		setMenu(getBrowserMenu());
 
-		textArea = new Browser(this, SWT.DOUBLE_BUFFERED);
+		textArea = new StyledText(this, SWT.DOUBLE_BUFFERED | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL);
+		textArea.setAlwaysShowScrollBars(false);
 		textArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		textArea.setMenu(getMenu());
-		textArea.setBackground(parent.getBackground());
-		stream = new ByteArrayOutputStream();
-		renderer = new CompositeHTMLRenderer(new PrintStream(stream), title, getShell());
+
+		setBackground(textArea.getBackground());
 	}
 
 	@Override
 	public void finaliseRender() {
-		renderer.finaliseRender();
-		try {
-			textArea.setText(stream.toString(StandardCharsets.UTF_8.name()));
-		} catch (UnsupportedEncodingException e) {
-			// Should never throw
-			textArea.setText(ExceptionUtil.getMessage(e));
-		}
+		// NOP
 	}
 
 	@Override
@@ -98,13 +109,30 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	}
 
 	@Override
+	public void dispose() {
+		super.dispose();
+		if (headerFont != null && !headerFont.isDisposed()) {
+			headerFont.dispose();
+		}
+	}
+
+	@Override
 	public void addHeaderLine(String value) {
-		renderer.addHeaderLine(value);
+		StyleRange range = new StyleRange();
+		range.start = currentLength;
+		range.length = value.length();
+		range.font = headerFont;
+		textArea.append(value);
+		textArea.append(EOL);
+		textArea.setStyleRange(range);
+		textArea.setLineVerticalIndent(textArea.getLineCount() - 2 , 8);
+		currentLength += (range.length + EOLLength);
 	}
 
 	@Override
 	public void addEmptyLine() {
-		renderer.addEmptyLine();
+		textArea.append(EOL);
+		currentLength += EOLLength;
 	}
 
 	@Override
@@ -114,27 +142,57 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 
 	@Override
 	public void addContentLine(String key, String value, boolean monospace) {
-		renderer.addContentLine(key, value, monospace);
+
+		StyleRange range = new StyleRange();
+		range.start = currentLength;
+		range.length = key.length();
+		range.fontStyle = SWT.BOLD;
+		textArea.append(key);
+		textArea.append(EOL);
+		textArea.setStyleRange(range);
+		currentLength += (range.length + EOLLength);
+		textArea.setLineIndent(textArea.getLineCount() - 2, 1, 8);
+
+		range = new StyleRange();
+		range.start = currentLength;
+		range.length = value.length();
+		range.font = this.monospace;
+		textArea.append(value);
+		textArea.append(EOL);
+		if (monospace) {
+			range = new StyleRange();
+			range.start = currentLength;
+			range.length = value.length();
+			range.font = this.monospace;
+			textArea.setStyleRange(range);
+		}
+		int c = countEOL(value);
+		textArea.setLineIndent(textArea.getLineCount() - (1 + c), c, 16);
+
+		currentLength += (value.length() + EOLLength);
+	}
+
+	private int countEOL(String value) {
+		if (value.contains(EOL)) {
+			int lastIndex = 0;
+			int count = 0;
+			while (lastIndex != -1) {
+				lastIndex = value.indexOf(EOL, lastIndex);
+				if (lastIndex != -1) {
+					count++;
+					lastIndex += EOL.length();
+				}
+			}
+			return count + 1;
+		}
+		return 1;
 	}
 
 	@Override
 	public void addHorizontalLine() {
-		renderer.addHorizontalLine();
-	}
-
-	/**
-	 * Get the custom browser menu.
-	 * <P>
-	 * This menu only contains a "copy" command.
-	 * 
-	 * @return A customised browser menu.
-	 */
-	private Menu getBrowserMenu() {
-		Menu menu = new Menu(getShell(), SWT.POP_UP);
-		MenuItem item = new MenuItem(menu, SWT.NONE);
-		item.setText("Copy");
-		item.addListener(SWT.Selection, e -> textArea.execute("document.execCommand('copy')"));
-		return menu;
+		textArea.append("--- --- ---");
+		textArea.append(EOL);
+		currentLength += EOLLength + 11;
 	}
 
 }
