@@ -17,24 +17,106 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.composite;
 
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.AnnotationModel;
+import org.eclipse.jface.text.source.AnnotationPainter;
+import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.render.ICertificateOutputRenderer;
 import net.sourceforge.dkartaschew.halimede.ui.util.SWTFontUtils;
 
 public class CompositeOutputRenderer extends Composite implements ICertificateOutputRenderer {
 
 	/**
-	 * The widget to display the contents
+	 * Annotation to use for drawing the line.
+	 */
+	class HRAnnotation extends Annotation {
+
+		public static final String TYPE = PluginDefaults.ID + ".annotation.hr";
+
+		/**
+		 * Create annotation marker
+		 * 
+		 * @param position The position of the marker
+		 */
+		public HRAnnotation(int position) {
+			super(TYPE, false, Integer.toString(position));
+		}
+
+	}
+
+	/**
+	 * Drawing strategy for the line.
+	 */
+	class HRDrawingStrategy implements AnnotationPainter.IDrawingStrategy {
+
+		@Override
+		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
+			if (gc != null) {
+				final Color foreground = gc.getForeground();
+
+				Point left = textWidget.getLocationAtOffset(offset);
+				Point right = textWidget.getLocationAtOffset(offset + length);
+				if (left.x > right.x) {
+					/*
+					 * hack: sometimes linewrapping text widget gives us the wrong x/y for the first character of a line
+					 * that has been wrapped.
+					 */
+					left.x = 0;
+					left.y = right.y;
+				}
+				right.x = textWidget.getClientArea().width;
+
+				int baseline = textWidget.getBaseline(offset);
+				int vcenter = left.y + (baseline / 2) + (baseline / 4);
+
+				gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
+				gc.setLineStyle(SWT.LINE_SOLID);
+
+				left.x += 3;
+				right.x -= 5;
+				vcenter -= 2;
+
+				if (right.x > left.x) {
+
+					// draw the horizontal rule
+					gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
+					gc.drawLine(left.x, vcenter, right.x, vcenter);
+				}
+
+				gc.setForeground(foreground);
+			} else {
+				textWidget.redrawRange(offset, length, true);
+			}
+		}
+
+	}
+
+	/**
+	 * The widget to display the contents.
+	 */
+	private SourceViewer viewer;
+	/**
+	 * The underlying widget of the viewer.
 	 */
 	private StyledText textArea;
+
 	/**
 	 * Header font.
 	 */
@@ -50,15 +132,19 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	/**
 	 * Current EOL
 	 */
-	private final String EOL = System.lineSeparator();
+	private final static String EOL = System.lineSeparator();
 	/**
 	 * EOL Length.
 	 */
-	private final int EOLLength = EOL.length();
+	private final static int EOLLength = EOL.length();
 	/**
 	 * Size of the header font.
 	 */
 	private final static int HEADER_FONT_HEIGHT_ADJUSTMENT = 2;
+	/**
+	 * Default margin
+	 */
+	private final static int DEFAULT_INDENT = 8;
 
 	/**
 	 * Create the composite based renderer.
@@ -80,6 +166,9 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	 */
 	private void init(Composite parent, String title) {
 
+		/*
+		 * Get our font references.
+		 */
 		this.monospace = SWTFontUtils.getMonospacedFont(getDisplay());
 		FontData[] font = parent.getFont().getFontData();
 		font[0].setHeight(font[0].getHeight() + HEADER_FONT_HEIGHT_ADJUSTMENT);
@@ -90,11 +179,48 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		 */
 		setLayout(new GridLayout(1, false));
 
-		textArea = new StyledText(this, SWT.DOUBLE_BUFFERED | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL);
+		/*
+		 * Create the source text viewer (We need this to be able to draw the horizontal rule line).
+		 */
+		viewer = new SourceViewer(this, null, SWT.DOUBLE_BUFFERED | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer.setDocument(new Document(), new AnnotationModel());
+
+		/*
+		 * Get access to the underlying text widget.
+		 */
+		textArea = viewer.getTextWidget();
 		textArea.setAlwaysShowScrollBars(false);
 		textArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-		textArea.setMenu(getMenu());
 
+		/*
+		 * Start creation of annotation services.
+		 */
+		IAnnotationAccess annotationAccess = new IAnnotationAccess() {
+			public Object getType(Annotation annotation) {
+				return annotation.getType();
+			}
+
+			public boolean isMultiLine(Annotation annotation) {
+				return true;
+			}
+
+			public boolean isTemporary(Annotation annotation) {
+				return true;
+			}
+		};
+
+		/**
+		 * Create a custom painter to draw horizontal line.
+		 */
+		AnnotationPainter painter = new AnnotationPainter(viewer, annotationAccess);
+		painter.addDrawingStrategy(HRAnnotation.TYPE, new HRDrawingStrategy());
+		painter.addAnnotationType(HRAnnotation.TYPE, HRAnnotation.TYPE);
+		painter.setAnnotationTypeColor(HRAnnotation.TYPE, textArea.getForeground());
+		viewer.addPainter(painter);
+
+		/*
+		 * Set the border around the text widget to be the same colour as the text area background.
+		 */
 		setBackground(textArea.getBackground());
 	}
 
@@ -125,7 +251,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		textArea.append(value);
 		textArea.append(EOL);
 		textArea.setStyleRange(range);
-		textArea.setLineVerticalIndent(textArea.getLineCount() - 2 , 8);
+		textArea.setLineVerticalIndent(textArea.getLineCount() - 2, DEFAULT_INDENT);
 		currentLength += (range.length + EOLLength);
 	}
 
@@ -142,6 +268,8 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 
 	@Override
 	public void addContentLine(String key, String value, boolean monospace) {
+		key = notNull(key);
+		value = notNull(value);
 
 		StyleRange range = new StyleRange();
 		range.start = currentLength;
@@ -150,9 +278,10 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		textArea.append(key);
 		textArea.append(EOL);
 		textArea.setStyleRange(range);
+		textArea.setLineIndent(textArea.getLineCount() - 2, 1, DEFAULT_INDENT);
+		textArea.setLineVerticalIndent(textArea.getLineCount() - 2, DEFAULT_INDENT / 2);
 		currentLength += (range.length + EOLLength);
-		textArea.setLineIndent(textArea.getLineCount() - 2, 1, 8);
-
+		
 		range = new StyleRange();
 		range.start = currentLength;
 		range.length = value.length();
@@ -167,11 +296,36 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 			textArea.setStyleRange(range);
 		}
 		int c = countEOL(value);
-		textArea.setLineIndent(textArea.getLineCount() - (1 + c), c, 16);
+		textArea.setLineIndent(textArea.getLineCount() - (1 + c), c, DEFAULT_INDENT * 2);
 
 		currentLength += (value.length() + EOLLength);
 	}
 
+	@Override
+	public void addHorizontalLine() {
+		textArea.append(EOL);
+		textArea.setLineVerticalIndent(textArea.getLineCount() - 2, DEFAULT_INDENT / 2);
+		IAnnotationModel model = viewer.getAnnotationModel();
+		model.addAnnotation(new HRAnnotation(currentLength), new Position(currentLength));
+		currentLength += EOLLength;
+	}
+
+	/**
+	 * Ensure the given string is not null
+	 * 
+	 * @param value The value to check
+	 * @return The original value if not null, or ""
+	 */
+	private String notNull(String value) {
+		return (value != null) ? value : "";
+	}
+
+	/**
+	 * Get the number of EOL in the string
+	 * 
+	 * @param value The Sting to check EOL for
+	 * @return The number of EOL in the string + 1
+	 */
 	private int countEOL(String value) {
 		if (value.contains(EOL)) {
 			int lastIndex = 0;
@@ -186,13 +340,6 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 			return count + 1;
 		}
 		return 1;
-	}
-
-	@Override
-	public void addHorizontalLine() {
-		textArea.append("--- --- ---");
-		textArea.append(EOL);
-		currentLength += EOLLength + 11;
 	}
 
 }
