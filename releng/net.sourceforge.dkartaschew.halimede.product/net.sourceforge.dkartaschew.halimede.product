@@ -7,7 +7,7 @@
    </configIni>
 
    <launcherArgs>
-      <programArgs>--clearPersistedState
+      <programArgs>-clearPersistedState
       </programArgs>
       <programArgsLin>-data @user.home/.config/net.sourceforge.dkartaschew.halimede
       </programArgsLin>
