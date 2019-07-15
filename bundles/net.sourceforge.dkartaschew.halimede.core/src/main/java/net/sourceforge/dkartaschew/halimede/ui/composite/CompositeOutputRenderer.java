@@ -40,6 +40,7 @@ import org.eclipse.swt.widgets.Composite;
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.render.ICertificateOutputRenderer;
 import net.sourceforge.dkartaschew.halimede.ui.util.SWTFontUtils;
+import net.sourceforge.dkartaschew.halimede.util.WordUtils;
 
 public class CompositeOutputRenderer extends Composite implements ICertificateOutputRenderer {
 
@@ -145,7 +146,10 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	 * Default margin
 	 */
 	private final static int DEFAULT_INDENT = 8;
-
+	/**
+	 * Default wrap for long strings.
+	 */
+	private final static int DEFAULT_WRAP = 120;
 	/**
 	 * Create the composite based renderer.
 	 * 
@@ -154,7 +158,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	 * @param title The title.
 	 */
 	public CompositeOutputRenderer(Composite parent, int style, String title) {
-		super(parent, SWT.BORDER);
+		super(parent, SWT.NONE);
 		init(parent, title);
 	}
 
@@ -182,7 +186,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		/*
 		 * Create the source text viewer (We need this to be able to draw the horizontal rule line).
 		 */
-		viewer = new SourceViewer(this, null, SWT.DOUBLE_BUFFERED | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL);
+		viewer = new SourceViewer(this, null, SWT.DOUBLE_BUFFERED | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.setDocument(new Document(), new AnnotationModel());
 
 		/*
@@ -221,7 +225,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		/*
 		 * Set the border around the text widget to be the same colour as the text area background.
 		 */
-		setBackground(textArea.getBackground());
+		//setBackground(textArea.getBackground());
 	}
 
 	@Override
@@ -282,6 +286,23 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		textArea.setLineVerticalIndent(textArea.getLineCount() - 2, DEFAULT_INDENT / 2);
 		currentLength += (range.length + EOLLength);
 		
+		if (!monospace) {
+			// We treat monospace as preformatted.
+			if (value.length() > DEFAULT_WRAP) {
+				if (value.contains(EOL)) {
+					// As WordUtils.wrap() is for single lines, lets split/rejoin...
+					StringBuilder sb = new StringBuilder();
+					for (String l : value.split(EOL)) {
+						sb.append(WordUtils.wrap(l, DEFAULT_WRAP));
+						sb.append(EOL);
+					}
+					value = sb.toString();
+				} else {
+					value = WordUtils.wrap(value, DEFAULT_WRAP);
+				}
+			}
+		}
+		
 		range = new StyleRange();
 		range.start = currentLength;
 		range.length = value.length();
@@ -334,7 +355,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 				lastIndex = value.indexOf(EOL, lastIndex);
 				if (lastIndex != -1) {
 					count++;
-					lastIndex += EOL.length();
+					lastIndex += EOLLength;
 				}
 			}
 			return count + 1;

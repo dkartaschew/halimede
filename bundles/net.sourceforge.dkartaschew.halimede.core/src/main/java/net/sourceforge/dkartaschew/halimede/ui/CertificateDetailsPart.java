@@ -269,7 +269,8 @@ public class CertificateDetailsPart {
 		renderer.render(composite);
 		composite.finaliseRender();
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
+		composite.redraw();
+		
 		/*
 		 * Set the action parameters
 		 */
