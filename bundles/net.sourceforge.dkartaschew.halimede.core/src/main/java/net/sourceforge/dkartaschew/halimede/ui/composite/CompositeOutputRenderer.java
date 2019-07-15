@@ -28,6 +28,8 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -36,6 +38,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.render.ICertificateOutputRenderer;
@@ -150,6 +154,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	 * Default wrap for long strings.
 	 */
 	private final static int DEFAULT_WRAP = 120;
+
 	/**
 	 * Create the composite based renderer.
 	 * 
@@ -186,7 +191,8 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		/*
 		 * Create the source text viewer (We need this to be able to draw the horizontal rule line).
 		 */
-		viewer = new SourceViewer(this, null, SWT.DOUBLE_BUFFERED | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
+		viewer = new SourceViewer(this, null,
+				SWT.DOUBLE_BUFFERED | SWT.READ_ONLY | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		viewer.setDocument(new Document(), new AnnotationModel());
 
 		/*
@@ -223,9 +229,27 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		viewer.addPainter(painter);
 
 		/*
-		 * Set the border around the text widget to be the same colour as the text area background.
+		 * Add basic menu
 		 */
-		//setBackground(textArea.getBackground());
+		Menu menu = new Menu(textArea);
+		MenuItem item = new MenuItem(menu, SWT.PUSH);
+		item.setText("Copy");
+		item.addListener(SWT.Selection, e -> textArea.copy());
+		item = new MenuItem(menu, SWT.PUSH);
+		item.setText("Select All");
+		item.addListener(SWT.Selection, e -> textArea.selectAll());
+		item.setAccelerator(SWT.CTRL + 'a');
+		textArea.setMenu(menu);
+		textArea.addKeyListener(new KeyAdapter() {
+		    @Override
+		    public void keyPressed(KeyEvent e)
+		    {
+		        if (e.stateMask == SWT.CTRL && e.keyCode == 'a') {
+		            textArea.selectAll();
+		            e.doit = false;
+		        }
+		    }
+		});
 	}
 
 	@Override
@@ -285,7 +309,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		textArea.setLineIndent(textArea.getLineCount() - 2, 1, DEFAULT_INDENT);
 		textArea.setLineVerticalIndent(textArea.getLineCount() - 2, DEFAULT_INDENT / 2);
 		currentLength += (range.length + EOLLength);
-		
+
 		if (!monospace) {
 			// We treat monospace as preformatted.
 			if (value.length() > DEFAULT_WRAP) {
@@ -302,7 +326,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 				}
 			}
 		}
-		
+
 		range = new StyleRange();
 		range.start = currentLength;
 		range.length = value.length();
