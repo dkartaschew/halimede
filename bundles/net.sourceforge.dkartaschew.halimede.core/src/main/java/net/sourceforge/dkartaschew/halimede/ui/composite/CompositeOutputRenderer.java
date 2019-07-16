@@ -17,6 +17,8 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.composite;
 
+import java.util.Arrays;
+
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -26,10 +28,9 @@ import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -154,6 +155,10 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	 * Default wrap for long strings.
 	 */
 	private final static int DEFAULT_WRAP = 120;
+	/**
+	 * Default text area margin.
+	 */
+	private final static int DEFAULT_MARGIN = 8;
 
 	/**
 	 * Create the composite based renderer.
@@ -201,6 +206,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		textArea = viewer.getTextWidget();
 		textArea.setAlwaysShowScrollBars(false);
 		textArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		textArea.setMargins(DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN, DEFAULT_MARGIN);
 
 		/*
 		 * Start creation of annotation services.
@@ -238,18 +244,10 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		item = new MenuItem(menu, SWT.PUSH);
 		item.setText("Select All");
 		item.addListener(SWT.Selection, e -> textArea.selectAll());
-		item.setAccelerator(SWT.CTRL + 'a');
+		item.setAccelerator(SWT.MOD1 + 'a');
 		textArea.setMenu(menu);
-		textArea.addKeyListener(new KeyAdapter() {
-		    @Override
-		    public void keyPressed(KeyEvent e)
-		    {
-		        if (e.stateMask == SWT.CTRL && e.keyCode == 'a') {
-		            textArea.selectAll();
-		            e.doit = false;
-		        }
-		    }
-		});
+		// Add select all to text area (why doesn't it have by default)?
+		textArea.setKeyBinding(SWT.MOD1 | 'A', ST.SELECT_ALL);
 	}
 
 	@Override
@@ -316,10 +314,10 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 				if (value.contains(EOL)) {
 					// As WordUtils.wrap() is for single lines, lets split/rejoin...
 					StringBuilder sb = new StringBuilder();
-					for (String l : value.split(EOL)) {
+					Arrays.stream(value.split(EOL)).forEach(l -> {
 						sb.append(WordUtils.wrap(l, DEFAULT_WRAP));
 						sb.append(EOL);
-					}
+					});
 					value = sb.toString();
 				} else {
 					value = WordUtils.wrap(value, DEFAULT_WRAP);
@@ -341,7 +339,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 			textArea.setStyleRange(range);
 		}
 		int c = countEOL(value);
-		textArea.setLineIndent(textArea.getLineCount() - (1 + c), c, DEFAULT_INDENT * 2);
+		textArea.setLineIndent(textArea.getLineCount() - (1 + c), c, DEFAULT_INDENT * 4);
 
 		currentLength += (value.length() + EOLLength);
 	}
