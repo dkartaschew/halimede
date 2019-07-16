@@ -19,10 +19,10 @@ package net.sourceforge.dkartaschew.halimede.e4rcp.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -81,9 +81,10 @@ public class AboutDialog extends TitleAreaDialog {
 		lblApplicationName.setAlignment(SWT.CENTER);
 		lblApplicationName.setText(PluginDefaults.APPLICATION_FULLNAME);
 		FontData[] fD = lblApplicationName.getFont().getFontData();
-		fD[0].setHeight(fD[0].getHeight() + 4);
-		fD[0].setStyle(SWT.BOLD);
-		lblApplicationName.setFont(new Font(getShell().getDisplay(), fD[0]));
+		FontDescriptor descriptor = FontDescriptor.createFrom(lblApplicationName.getFont())//
+				.setStyle(SWT.BOLD)//
+				.setHeight(fD[0].getHeight() + 4);
+		lblApplicationName.setFont(PluginDefaults.getResourceManager().createFont(descriptor));
 
 		Label lblVersion = new Label(container, SWT.NONE);
 		lblVersion.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));

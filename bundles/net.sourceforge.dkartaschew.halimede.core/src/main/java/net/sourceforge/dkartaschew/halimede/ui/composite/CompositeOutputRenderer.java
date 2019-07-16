@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.ui.composite;
 
 import java.util.Arrays;
 
+import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
@@ -33,7 +34,6 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
@@ -184,10 +184,10 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		 * Get our font references.
 		 */
 		this.monospace = SWTFontUtils.getMonospacedFont(getDisplay());
-		FontData[] font = parent.getFont().getFontData();
-		font[0].setHeight(font[0].getHeight() + HEADER_FONT_HEIGHT_ADJUSTMENT);
-		font[0].setStyle(SWT.BOLD);
-		this.headerFont = new Font(getDisplay(), font[0]);
+		FontDescriptor boldDescriptor = FontDescriptor.createFrom(parent.getFont())//
+				.setStyle(SWT.BOLD)//
+				.setHeight(parent.getFont().getFontData()[0].getHeight() + HEADER_FONT_HEIGHT_ADJUSTMENT);
+		this.headerFont = PluginDefaults.getResourceManager().createFont(boldDescriptor);
 		/*
 		 * Start layout.
 		 */
@@ -258,14 +258,6 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	@Override
 	protected void checkSubclass() {
 		/* Do nothing - Subclassing is allowed */
-	}
-
-	@Override
-	public void dispose() {
-		super.dispose();
-		if (headerFont != null && !headerFont.isDisposed()) {
-			headerFont.dispose();
-		}
 	}
 
 	@Override

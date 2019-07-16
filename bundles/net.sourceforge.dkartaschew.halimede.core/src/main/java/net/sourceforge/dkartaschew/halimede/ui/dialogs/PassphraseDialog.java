@@ -138,8 +138,7 @@ public class PassphraseDialog extends Dialog {
 			Font parentFont = errorLabel.getFont();
 			int fontHeight = parentFont.getFontData()[0].getHeight() - 1;
 			FontDescriptor boldDescriptor = FontDescriptor.createFrom(parentFont).setStyle(SWT.BOLD).setHeight(fontHeight);
-			Font boldFont = boldDescriptor.createFont(errorLabel.getDisplay());
-			errorLabel.setFont(boldFont);
+			errorLabel.setFont(PluginDefaults.getResourceManager().createFont(boldDescriptor));
 		}
 		applyDialogFont(composite);
 		return composite;

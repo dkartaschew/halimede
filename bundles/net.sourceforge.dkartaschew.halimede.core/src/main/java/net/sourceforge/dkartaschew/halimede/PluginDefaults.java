@@ -25,6 +25,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
+import org.eclipse.swt.graphics.RGB;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -104,6 +105,20 @@ public class PluginDefaults {
 	 * The length for header labels in parts.
 	 */
 	public static final int PART_HEADER_LENGTH = 60;
+	
+	/**
+	 * The colour to use on the header (Certificate Details view) when a light theme is in use.
+	 * <p>
+	 * Note: Non-final to allow consumers to modify to suite application theme
+	 */
+	public static RGB HEADER_COLOUR_LIGHT = new RGB(26, 82, 118); // Midnight Blue
+
+	/**
+	 * The colour to use on the header (Certificate Details view) when a dark theme is in use.
+	 * <p>
+	 * Note: Non-final to allow consumers to modify to suite application theme
+	 */
+	public static RGB HEADER_COLOUR_DARK = new RGB(133, 193, 233); 
 	
 	/**
 	 * Local resource manager for any images.

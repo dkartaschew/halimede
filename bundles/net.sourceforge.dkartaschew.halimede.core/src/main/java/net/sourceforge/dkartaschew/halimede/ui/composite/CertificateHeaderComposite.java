@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.ui.composite;
 
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -31,6 +32,7 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.ui.model.HeaderCompositeMenuModel;
+import net.sourceforge.dkartaschew.halimede.ui.util.SWTColorUtils;
 
 /**
  * Composite for header area in CertificatePane implementations.
@@ -55,15 +57,19 @@ public class CertificateHeaderComposite extends Composite {
 		Label lblHeader = new Label(this, SWT.NONE);
 		lblHeader.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		lblHeader.setText(model.getHeader());
-		// lblHeader.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
-		lblHeader.setForeground(getDisplay().getSystemColor(SWT.COLOR_LIST_SELECTION));
+		// Set the colour depending on light or dark theme.
+		Color color = SWTColorUtils.isDarkColour(lblHeader.getBackground()) //
+				? PluginDefaults.getResourceManager().createColor(PluginDefaults.HEADER_COLOUR_DARK)
+				: PluginDefaults.getResourceManager().createColor(PluginDefaults.HEADER_COLOUR_LIGHT);
+		lblHeader.setForeground(color);
 		/*
 		 * Set font to bold
 		 */
 		int fontHeight = lblHeader.getFont().getFontData()[0].getHeight() + 2;
-		FontDescriptor boldDescriptor = FontDescriptor.createFrom(lblHeader.getFont()).setStyle(SWT.BOLD)
+		FontDescriptor boldDescriptor = FontDescriptor.createFrom(lblHeader.getFont())//
+				.setStyle(SWT.BOLD)//
 				.setHeight(fontHeight);
-		lblHeader.setFont(boldDescriptor.createFont(lblHeader.getDisplay()));
+		lblHeader.setFont(PluginDefaults.getResourceManager().createFont(boldDescriptor));
 
 		toolbar = new ToolBar(this, SWT.FLAT);
 		ToolItem itemCreate = new ToolItem(toolbar, SWT.DROP_DOWN);
