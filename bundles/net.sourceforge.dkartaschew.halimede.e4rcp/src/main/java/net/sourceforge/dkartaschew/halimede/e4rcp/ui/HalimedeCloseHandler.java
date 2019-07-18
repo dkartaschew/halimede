@@ -20,6 +20,7 @@ package net.sourceforge.dkartaschew.halimede.e4rcp.ui;
 import java.util.Collection;
 
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.IWorkbench;
@@ -46,6 +47,7 @@ public class HalimedeCloseHandler implements IWindowCloseHandler {
 		this.context = context;
 	}
 
+	@Execute
 	@Override
 	public boolean close(MWindow window) {
 		Shell shell = context.getActive(Shell.class);
