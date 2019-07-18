@@ -21,3 +21,13 @@ Commons, 171 Second Street, Suite 300, San Francisco, California 94105, USA.
 
 When attributing the artwork, using "GNOME Project" is enough.
 Please link to http://www.gnome.org where available.
+
+---------------
+
+Font used in logo / icons is CGF Locust Resistance.
+
+Downloaded from 1001fonts.com
+
+https://www.1001fonts.com/cgf-locust-resistance-font.html
+
+Free for commerical and non-commercial use.
