@@ -159,4 +159,20 @@ public class PluginDefaults {
 		URL url = FileLocator.find(bundle, new Path(image), null);
 		return ImageDescriptor.createFromURL(url);
 	}
+	
+	/**
+	 * Get the image descriptor for the image path
+	 * 
+	 * @param bundle The bundle containing the image.
+	 * @param image the image path
+	 * @return An image descriptor
+	 */
+	public static ImageDescriptor createImageDescriptor(Bundle bundle, String image) {
+		if (bundle == null) {
+			return createImageDescriptor(image);
+		}
+		URL url = FileLocator.find(bundle, new Path(image), null);
+		return ImageDescriptor.createFromURL(url);
+	}
+	
 }

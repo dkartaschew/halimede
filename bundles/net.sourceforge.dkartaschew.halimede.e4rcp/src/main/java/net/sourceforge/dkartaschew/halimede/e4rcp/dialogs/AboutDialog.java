@@ -18,7 +18,7 @@
 package net.sourceforge.dkartaschew.halimede.e4rcp.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -38,7 +38,7 @@ import org.osgi.framework.Version;
 
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 
-public class AboutDialog extends TitleAreaDialog {
+public class AboutDialog extends Dialog {
 
 	/**
 	 * Create the dialog.
@@ -52,8 +52,8 @@ public class AboutDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		setTitle(PluginDefaults.APPLICATION_NAME);
-		setTitleImage(PluginDefaults.createImageDescriptor(PluginDefaults.IMG_APPLICATION).createImage());
+		//setTitle(PluginDefaults.APPLICATION_NAME);
+		//setTitleImage(PluginDefaults.createImageDescriptor(PluginDefaults.IMG_APPLICATION).createImage());
 	}
 
 	@Override
@@ -72,12 +72,28 @@ public class AboutDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite area = (Composite) super.createDialogArea(parent);
+		GridLayout gridLayout = (GridLayout) area.getLayout();
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		gridLayout.horizontalSpacing = 0;
 		Composite container = new Composite(area, SWT.NONE);
-		container.setLayout(new GridLayout(1, false));
+		GridLayout layout = new GridLayout(1, false);
+		layout.horizontalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
+		
+		Label lblSplashIcon = new Label(container, SWT.BORDER);
+		lblSplashIcon.setAlignment(SWT.CENTER);
+		lblSplashIcon.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
+		lblSplashIcon.setImage(PluginDefaults.getResourceManager().createImage(
+				PluginDefaults.createImageDescriptor(FrameworkUtil.getBundle(getClass()), "icons/splash.png")));
 
 		Label lblApplicationName = new Label(container, SWT.NONE);
-		lblApplicationName.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		GridData gd_lblApplicationName = new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1);
+		gd_lblApplicationName.verticalIndent = 8;
+		lblApplicationName.setLayoutData(gd_lblApplicationName);
 		lblApplicationName.setAlignment(SWT.CENTER);
 		lblApplicationName.setText(PluginDefaults.APPLICATION_FULLNAME);
 		FontData[] fD = lblApplicationName.getFont().getFontData();
