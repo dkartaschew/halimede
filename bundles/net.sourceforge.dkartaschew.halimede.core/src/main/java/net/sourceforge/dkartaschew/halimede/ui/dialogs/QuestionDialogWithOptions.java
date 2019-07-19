@@ -45,20 +45,27 @@ public class QuestionDialogWithOptions extends Dialog {
 	private final List<Object> elements;
 	private Object selectedElement;
 
+	private String okButton;
+	private String cancelButton;
+	
 	/**
 	 * Create the dialog.
 	 * 
 	 * @param parentShell The parent shell.
 	 * @param title The title to display
 	 * @param message The message to ask.
+	 * @param okButton The string to use on the OK button.
+	 * @param cancelButton The string to use on the Cancel button.
 	 * @param elements The collection of elements to select from.
 	 */
-	public QuestionDialogWithOptions(Shell parentShell, String title, String message, List<Object> elements) {
+	public QuestionDialogWithOptions(Shell parentShell, String title, String message, String okButton, String cancelButton, List<Object> elements) {
 		super(parentShell);
 		setShellStyle(SWT.BORDER | SWT.CLOSE | SWT.APPLICATION_MODAL);
 		this.title = title;
 		this.message = message;
 		this.elements = elements;
+		this.okButton = okButton;
+		this.cancelButton = cancelButton;
 		this.selectedElement = elements.get(0);
 	}
 
@@ -104,8 +111,8 @@ public class QuestionDialogWithOptions extends Dialog {
 
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		createButton(parent, IDialogConstants.OK_ID, okButton, true);
+		createButton(parent, IDialogConstants.CANCEL_ID, cancelButton, false);
 	}
 
 	/**

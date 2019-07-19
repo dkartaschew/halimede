@@ -95,8 +95,9 @@ public class RevokeCertificateAction extends Action implements SelectionListener
 				"Are you sure you wish to revoke this certificate?" + System.lineSeparator() //
 						+ System.lineSeparator() //
 						+ "Reason:",
+						"Revoke", //
+						"Cancel", //
 				RevokeReasonCode.getValidList());
-
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			String desc = certificate.getProperty(Key.description);
 			if (desc == null) {
