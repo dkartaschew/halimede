@@ -132,7 +132,7 @@ To Create a new Certificate Authority, perform:
 	or exporting CRLs).
 	7. The Passphrase (entered twice).
     <img src="images/doc_new_ca_dialog.png" alt="New CA Dialog" width="100%" class="center w3-card-4" />
-3. Click OK to create the Certificate Authority instance. This may take some
+3. Click Create to create the Certificate Authority instance. This may take some
 time depending on the keying material type choosen.
 
 On completion the Certificate Authority will be listed in the left pane of the
@@ -158,7 +158,7 @@ based on Existing Certificate".
 	Certificate and match Private Key.
 	4. The Passphrase (entered twice).
      <img src="images/doc_new_ca2_dialog.png" alt="New CA Existing Dialog" width="100%" class="center w3-card-4" />
-3. Click OK to create the Certificate Authority instance. It may prompt for the
+3. Click Create to create the Certificate Authority instance. It may prompt for the
 passphrase to access the PKCS#12 or private key to complete the operation.
  
 <img src="images/doc_ca2.png" alt="CA2" class="w3-card-4" width="100%" />
@@ -225,7 +225,7 @@ To modify the settings for each Certificate Authority, perform:
 2. Right-click on the Certificate Authority, and select "Certificate Authority
 Settings".
 3. Modify the Settings as required.
-4. Click OK to update the settings. Or Cancel to cancel the operation.
+4. Click Save to update the settings. Or Cancel to cancel the operation.
 
 <img src="images/doc_ca_settings.png" alt="CA Settings" class="center w3-card-4" />
 
@@ -346,7 +346,7 @@ To export the Certificate, Certificate Chain or Public Key perform:
 1. From the drop down menu, select the appropriate action.
 2. Enter the filename to export to, or use the "..." to select the file name.
 3. Select the encoding format, either PEM or DER format.
-4. Select OK to save/export the information.
+4. Select Export to save/export the information.
 
 <img src="images/doc_cert_export1.png" alt="Certificate Export" class="center w3-card-4" />
 
@@ -360,7 +360,7 @@ To export the Private Key (if present) perform:
 4. Select the cipher to use to encrypt the private key with.
 5. Enter the passphrase to protect the private key. (Note: If no passphrase
 is entered, the private key will not be encrypted).
-6. Select OK to save/export the private key.
+6. Select Export to save/export the private key.
 
 <img src="images/doc_cert_export2.png" alt="Certificate Export" class="center w3-card-4" />
 
@@ -376,7 +376,7 @@ use of 3DES for PKCS#12 is widely supported, support for using AES with
 PKCS#12 is limited).
 4. Enter the passphrase to protect the keystore. (Note: If no passphrase
 is entered, the keystore will not be encrypted).
-5. Select OK to save/export the information into the keystore.
+5. Select Export to save/export the information into the keystore.
 
 <img src="images/doc_cert_export3.png" alt="Certificate Export" class="center w3-card-4" />
 
@@ -409,7 +409,7 @@ a CRL for the selected Certificate Authority, perform:
 1. Right-click on the Certificate Authority or CRLs node, and select "Create
 CRL".
 2. Update or confirm the next CRL date.
-3. Click OK to generate the CRL.
+3. Click Create CRL to generate the CRL.
 
 <img src="images/doc_new_crl.png" alt="New CRL" class="center w3-card-4" />
 
@@ -427,7 +427,7 @@ To export the CRL, perform:
 "Export the CRL".
 2. Enter the filename to export to, or use the "..." to select the file name.
 3. Select the encoding format, either PEM or DER format.
-4. Select OK to save/export the information.
+4. Select Export to save/export the information.
 5. Upload / copy the file to the location as defined in the CRL Location
 defined when the Certificate Authority was create.
 
@@ -545,7 +545,7 @@ To restore a Certificate Authority, perform:
 1. Right-click on the left pane, and select "Restore Certificate Authority".
 2. On the Restore Dialog, select the backup file name, the location to restore to,
 and if you wish to automatically open the Certificate Authority on completion.
-3. Click OK to restore from the Backup File.
+3. Click Restore to restore from the Backup File.
 
 A progress dialog will be displayed during the operation.
 
@@ -588,7 +588,7 @@ Keystore".
     PKCS#12 is limited).
     3. Enter the passphrase to protect the keystore. (Note: If no passphrase
     is entered, the keystore will not be encrypted).
-    4. Select OK to save/export the information into the keystore.
+    4. Select Export to save/export the information into the keystore.
 7. You can export other elements of the generated Certificate and Keying 
 material from the Certificate Icon drop down menu.
 

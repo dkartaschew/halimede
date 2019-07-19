@@ -23,7 +23,7 @@ Halimede includes the following 3rd-party art assets.
 | Asset            | Source                                                                                     | License |
 |------------------|--------------------------------------------------------------------------------------------|-------------|
 | Lock Icon        | [Eclipse Platform Images](https://git.eclipse.org/c/platform/eclipse.platform.images.git/) | EPL v1.0    |
-| Certificat Icon  | [Adwaita Icon Theme](https://github.com/GNOME/adwaita-icon-theme)                          | CC-BY-SA / GNU LGPL v3 |
+| Certificate Icon | [Adwaita Icon Theme](https://github.com/GNOME/adwaita-icon-theme)                          | CC-BY-SA / GNU LGPL v3 |
 | List Add Icon    | [Adwaita Icon Theme](https://github.com/GNOME/adwaita-icon-theme)                          | CC-BY-SA / GNU LGPL v3 |
 | List Remove Icon | [Adwaita Icon Theme](https://github.com/GNOME/adwaita-icon-theme)                          | CC-BY-SA / GNU LGPL v3 |
 | Folder Icon      | [Adwaita Icon Theme](https://github.com/GNOME/adwaita-icon-theme)                          | CC-BY-SA / GNU LGPL v3 |
