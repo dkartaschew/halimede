@@ -41,6 +41,7 @@ public class HalimedeCloseHandler implements IWindowCloseHandler {
 
 	/**
 	 * Create a new Halimede Close handler
+	 * 
 	 * @param context The application context.
 	 */
 	public HalimedeCloseHandler(IEclipseContext context) {
@@ -54,10 +55,11 @@ public class HalimedeCloseHandler implements IWindowCloseHandler {
 		if (shell == null) {
 			shell = context.get(Shell.class);
 		}
-		if (MessageDialog.openConfirm(shell, "Quit", "Are you sure you wish to quit the application?")) {
+
+		if (open(shell, "Quit", "Are you sure you wish to quit the application?")) {
 			EPartService partService = window.getContext().get(EPartService.class);
 			Collection<MPart> parts = partService.getDirtyParts();
-			if(!parts.isEmpty()) {
+			if (!parts.isEmpty()) {
 				ISaveHandler saveHandler = window.getContext().get(ISaveHandler.class);
 				if (!saveHandler.saveParts(parts, true)) {
 					return false;
@@ -66,6 +68,19 @@ public class HalimedeCloseHandler implements IWindowCloseHandler {
 			return context.get(IWorkbench.class).close();
 		}
 		return false;
+	}
+
+	/**
+	 * Open a message confirmation dialog.
+	 * @param parent The parent shell
+	 * @param title The title of the dialog
+	 * @param message The message to display
+	 * @return TRUE as confirmation.
+	 */
+	private boolean open(Shell parent, String title, String message) {
+		MessageDialog dialog = new MessageDialog(parent, title, null, message, MessageDialog.CONFIRM, 0, "Quit",
+				"Cancel");
+		return dialog.open() == 0;
 	}
 
 }
