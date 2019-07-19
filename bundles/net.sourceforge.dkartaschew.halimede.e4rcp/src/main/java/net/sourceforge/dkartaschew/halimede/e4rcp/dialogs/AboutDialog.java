@@ -84,7 +84,7 @@ public class AboutDialog extends Dialog {
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		Label lblSplashIcon = new Label(container, SWT.BORDER);
+		Label lblSplashIcon = new Label(container, SWT.NONE);
 		lblSplashIcon.setAlignment(SWT.CENTER);
 		lblSplashIcon.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
 		lblSplashIcon.setImage(PluginDefaults.getResourceManager().createImage(
