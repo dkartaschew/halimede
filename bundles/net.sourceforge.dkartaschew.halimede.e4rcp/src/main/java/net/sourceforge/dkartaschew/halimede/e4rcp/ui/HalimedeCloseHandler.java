@@ -27,8 +27,9 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
+
+import net.sourceforge.dkartaschew.halimede.ui.util.Dialogs;
 
 /**
  * An application close handler.
@@ -56,7 +57,7 @@ public class HalimedeCloseHandler implements IWindowCloseHandler {
 			shell = context.get(Shell.class);
 		}
 
-		if (open(shell, "Quit", "Are you sure you wish to quit the application?")) {
+		if (Dialogs.openConfirm(shell, "Quit", "Are you sure you wish to quit the application?", "Quit", "Cancel")) {
 			EPartService partService = window.getContext().get(EPartService.class);
 			Collection<MPart> parts = partService.getDirtyParts();
 			if (!parts.isEmpty()) {
@@ -68,19 +69,6 @@ public class HalimedeCloseHandler implements IWindowCloseHandler {
 			return context.get(IWorkbench.class).close();
 		}
 		return false;
-	}
-
-	/**
-	 * Open a message confirmation dialog.
-	 * @param parent The parent shell
-	 * @param title The title of the dialog
-	 * @param message The message to display
-	 * @return TRUE as confirmation.
-	 */
-	private boolean open(Shell parent, String title, String message) {
-		MessageDialog dialog = new MessageDialog(parent, title, null, message, MessageDialog.CONFIRM, 0, "Quit",
-				"Cancel");
-		return dialog.open() == 0;
 	}
 
 }

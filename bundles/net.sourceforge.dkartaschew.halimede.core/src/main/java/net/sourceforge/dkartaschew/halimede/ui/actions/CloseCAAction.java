@@ -25,11 +25,11 @@ import javax.inject.Named;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthourityManager;
 import net.sourceforge.dkartaschew.halimede.ui.node.CertificateAuthorityNode;
+import net.sourceforge.dkartaschew.halimede.ui.util.Dialogs;
 
 @SuppressWarnings("restriction")
 public class CloseCAAction extends Action {
@@ -67,8 +67,8 @@ public class CloseCAAction extends Action {
 
 	@Override
 	public void run() {
-		if (MessageDialog.openConfirm(shell, "Close Certificate Authority",
-				"Are you sure you wish to close this Certificate Authority?")) {
+		if (Dialogs.openConfirm(shell, "Close Certificate Authority",
+				"Are you sure you wish to close this Certificate Authority?", "Close", "Cancel")) {
 			if (logger != null) {
 				logger.info("User selected to close the CA at location: "
 						+ node.getCertificateAuthority().getBasePath().toString());

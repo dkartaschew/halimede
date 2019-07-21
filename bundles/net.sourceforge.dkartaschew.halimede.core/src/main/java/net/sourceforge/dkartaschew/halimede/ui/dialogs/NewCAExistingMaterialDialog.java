@@ -34,7 +34,6 @@ import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -54,6 +53,7 @@ import org.eclipse.swt.widgets.Text;
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.Entropy;
 import net.sourceforge.dkartaschew.halimede.ui.model.NewCAModel;
+import net.sourceforge.dkartaschew.halimede.ui.util.Dialogs;
 import net.sourceforge.dkartaschew.halimede.ui.validators.ExistingCAValidator;
 import net.sourceforge.dkartaschew.halimede.ui.validators.FileValidator;
 import net.sourceforge.dkartaschew.halimede.ui.validators.PassphraseValidator;
@@ -302,8 +302,9 @@ public class NewCAExistingMaterialDialog extends Dialog {
 	public boolean close() {
 		if (getReturnCode() == IDialogConstants.OK_ID) {
 			if (model.getPassword() == null || model.getPassword().length() < PluginDefaults.MIN_PASSWORD_LENGTH) {
-				if (!MessageDialog.openConfirm(getParentShell(), "Weak Passphrase",
-						"The Passphrase provided is weak. Are you sure you wish to proceed with a weak passphrase?")) {
+				if (!Dialogs.openConfirm(getParentShell(), "Weak Passphrase",
+						"The Passphrase provided is weak. Are you sure you wish to proceed with a weak passphrase?",
+						"Proceed", "Cancel")) {
 					return false;
 				}
 			}

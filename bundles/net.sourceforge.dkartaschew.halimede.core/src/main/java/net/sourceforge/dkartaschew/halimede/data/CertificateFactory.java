@@ -78,6 +78,7 @@ import net.sourceforge.dkartaschew.halimede.enumeration.RevokeReasonCode;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
 import net.sourceforge.dkartaschew.halimede.exceptions.DatastoreLockedException;
 import net.sourceforge.dkartaschew.halimede.util.DateTimeUtil;
+import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
 /**
  * Helper Utility Class for generation of X509 Certificates.
@@ -522,12 +523,12 @@ public class CertificateFactory {
 						try {
 							return stream.getSignature();
 						} catch (SignatureException e) {
-							throw new RuntimeOperatorException("exception obtaining signature: " + e.getMessage(), e);
+							throw new RuntimeOperatorException("exception obtaining signature: " + ExceptionUtil.getMessage(e), e);
 						}
 					}
 				};
 			} catch (NoSuchAlgorithmException | NoSuchProviderException | InvalidKeyException e) {
-				throw new OperatorCreationException(e.getMessage(), e);
+				throw new OperatorCreationException(ExceptionUtil.getMessage(e), e);
 			}
 		}
 	}
@@ -548,7 +549,7 @@ public class CertificateFactory {
 			try {
 				sig.update(bytes, off, len);
 			} catch (SignatureException e) {
-				throw new OperatorStreamException("exception in content signer: " + e.getMessage(), e);
+				throw new OperatorStreamException("exception in content signer: " + ExceptionUtil.getMessage(e), e);
 			}
 		}
 
@@ -556,7 +557,7 @@ public class CertificateFactory {
 			try {
 				sig.update(bytes);
 			} catch (SignatureException e) {
-				throw new OperatorStreamException("exception in content signer: " + e.getMessage(), e);
+				throw new OperatorStreamException("exception in content signer: " + ExceptionUtil.getMessage(e), e);
 			}
 		}
 
@@ -564,7 +565,7 @@ public class CertificateFactory {
 			try {
 				sig.update((byte) b);
 			} catch (SignatureException e) {
-				throw new OperatorStreamException("exception in content signer: " + e.getMessage(), e);
+				throw new OperatorStreamException("exception in content signer: " + ExceptionUtil.getMessage(e), e);
 			}
 		}
 

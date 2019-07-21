@@ -34,6 +34,7 @@ import org.eclipse.swt.widgets.Shell;
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
 import net.sourceforge.dkartaschew.halimede.data.CertificateRequestProperties;
 import net.sourceforge.dkartaschew.halimede.ui.CertificateRequestDetailsPart;
+import net.sourceforge.dkartaschew.halimede.ui.util.Dialogs;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
 @SuppressWarnings("restriction")
@@ -86,8 +87,8 @@ public class DeleteCertificateRequestAction extends Action implements SelectionL
 			return;
 		}
 		ca.getActivityLogger().log(Level.INFO, "Start Delete CSR {0}", element);
-		if (MessageDialog.openConfirm(shell, "Confirm Delete",
-				"Are you sure you wish to delete this Certificate Request?")) {
+		if (Dialogs.openConfirm(shell, "Confirm Delete",
+				"Are you sure you wish to delete this Certificate Request?", "Delete", "Cancel")) {
 			try {
 				if (logger != null) {
 					logger.warn("User selected to delete the following Certificate Request: " + element.toString());

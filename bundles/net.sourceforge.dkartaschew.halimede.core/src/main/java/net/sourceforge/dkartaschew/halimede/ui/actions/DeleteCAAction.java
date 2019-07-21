@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthourityManager;
 import net.sourceforge.dkartaschew.halimede.ui.node.CertificateAuthorityNode;
+import net.sourceforge.dkartaschew.halimede.ui.util.Dialogs;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
 @SuppressWarnings("restriction")
@@ -78,9 +79,10 @@ public class DeleteCAAction extends Action {
 
 	@Override
 	public void run() {
-		if (MessageDialog.openConfirm(shell, "Delete Certificate Authority",
+		if (Dialogs.openConfirm(shell, "Delete Certificate Authority",
 				"Are you sure you wish to completely remove this Certificate Authority from your system?"
-						+ System.lineSeparator() + "This action will delete the Certificate Authority from the filesystem!")) {
+						+ System.lineSeparator() + "This action will delete the Certificate Authority from the filesystem!",
+						"Delete", "Cancel")) {
 			if (logger != null) {
 				logger.warn("User selected to delete the CA at location: "
 						+ node.getCertificateAuthority().getBasePath().toString());

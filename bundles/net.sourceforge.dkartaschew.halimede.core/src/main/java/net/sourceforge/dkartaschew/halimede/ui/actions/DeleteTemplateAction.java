@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
 import net.sourceforge.dkartaschew.halimede.data.ICertificateKeyPairTemplate;
+import net.sourceforge.dkartaschew.halimede.ui.util.Dialogs;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
 @SuppressWarnings("restriction")
@@ -75,7 +76,7 @@ public class DeleteTemplateAction extends Action {
 			return;
 		}
 		ca.getActivityLogger().log(Level.INFO, "Start Delete Template {0}", element);
-		if (MessageDialog.openConfirm(shell, "Confirm Delete", "Are you sure you wish to delete this template?")) {
+		if (Dialogs.openConfirm(shell, "Confirm Delete", "Are you sure you wish to delete this template?", "Delete", "Cancel")) {
 			try {
 				if (logger != null) {
 					logger.warn("User selected to delete the following template: " + element.toString());

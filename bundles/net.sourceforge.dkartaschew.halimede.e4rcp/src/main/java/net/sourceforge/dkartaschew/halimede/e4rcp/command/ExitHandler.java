@@ -22,11 +22,12 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 
+import net.sourceforge.dkartaschew.halimede.ui.util.Dialogs;
+
 public class ExitHandler {
-	
+
 	@Execute
 	public void execute(IWorkbench workbench, Shell shell, IEclipseContext context) {
 		// Execute the default handler if available.
@@ -36,7 +37,7 @@ public class ExitHandler {
 			return;
 		}
 
-		if (MessageDialog.openConfirm(shell, "Quit", "Are you sure you wish to quit the application?")) {
+		if (Dialogs.openConfirm(shell, "Quit", "Are you sure you wish to quit the application?", "Quit", "Cancel")) {
 			workbench.close();
 		}
 	}
