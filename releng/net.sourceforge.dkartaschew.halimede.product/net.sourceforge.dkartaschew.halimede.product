@@ -27,7 +27,7 @@
       </vmArgs>
       <vmArgsLin>-Dosgi.configuration.area=@user.home/.config/net.sourceforge.dkartaschew.halimede
       </vmArgsLin>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Dosgi.configuration.area=@user.home/.config/net.sourceforge.dkartaschew.halimede
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts -Dosgi.configuration.area=@user.home/.config/net.sourceforge.dkartaschew.halimede -Dorg.eclipse.swt.display.useSystemTheme=true
       </vmArgsMac>
       <vmArgsWin>-Dosgi.configuration.area=@user.home/AppData/Local/net.sourceforge.dkartaschew.halimede -Dorg.osgi.framework.os.name=win32
       </vmArgsWin>
