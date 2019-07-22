@@ -54,6 +54,7 @@ import org.bouncycastle.pkcs.jcajce.JcePKCSPBEInputDecryptorProviderBuilder;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 
 import net.sourceforge.dkartaschew.halimede.exceptions.InvalidPasswordException;
+import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 /**
@@ -326,7 +327,7 @@ public class PKCS8Decoder {
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new IOException("problem creating RSA private key: " + e.toString(), e);
+			throw new IOException("problem creating RSA private key: " + ExceptionUtil.getMessage(e), e);
 		}
 	}
 
@@ -361,7 +362,7 @@ public class PKCS8Decoder {
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new IOException("problem creating DSA private key: " + e.toString(), e);
+			throw new IOException("problem creating DSA private key: " + ExceptionUtil.getMessage(e), e);
 		}
 	}
 
@@ -387,7 +388,7 @@ public class PKCS8Decoder {
 		} catch (IOException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new IOException("problem creating EC private key: " + e.toString(), e);
+			throw new IOException("problem creating EC private key: " + ExceptionUtil.getMessage(e), e);
 		}
 	}
 
