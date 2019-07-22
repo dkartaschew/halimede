@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?pde version="3.8"?><target name="Eclipse 2019-06" sequenceNumber="11">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target name="Eclipse 2019-06" sequenceNumber="11">
 <locations>
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
 		<unit id="org.eclipse.nebula.widgets.cdatetime.feature.feature.group" version="1.3.0.201812241324"/>
@@ -6,8 +8,8 @@
 	</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
 		<repository location="http://download.eclipse.org/releases/2019-06"/>
-		<unit id="org.eclipse.equinox.sdk.feature.group" />
-		<unit id="org.eclipse.platform.sdk" />
+		<unit id="org.eclipse.equinox.sdk.feature.group" version="3.18.0.v20190528-1257"/>
+		<unit id="org.eclipse.platform.sdk" version="4.12.0.I20190605-1800"/>
 	</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
 		<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20190602212107/repository"/>
