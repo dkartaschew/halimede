@@ -36,7 +36,7 @@ public class CSRColumnLabelProvider extends CADetailsLabelProvider<CertificateRe
 		case PendingCertificatesPane.COLUMN_KEY_TYPE:
 			try {
 				return KeyType.getKeyTypeDescription(element.getProperty(CertificateRequestProperties.Key.keyType));
-			} catch (NullPointerException | NoSuchElementException e) {
+			} catch (NullPointerException | NoSuchElementException | IllegalArgumentException e) {
 				return null;
 			}
 		case PendingCertificatesPane.COLUMN_IMPORT_DATE:

@@ -81,6 +81,26 @@ public class TestGeneralNameTag {
 		assertEquals(n, GeneralNameTag.dNSName.asGeneralName("a.com"));
 	}
     
+    @Test(expected=IllegalArgumentException.class)
+    public void testForGeneralNameDNS_BadValue() {
+    	GeneralNameTag.dNSName.asGeneralName("123.::a");
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testForGeneralNameDNS_BadValue2() {
+    	GeneralNameTag.dNSName.asGeneralName("");
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testForGeneralNameDNS_BadValue3() {
+    	GeneralNameTag.dNSName.asGeneralName("  ");
+    }
+    
+    @Test(expected=IllegalArgumentException.class)
+    public void testForGeneralNameDNS_BadValueNull() {
+    	GeneralNameTag.dNSName.asGeneralName(null);
+    }
+    
     @Test
     @Ignore
 	public void testForGeneralNameX400() {
@@ -103,6 +123,26 @@ public class TestGeneralNameTag {
 	public void testForGeneralNameURI() {
 		GeneralName n = new GeneralName(GeneralName.uniformResourceIdentifier, "http://a.com");
 		assertEquals(n, GeneralNameTag.uniformResourceIdentifier.asGeneralName("http://a.com"));
+	}
+    
+    @Test(expected=IllegalArgumentException.class)
+	public void testForGeneralNameURI_BadValue() {
+		GeneralNameTag.uniformResourceIdentifier.asGeneralName("http@\\  123 []?://a.com");
+	}
+    
+    @Test(expected=IllegalArgumentException.class)
+	public void testForGeneralNameURI_BadValue2() {
+		GeneralNameTag.uniformResourceIdentifier.asGeneralName("");
+	}
+    
+    @Test(expected=IllegalArgumentException.class)
+  	public void testForGeneralNameURI_BadValue3() {
+  		GeneralNameTag.uniformResourceIdentifier.asGeneralName("  ");
+  	}
+    
+    @Test(expected=IllegalArgumentException.class)
+	public void testForGeneralNameURI_BadValueNull() {
+		GeneralNameTag.uniformResourceIdentifier.asGeneralName(null);
 	}
     
 	@Test

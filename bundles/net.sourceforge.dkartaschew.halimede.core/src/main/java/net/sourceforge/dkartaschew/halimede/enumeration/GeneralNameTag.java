@@ -20,10 +20,13 @@ package net.sourceforge.dkartaschew.halimede.enumeration;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 import org.bouncycastle.asn1.x509.GeneralName;
+
+import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
 public enum GeneralNameTag {
 
@@ -117,15 +120,19 @@ public enum GeneralNameTag {
 	public GeneralName asGeneralName(String value) throws IllegalArgumentException {
 		if (tag == GeneralName.uniformResourceIdentifier) {
 			try {
-				URI u = new URI(value);
-				return new GeneralName(tag, u.toString());
-			} catch (URISyntaxException e) {
-				throw new IllegalArgumentException(e.getMessage(), e);
+				if (!value.trim().isEmpty()) {
+					URI u = new URI(value);
+					return new GeneralName(tag, u.toString());
+				} else {
+					throw new IllegalArgumentException("URI appears invalid");
+				}
+			} catch (URISyntaxException | NullPointerException e) {
+				throw new IllegalArgumentException(ExceptionUtil.getMessage(e), e);
 			}
 		}
 		if (tag == GeneralName.dNSName) {
 			Pattern p = Pattern.compile("^(?=.{1,253}\\.?$)(?:(?!-|[^.]+_)[A-Za-z0-9-_]{1,63}(?<!-)(?:\\.|$)){2,}$");
-			if (p.matcher(value).matches()) {
+			if (value != null && !value.trim().isEmpty() && p.matcher(value).matches()) {
 				return new GeneralName(tag, value);
 			} else {
 				throw new IllegalArgumentException("DNS name appears invalid");
