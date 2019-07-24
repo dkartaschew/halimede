@@ -24,10 +24,19 @@ public class CRLColumnComparator extends AbstractColumnComparator<CRLProperties>
 
 	@Override
 	public int compare(int columnIndex, CRLProperties e1, CRLProperties e2) {
+		if (e1 == null && e2 == null) {
+			return 0;
+		}
+		if (e1 == null) {
+			return 1;
+		}
+		if (e2 == null) {
+			return -1;
+		}
 		switch (columnIndex) {
 		case -1:
 		case CRLPane.COLUMN_CRL_NUMBER:
-			return compareString(e1.getProperty(CRLProperties.Key.crlSerialNumber),
+			return compareInteger(e1.getProperty(CRLProperties.Key.crlSerialNumber),
 					e2.getProperty(CRLProperties.Key.crlSerialNumber));
 		case CRLPane.COLUMN_SUBJECT:
 			return compareString(e1.getProperty(CRLProperties.Key.issuer), 

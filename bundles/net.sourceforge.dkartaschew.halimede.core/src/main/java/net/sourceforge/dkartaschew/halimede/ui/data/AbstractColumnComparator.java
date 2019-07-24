@@ -17,7 +17,9 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.data;
 
+import java.math.BigInteger;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeParseException;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
@@ -30,22 +32,32 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 
 	/**
 	 * Compare the two strings as strings.
+	 * <p>
+	 * Note: Null strings are treated as equal to empty string.
 	 * 
 	 * @param e1 The first string
 	 * @param e2 The second string
 	 * @return The comparison.
 	 */
 	protected int compareString(String e1, String e2) {
-		if (e1 == null && e2 == null) {
+		if ((e1 == null || e1.isEmpty()) && (e2 == null || e2.isEmpty())) {
 			return 0;
 		}
-		if (e1 == null) {
+		if (e1 == null || e1.isEmpty()) {
 			return 1;
 		}
-		if (e2 == null) {
+		if (e2 == null || e2.isEmpty()) {
 			return -1;
 		}
-		return e1.compareToIgnoreCase(e2);
+		// normalise the return result as -1, 0, or 1.
+		int res = e1.compareToIgnoreCase(e2);
+		if (res < -1) {
+			return -1;
+		}
+		if (res > 1) {
+			return 1;
+		}
+		return res;
 	}
 
 	/**
@@ -56,20 +68,30 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 	 * @return The comparison.
 	 */
 	protected int compareDate(String e1, String e2) {
-		if (e1 == null && e2 == null) {
+		if ((e1 == null || e1.isEmpty()) && (e2 == null || e2.isEmpty())) {
 			return 0;
 		}
-		if (e1 == null) {
+		if (e1 == null || e1.isEmpty()) {
 			return 1;
 		}
-		if (e2 == null) {
+		if (e2 == null || e2.isEmpty()) {
 			return -1;
 		}
-		ZonedDateTime d1 = DateTimeUtil.toZonedDateTime(e1);
-		ZonedDateTime d2 = DateTimeUtil.toZonedDateTime(e2);
-		return d1.compareTo(d2);
+		ZonedDateTime d1 = null;
+		try {
+			d1 = DateTimeUtil.toZonedDateTime(e1);
+		} catch (DateTimeParseException e) {
+			// ignore
+		}
+		ZonedDateTime d2 = null;
+		try {
+			d2 = DateTimeUtil.toZonedDateTime(e2);
+		} catch (DateTimeParseException e) {
+			// ignore
+		}
+		return compareDate(d1, d2);
 	}
-	
+
 	/**
 	 * Compare the ZonedDateTime.
 	 * 
@@ -98,19 +120,19 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 	 * @return The comparison.
 	 */
 	protected int compareKeyType(String e1, String e2) {
-		if (e1 == null && e2 == null) {
+		if ((e1 == null || e1.isEmpty()) && (e2 == null || e2.isEmpty())) {
 			return 0;
 		}
-		if (e1 == null) {
+		if (e1 == null || e1.isEmpty()) {
 			return 1;
 		}
-		if (e2 == null) {
+		if (e2 == null || e2.isEmpty()) {
 			return -1;
 		}
 		KeyType k1 = (KeyType) KeyType.valueOf(e1);
 		KeyType k2 = (KeyType) KeyType.valueOf(e2);
 		return k1.compare(k2);
-		
+
 	}
 
 	/**
@@ -121,21 +143,21 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 	 * @return The comparison.
 	 */
 	protected int compareRevokeReason(String e1, String e2) {
-		if (e1 == null && e2 == null) {
+		if ((e1 == null || e1.isEmpty()) && (e2 == null || e2.isEmpty())) {
 			return 0;
 		}
-		if (e1 == null) {
+		if (e1 == null || e1.isEmpty()) {
 			return 1;
 		}
-		if (e2 == null) {
+		if (e2 == null || e2.isEmpty()) {
 			return -1;
 		}
 		RevokeReasonCode k1 = (RevokeReasonCode) RevokeReasonCode.valueOf(e1);
 		RevokeReasonCode k2 = (RevokeReasonCode) RevokeReasonCode.valueOf(e2);
 		return k1.getDescription().compareTo(k2.getDescription());
-		
+
 	}
-	
+
 	/**
 	 * Compare the two X500Names
 	 * 
@@ -154,5 +176,59 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 			return -1;
 		}
 		return e1.toString().compareToIgnoreCase(e2.toString());
+	}
+
+	/**
+	 * Compare the two strings as integers.
+	 * <p>
+	 * Note: Null strings are treated as equal to empty string.
+	 * 
+	 * @param e1 The first string
+	 * @param e2 The second string
+	 * @return The comparison.
+	 */
+	protected int compareInteger(String e1, String e2) {
+		if ((e1 == null || e1.isEmpty()) && (e2 == null || e2.isEmpty())) {
+			return 0;
+		}
+		if (e1 == null || e1.isEmpty()) {
+			return 1;
+		}
+		if (e2 == null || e2.isEmpty()) {
+			return -1;
+		}
+		BigInteger d1 = null;
+		try {
+			d1 = new BigInteger(e1);
+		} catch (NumberFormatException e) {
+			// ignore
+		}
+		BigInteger d2 = null;
+		try {
+			d2 = new BigInteger(e2);
+		} catch (NumberFormatException e) {
+			// ignore
+		}
+		return compareInteger(d1, d2);
+	}
+
+	/**
+	 * Compare the two integers
+	 * 
+	 * @param e1 The first integer
+	 * @param e2 The second integer
+	 * @return The comparison.
+	 */
+	protected int compareInteger(BigInteger e1, BigInteger e2) {
+		if (e1 == null && e2 == null) {
+			return 0;
+		}
+		if (e1 == null) {
+			return 1;
+		}
+		if (e2 == null) {
+			return -1;
+		}
+		return e1.compareTo(e2);
 	}
 }
