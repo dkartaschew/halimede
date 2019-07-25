@@ -51,13 +51,7 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 		}
 		// normalise the return result as -1, 0, or 1.
 		int res = e1.compareToIgnoreCase(e2);
-		if (res < -1) {
-			return -1;
-		}
-		if (res > 1) {
-			return 1;
-		}
-		return res;
+		return normaliseResult(res);
 	}
 
 	/**
@@ -131,8 +125,29 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 		}
 		KeyType k1 = (KeyType) KeyType.valueOf(e1);
 		KeyType k2 = (KeyType) KeyType.valueOf(e2);
-		return k1.compare(k2);
+		return compareKeyType(k1, k2);
 
+	}
+	
+	/**
+	 * Compare the two KeyType
+	 * 
+	 * @param e1 The first key type
+	 * @param e2 The second key type
+	 * @return The comparison.
+	 */
+	protected int compareKeyType(KeyType e1, KeyType e2) {
+		if (e1 == null && e2 == null) {
+			return 0;
+		}
+		if (e1 == null) {
+			return 1;
+		}
+		if (e2 == null) {
+			return -1;
+		}
+		int res = e1.compare(e2);
+		return normaliseResult(res);
 	}
 
 	/**
@@ -154,7 +169,8 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 		}
 		RevokeReasonCode k1 = (RevokeReasonCode) RevokeReasonCode.valueOf(e1);
 		RevokeReasonCode k2 = (RevokeReasonCode) RevokeReasonCode.valueOf(e2);
-		return k1.getDescription().compareTo(k2.getDescription());
+		int res = k1.getDescription().compareTo(k2.getDescription());
+		return normaliseResult(res);
 
 	}
 
@@ -175,7 +191,8 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 		if (e2 == null) {
 			return -1;
 		}
-		return e1.toString().compareToIgnoreCase(e2.toString());
+		int res =  e1.toString().compareToIgnoreCase(e2.toString());
+		return normaliseResult(res);
 	}
 
 	/**
@@ -230,5 +247,21 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 			return -1;
 		}
 		return e1.compareTo(e2);
+	}
+	
+	/**
+	 * Normalise the given result
+	 * 
+	 * @param res The result to normalise as -1, 0, 1
+	 * @return The result
+	 */
+	private int normaliseResult(int res) {
+		if (res < -1) {
+			return -1;
+		}
+		if (res > 1) {
+			return 1;
+		}
+		return res;
 	}
 }

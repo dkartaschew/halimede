@@ -24,6 +24,15 @@ public class TemplateColumnComparator extends AbstractColumnComparator<Certifica
 
 	@Override
 	public int compare(int columnIndex, CertificateKeyPairTemplate e1, CertificateKeyPairTemplate e2) {
+		if (e1 == null && e2 == null) {
+			return 0;
+		}
+		if (e1 == null) {
+			return 1;
+		}
+		if (e2 == null) {
+			return -1;
+		}
 		switch (columnIndex) {
 		case -1:
 		case TemplatesPane.COLUMN_DESCRIPTION:
@@ -31,7 +40,7 @@ public class TemplateColumnComparator extends AbstractColumnComparator<Certifica
 		case TemplatesPane.COLUMN_SUBJECT:
 			return compareX500Name(e1.getSubject(), e2.getSubject());
 		case TemplatesPane.COLUMN_KEY_TYPE:
-			return compareKeyType(e1.getKeyType().name(), e2.getKeyType().name());
+			return compareKeyType(e1.getKeyType(), e2.getKeyType());
 		case TemplatesPane.COLUMN_CREATE_DATE:
 			return compareDate(e1.getCreationDate(), e2.getCreationDate());
 		}
