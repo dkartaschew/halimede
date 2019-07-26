@@ -20,6 +20,7 @@ package net.sourceforge.dkartaschew.halimede.ui.data;
 import java.math.BigInteger;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.NoSuchElementException;
 
 import org.bouncycastle.asn1.x500.X500Name;
 
@@ -123,12 +124,22 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 		if (e2 == null || e2.isEmpty()) {
 			return -1;
 		}
-		KeyType k1 = (KeyType) KeyType.valueOf(e1);
-		KeyType k2 = (KeyType) KeyType.valueOf(e2);
+		KeyType k1 = null;
+		try {
+			k1 = (KeyType) KeyType.valueOf(e1);
+		} catch (IllegalArgumentException | NoSuchElementException e) {
+			// ignore.
+		}
+		KeyType k2 = null;
+		try {
+			k2 = (KeyType) KeyType.valueOf(e2);
+		} catch (IllegalArgumentException | NoSuchElementException e) {
+			// ignore.
+		}
 		return compareKeyType(k1, k2);
 
 	}
-	
+
 	/**
 	 * Compare the two KeyType
 	 * 
@@ -151,7 +162,7 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 	}
 
 	/**
-	 * Compare the two strings as KeyType
+	 * Compare the two strings as Revoke Reason Code
 	 * 
 	 * @param e1 The first string
 	 * @param e2 The second string
@@ -167,11 +178,40 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 		if (e2 == null || e2.isEmpty()) {
 			return -1;
 		}
-		RevokeReasonCode k1 = (RevokeReasonCode) RevokeReasonCode.valueOf(e1);
-		RevokeReasonCode k2 = (RevokeReasonCode) RevokeReasonCode.valueOf(e2);
-		int res = k1.getDescription().compareTo(k2.getDescription());
-		return normaliseResult(res);
+		RevokeReasonCode k1 = null;
+		try {
+			k1 = (RevokeReasonCode) RevokeReasonCode.valueOf(e1);
+		} catch (IllegalArgumentException | NoSuchElementException e) {
+			// ignore.
+		}
+		RevokeReasonCode k2 = null;
+		try {
+			k2 = (RevokeReasonCode) RevokeReasonCode.valueOf(e2);
+		} catch (IllegalArgumentException | NoSuchElementException e) {
+			// ignore.
+		}
+		return compareRevokeReason(k1, k2);
+	}
 
+	/**
+	 * Compare the two Revoke Reason Code
+	 * 
+	 * @param e1 The first code
+	 * @param e2 The second code
+	 * @return The comparison.
+	 */
+	protected int compareRevokeReason(RevokeReasonCode e1, RevokeReasonCode e2) {
+		if (e1 == null && e2 == null) {
+			return 0;
+		}
+		if (e1 == null) {
+			return 1;
+		}
+		if (e2 == null) {
+			return -1;
+		}
+		int res = e1.getDescription().compareToIgnoreCase(e2.getDescription());
+		return normaliseResult(res);
 	}
 
 	/**
@@ -191,7 +231,7 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 		if (e2 == null) {
 			return -1;
 		}
-		int res =  e1.toString().compareToIgnoreCase(e2.toString());
+		int res = e1.toString().compareToIgnoreCase(e2.toString());
 		return normaliseResult(res);
 	}
 
@@ -248,7 +288,7 @@ public abstract class AbstractColumnComparator<V> implements IColumnComparator<V
 		}
 		return e1.compareTo(e2);
 	}
-	
+
 	/**
 	 * Normalise the given result
 	 * 

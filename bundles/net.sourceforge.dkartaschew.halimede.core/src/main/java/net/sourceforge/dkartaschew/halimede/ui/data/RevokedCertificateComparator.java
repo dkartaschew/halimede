@@ -25,6 +25,15 @@ public class RevokedCertificateComparator extends AbstractColumnComparator<Issue
 
 	@Override
 	public int compare(int columnIndex, IssuedCertificateProperties e1, IssuedCertificateProperties e2) {
+		if (e1 == null && e2 == null) {
+			return 0;
+		}
+		if (e1 == null) {
+			return 1;
+		}
+		if (e2 == null) {
+			return -1;
+		}
 		switch (columnIndex) {
 		case -1:
 		case RevokedCertificatesPane.COLUMN_DESCRIPTION:
