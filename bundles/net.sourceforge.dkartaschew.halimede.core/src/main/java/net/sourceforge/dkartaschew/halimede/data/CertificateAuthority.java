@@ -215,7 +215,7 @@ public class CertificateAuthority {
 		if (!Files.isDirectory(basePath)) {
 			throw new IOException("Path is not a directory");
 		}
-		if (!Files.isReadable(basePath) && !Files.isWritable(basePath)) {
+		if (!(Files.isReadable(basePath) && Files.isWritable(basePath))) {
 			throw new IOException("Path is not accessible");
 		}
 		return new CertificateAuthority(basePath);
@@ -257,10 +257,10 @@ public class CertificateAuthority {
 		if (!Files.isDirectory(basePath)) {
 			throw new IOException("Path is not a directory");
 		}
-		if (!Files.isReadable(basePath) && !Files.isWritable(basePath)) {
+		if (!(Files.isReadable(basePath) && Files.isWritable(basePath))) {
 			throw new IOException("Path is not accessible");
 		}
-		if (certificate.getCertificateChain() == null || certificate.getCertificateChain().length == 0) {
+		if (certificate == null || certificate.getCertificateChain() == null || certificate.getCertificateChain().length == 0) {
 			throw new IOException("Missing Certificate");
 		}
 		if (certificate.getPublicKey() == null) {
@@ -412,7 +412,7 @@ public class CertificateAuthority {
 		boolean islocked = isLocked();
 		issuerInformation = null;
 		this.logger.log(Level.INFO, "Locking Certificate Authority");
-		propertySupport.firePropertyChange(PROPERTY_UNLOCK, islocked, false);
+		propertySupport.firePropertyChange(PROPERTY_UNLOCK, islocked, true);
 	}
 
 	/**
@@ -437,7 +437,7 @@ public class CertificateAuthority {
 			throw new IllegalArgumentException("Supplied Issuer Information is not a Certificate Authority");
 		}
 		this.logger.log(Level.INFO, "Unlocked Certificate Authority");
-		propertySupport.firePropertyChange(PROPERTY_UNLOCK, false, true);
+		propertySupport.firePropertyChange(PROPERTY_UNLOCK, true, false);
 	}
 
 	/**
@@ -1514,7 +1514,8 @@ public class CertificateAuthority {
 	 */
 	@Override
 	public String toString() {
-		return getDescription();
+		String value =  getDescription();
+		return value != null ? value : getCertificateAuthorityID().toString();
 	}
 
 	/*
