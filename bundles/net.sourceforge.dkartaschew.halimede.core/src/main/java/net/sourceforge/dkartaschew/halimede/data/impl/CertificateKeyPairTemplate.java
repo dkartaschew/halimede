@@ -369,8 +369,10 @@ public class CertificateKeyPairTemplate implements ICertificateKeyPairTemplate, 
 		request.setDescription(description);
 		request.setKeyUsage(keyUsage);
 		ASN1EncodableVector vector = new ASN1EncodableVector();
-		for (KeyPurposeId id : extendedKeyUsage) {
-			vector.add(id);
+		if (extendedKeyUsage != null) {
+			for (KeyPurposeId id : extendedKeyUsage) {
+				vector.add(id);
+			}
 		}
 		request.setExtendedKeyUsage(vector);
 		request.setSubjectAlternativeName(subjectAltNames);

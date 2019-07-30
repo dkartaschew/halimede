@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -39,7 +40,11 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.bouncycastle.asn1.x500.X500Name;
@@ -51,11 +56,14 @@ import org.junit.runners.MethodSorters;
 import org.mockito.Mockito;
 
 import net.sourceforge.dkartaschew.halimede.TestUtilities;
+import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties.Key;
+import net.sourceforge.dkartaschew.halimede.data.impl.CertificateKeyPairTemplate;
 import net.sourceforge.dkartaschew.halimede.data.impl.IssuedCertificate;
 import net.sourceforge.dkartaschew.halimede.enumeration.EncodingType;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.enumeration.PKCS12Cipher;
 import net.sourceforge.dkartaschew.halimede.enumeration.PKCS8Cipher;
+import net.sourceforge.dkartaschew.halimede.enumeration.RevokeReasonCode;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
 import net.sourceforge.dkartaschew.halimede.exceptions.DatastoreLockedException;
 import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
@@ -98,6 +106,13 @@ public class TestCertificateAuthority {
 			assertFalse(ca.equals(null));
 			assertEquals(ca, ca2);
 			assertEquals(ca.hashCode(), ca2.hashCode());
+			
+			Iterator<Path> search = ca.getSearchPaths();
+			Path basePath = ca.getBasePath();
+			while(search.hasNext()) {
+				Path p = search.next();
+				assertTrue(p.startsWith(basePath));
+			}
 		} finally {
 			TestUtilities.cleanup(path);
 		}
@@ -311,6 +326,51 @@ public class TestCertificateAuthority {
 	}
 
 	/**
+	 * Create a new CA instance
+	 * 
+	 * @throws Exception The creation failed.
+	 */
+	@Test
+	public void createNewCA_Intermediate() throws Exception {
+		Path path = Paths.get(TestUtilities.TMP, "CA");
+		TestUtilities.cleanup(path);
+		assertTrue(path.toFile().mkdirs());
+		try {
+			KeyPair key = KeyPairFactory.generateKeyPair(KeyType.EC_secp521r1);
+			X509Certificate cert = CertificateFactory.generateSelfSignedCertificate(issuer, //
+					ZonedDateTime.now().plusSeconds(3600), key, SignatureAlgorithm.getDefaultSignature(key.getPublic()),
+					true);
+			IssuedCertificate ic = new IssuedCertificate(key, new X509Certificate[] { cert }, null, null, PASSWORD);
+
+			CertificateAuthority ca = CertificateAuthority.create(path, ic);
+			assertTrue(ca.canCreateIntermediateCA());
+
+		} finally {
+			TestUtilities.cleanup(path);
+		}
+	}
+	
+	/**
+	 * Create a new CA instance
+	 * 
+	 * @throws Exception The creation failed.
+	 */
+	@Test(expected=IOException.class)
+	public void createNewCA_Exists() throws Exception {
+		Path path = Paths.get(TestUtilities.TMP, "CA");
+		TestUtilities.cleanup(path);
+		assertTrue(path.toFile().mkdirs());
+		try {
+			Path config = path.resolve(CertificateAuthoritySettings.DEFAULT_NAME);
+			Files.createDirectories(config);
+			CertificateAuthority.open(path);
+
+		} finally {
+			TestUtilities.cleanup(path);
+		}
+	}
+	
+	/**
 	 * Test opening an existing CA
 	 * 
 	 * @throws Exception The opening of the CA failed.
@@ -491,6 +551,91 @@ public class TestCertificateAuthority {
 	}
 
 	/**
+	 * Test add and remove property change listener
+	 * 
+	 * @throws Exception An error occurred.
+	 */
+	@Test
+	public void checkToString() throws Exception {
+		Path path = Paths.get(TestUtilities.TMP, "CA");
+		TestUtilities.cleanup(path);
+		assertTrue(path.toFile().mkdirs());
+		try {
+			Path file = TestUtilities.getFile("ec521_aes_2.p12");
+			CertificateAuthority ca = CertificateAuthority.create(path, IssuedCertificate.openPKCS12(file, PASSWORD));
+			ca.setDescription(CA_DESCRIPTION);
+			assertFalse(ca.isLocked());
+
+			// toString should be the descriptiom
+			assertEquals(CA_DESCRIPTION, ca.getDescription());
+			assertEquals(CA_DESCRIPTION, ca.toString());
+
+			// Null description should be UUID of ca.
+			ca.setDescription(null);
+			assertEquals(ca.getCertificateAuthorityID().toString(), ca.toString());
+
+			// Empty description should be UUID of ca.
+			ca.setDescription("");
+			assertEquals(ca.getCertificateAuthorityID().toString(), ca.toString());
+			ca.setDescription("  ");
+			assertEquals(ca.getCertificateAuthorityID().toString(), ca.toString());
+
+		} finally {
+			TestUtilities.cleanup(path);
+		}
+	}
+
+	/**
+	 * Test add and remove property change listener
+	 * 
+	 * @throws Exception An error occurred.
+	 */
+	@Test
+	public void checkPropertyChangeListener() throws Exception {
+		Path path = Paths.get(TestUtilities.TMP, "CA");
+		TestUtilities.cleanup(path);
+		assertTrue(path.toFile().mkdirs());
+		try {
+			Path file = TestUtilities.getFile("ec521_aes_2.p12");
+			CertificateAuthority ca = CertificateAuthority.create(path, IssuedCertificate.openPKCS12(file, PASSWORD));
+			ca.setDescription(CA_DESCRIPTION);
+			assertFalse(ca.isLocked());
+
+			// Ensure we capture all events.
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			PropertyChangeListener l = new PropertyChangeListener() {
+
+				@Override
+				public void propertyChange(PropertyChangeEvent evt) {
+					events.add(evt);
+				}
+			};
+			ca.addPropertyChangeListener(l);
+
+			ca.lock();
+			assertTrue(ca.isLocked());
+
+			assertEquals(1, events.size());
+			PropertyChangeEvent e = events.get(0);
+			assertEquals(CertificateAuthority.PROPERTY_UNLOCK, e.getPropertyName());
+
+			events.clear();
+
+			// remove listener
+			ca.removePropertyChangeListener(l);
+
+			// Cause an event to occur
+			ca.unlock(PASSWORD);
+			assertFalse(ca.isLocked());
+
+			assertEquals(0, events.size());
+
+		} finally {
+			TestUtilities.cleanup(path);
+		}
+	}
+
+	/**
 	 * Create and reread a CA instance
 	 * 
 	 * @throws Exception The creation failed.
@@ -587,6 +732,59 @@ public class TestCertificateAuthority {
 		}
 	}
 
+	/**
+	 * Check CA getter/setter and property listener
+	 * 
+	 * @throws Exception The creation failed.
+	 */
+	@Test
+	public void setSignature() throws Exception {
+		Path path = Paths.get(TestUtilities.TMP, "CA");
+		TestUtilities.cleanup(path);
+		assertTrue(path.toFile().mkdirs());
+		try {
+			Path file = TestUtilities.getFile("ec521_aes_2.p12");
+			CertificateAuthority ca = CertificateAuthority.create(path, IssuedCertificate.openPKCS12(file, PASSWORD));
+			assertFalse(ca.isLocked());
+			ca.unlock(PASSWORD);
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			ca.setSignatureAlgorithm(SignatureAlgorithm.SHA224withECDSA);
+
+			assertEquals(1, events.size());
+			PropertyChangeEvent e = events.get(0);
+			assertEquals(CertificateAuthority.PROPERTY_SIGNATURE, e.getPropertyName());
+			assertEquals(SignatureAlgorithm.SHA224withECDSA, e.getNewValue());
+
+		} finally {
+			TestUtilities.cleanup(path);
+		}
+	}
+	
+	/**
+	 * Check CA getter/setter and property listener
+	 * 
+	 * @throws Exception The creation failed.
+	 */
+	@Test(expected=NullPointerException.class)
+	public void setSignatureNull() throws Exception {
+		Path path = Paths.get(TestUtilities.TMP, "CA");
+		TestUtilities.cleanup(path);
+		assertTrue(path.toFile().mkdirs());
+		try {
+			Path file = TestUtilities.getFile("ec521_aes_2.p12");
+			CertificateAuthority ca = CertificateAuthority.create(path, IssuedCertificate.openPKCS12(file, PASSWORD));
+			assertFalse(ca.isLocked());
+			ca.unlock(PASSWORD);
+			ca.setSignatureAlgorithm(null);
+
+		} finally {
+			TestUtilities.cleanup(path);
+		}
+	}
+	
 	/**
 	 * Check CA getter/setter and property listener
 	 * 
@@ -925,7 +1123,7 @@ public class TestCertificateAuthority {
 		assertEquals(ca.getDescription(), CA_DESCRIPTION);
 		ca.exportCertificateChain(Paths.get(TestUtilities.TMP, "ca.cer"), EncodingType.PEM);
 	}
-	
+
 	/**
 	 * Test attempt to read certificate chain
 	 * 
@@ -970,7 +1168,7 @@ public class TestCertificateAuthority {
 		Path export = Paths.get(TestUtilities.TMP, "ca.key");
 		ca.exportPrivateKey(export, PASSWORD, EncodingType.PEM, PKCS8Cipher.DES3_CBC);
 	}
-	
+
 	/**
 	 * Test attempt to read certificate chain
 	 * 
@@ -1014,7 +1212,7 @@ public class TestCertificateAuthority {
 		Path export = Paths.get(TestUtilities.TMP, "ca.key");
 		ca.createPublicKey(export, EncodingType.PEM);
 	}
-	
+
 	/**
 	 * Test attempt to read certificate chain
 	 * 
@@ -1059,5 +1257,1026 @@ public class TestCertificateAuthority {
 		assertEquals(ca.getDescription(), CA_DESCRIPTION);
 		Path export = Paths.get(TestUtilities.TMP, "ca.key");
 		ca.exportPKCS12(export, PASSWORD, "1", PKCS12Cipher.DES3);
+	}
+
+	/**
+	 * Add and remove template from ca
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void addRemoveTemplate() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			CertificateKeyPairTemplate template = new CertificateKeyPairTemplate();
+			template.setDescription(PASSWORD);
+			template.setKeyType(KeyType.DSA_3072);
+			template.setCARequest(true);
+			template.setCreationDate(ZonedDateTime.now());
+
+			ca.addTemplate(template);
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_TEMPLATE, events.get(0).getPropertyName());
+
+			@SuppressWarnings("unchecked")
+			ICertificateKeyPairTemplate t = ((Map<Path, ICertificateKeyPairTemplate>) events.get(0).getNewValue())
+					.values().iterator().next();
+
+			events.clear();
+
+			Collection<ICertificateKeyPairTemplate> templates = ca.getCertificateKeyPairTemplates();
+			assertEquals(3, templates.size());
+
+			// Now remove said template.
+			ca.removeCertificateTemplate(t);
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_TEMPLATE, events.get(0).getPropertyName());
+
+			@SuppressWarnings("unchecked")
+			Map<Path, ICertificateKeyPairTemplate> items = (Map<Path, ICertificateKeyPairTemplate>) events.get(0)
+					.getNewValue();
+			assertEquals(2, items.size());
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+
+	/**
+	 * Attempt to remove Template
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected = NoSuchElementException.class)
+	public void removeNullTemplate() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			CertificateKeyPairTemplate template = new CertificateKeyPairTemplate();
+			template.setDescription(PASSWORD);
+			template.setKeyType(KeyType.DSA_3072);
+			template.setCARequest(true);
+			template.setCreationDate(ZonedDateTime.now());
+
+			ca.addTemplate(template);
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_TEMPLATE, events.get(0).getPropertyName());
+
+			ca.removeCertificateTemplate(null);
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+
+	/**
+	 * Attempt to remove Template
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected = NoSuchElementException.class)
+	public void removeUnknownTemplate() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			CertificateKeyPairTemplate template = new CertificateKeyPairTemplate();
+			template.setDescription(PASSWORD);
+			template.setKeyType(KeyType.DSA_3072);
+			template.setCARequest(true);
+			template.setCreationDate(ZonedDateTime.now());
+
+			ca.addTemplate(template);
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_TEMPLATE, events.get(0).getPropertyName());
+
+			CertificateKeyPairTemplate template2 = new CertificateKeyPairTemplate();
+			template.setDescription(PASSWORD);
+			template.setKeyType(KeyType.DSA_3072);
+			template.setCARequest(true);
+			template.setCreationDate(ZonedDateTime.now().minusHours(1));
+
+			ca.removeCertificateTemplate(template2);
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+
+	/**
+	 * Add a CSR
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void addCSR() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			Path csr = TestUtilities.getFile("ec_email.csr");
+			CertificateRequestProperties req = ca.addCertificateSigningRequest(csr);
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_REQUESTS, events.get(0).getPropertyName());
+
+			Collection<CertificateRequestProperties> requests = ca.getCertificateRequests();
+			assertEquals(4, requests.size());
+
+			events.clear();
+
+			ca.removeCertificateSigningRequest(req);
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_REQUESTS, events.get(0).getPropertyName());
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+
+	/**
+	 * Add a CSR
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void addCSRNull() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			ca.addCertificateSigningRequest(null);
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+
+	/**
+	 * Add a CSR
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void removeCSRNull() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			ca.removeCertificateSigningRequest(null);
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+
+	/**
+	 * Remove an invalid CSR
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected = NoSuchElementException.class)
+	public void removeCSRInvalid() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			CertificateRequestProperties req = new CertificateRequestProperties(ca);
+
+			ca.removeCertificateSigningRequest(req);
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+
+	/**
+	 * Add a CSR and Issue/Move
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void addCSRandIssue() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			ca.unlock(PASSWORD);
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			Path csr = TestUtilities.getFile("ec_email.csr");
+			CertificateRequestProperties req = ca.addCertificateSigningRequest(csr);
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_REQUESTS, events.get(0).getPropertyName());
+
+			Collection<CertificateRequestProperties> requests = ca.getCertificateRequests();
+			assertEquals(4, requests.size());
+
+			events.clear();
+
+			IssuedCertificateProperties issued = ca.signAndStoreCertificateRequest(req.getCertificateRequest(),
+					ZonedDateTime.now(), ZonedDateTime.now().plusMonths(1), ca.getPassword());
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_ISSUED, events.get(0).getPropertyName());
+
+			events.clear();
+
+			ca.moveCertificateSigningRequest(req, issued);
+			ca.removeCertificateSigningRequest(req);
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_REQUESTS, events.get(0).getPropertyName());
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+
+	
+	/**
+	 * Remove an invalid CSR
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void moveNullCSR() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			ca.unlock(PASSWORD);
+			
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			Path csr = TestUtilities.getFile("ec_email.csr");
+			CertificateRequestProperties req = ca.addCertificateSigningRequest(csr);
+			IssuedCertificateProperties issued = ca.signAndStoreCertificateRequest(req.getCertificateRequest(),
+					ZonedDateTime.now(), ZonedDateTime.now().plusMonths(1), ca.getPassword());
+			
+			ca.moveCertificateSigningRequest(null, issued);
+			
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Remove an invalid CSR
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected=NoSuchElementException.class)
+	public void moveInvalidCSR() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			ca.unlock(PASSWORD);
+			
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			Path csr = TestUtilities.getFile("ec_email.csr");
+			CertificateRequestProperties req = ca.addCertificateSigningRequest(csr);
+			IssuedCertificateProperties issued = ca.signAndStoreCertificateRequest(req.getCertificateRequest(),
+					ZonedDateTime.now(), ZonedDateTime.now().plusMonths(1), ca.getPassword());
+			
+			CertificateRequestProperties req2 = new CertificateRequestProperties(ca);
+			
+			ca.moveCertificateSigningRequest(req2, issued);
+			
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Remove an invalid CSR
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void moveNullCSRCert() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			Path csr = TestUtilities.getFile("ec_email.csr");
+			CertificateRequestProperties req = ca.addCertificateSigningRequest(csr);
+			
+			ca.moveCertificateSigningRequest(req, null);
+			
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Add a CSR and Issue/Move
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void revokeCertificate() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			ca.unlock(PASSWORD);
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			Path csr = TestUtilities.getFile("ec_email.csr");
+			CertificateRequestProperties req = ca.addCertificateSigningRequest(csr);
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_REQUESTS, events.get(0).getPropertyName());
+
+			Collection<CertificateRequestProperties> requests = ca.getCertificateRequests();
+			assertEquals(4, requests.size());
+
+			events.clear();
+
+			IssuedCertificateProperties issued = ca.signAndStoreCertificateRequest(req.getCertificateRequest(),
+					ZonedDateTime.now(), ZonedDateTime.now().plusMonths(1), ca.getPassword());
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_ISSUED, events.get(0).getPropertyName());
+
+			events.clear();
+
+			ca.revokeCertificate(issued, ZonedDateTime.now(), RevokeReasonCode.CA_COMPROMISE);
+
+			assertEquals(2, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_ISSUED, events.get(0).getPropertyName());
+			assertEquals(CertificateAuthority.PROPERTY_REVOKED, events.get(1).getPropertyName());
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Create a cert and revoke.
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void revokeCertificateP12() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			ca.unlock(PASSWORD);
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+			
+			CertificateKeyPairTemplate template = new CertificateKeyPairTemplate();
+			template.setCreationDate(ZonedDateTime.now());
+			template.setDescription(CA_DESCRIPTION);
+			template.setKeyType(KeyType.DSTU4145_0);
+			template.setSubject(new X500Name("CN=MyCert"));
+
+			IssuedCertificateProperties issued = ca.signAndStoreCertificateRequest(template.asCertificateRequest(),
+					ZonedDateTime.now(), ZonedDateTime.now().plusMonths(1), ca.getPassword());
+
+			events.clear();
+
+			ca.revokeCertificate(issued, ZonedDateTime.now(), RevokeReasonCode.CA_COMPROMISE);
+
+			assertEquals(2, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_ISSUED, events.get(0).getPropertyName());
+			assertEquals(CertificateAuthority.PROPERTY_REVOKED, events.get(1).getPropertyName());
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Add a CSR and Issue/Move
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void revokeCertificateAutoDateTime() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			ca.unlock(PASSWORD);
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			Path csr = TestUtilities.getFile("ec_email.csr");
+			CertificateRequestProperties req = ca.addCertificateSigningRequest(csr);
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_REQUESTS, events.get(0).getPropertyName());
+
+			Collection<CertificateRequestProperties> requests = ca.getCertificateRequests();
+			assertEquals(4, requests.size());
+
+			events.clear();
+
+			IssuedCertificateProperties issued = ca.signAndStoreCertificateRequest(req.getCertificateRequest(),
+					ZonedDateTime.now(), ZonedDateTime.now().plusMonths(1), ca.getPassword());
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_ISSUED, events.get(0).getPropertyName());
+
+			events.clear();
+
+			ca.revokeCertificate(issued, null, null);
+
+			assertEquals(2, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_ISSUED, events.get(0).getPropertyName());
+			assertEquals(CertificateAuthority.PROPERTY_REVOKED, events.get(1).getPropertyName());
+			
+			Collection<IssuedCertificateProperties> revoked = ca.getRevokedCertificates();
+			assertEquals(2, revoked.size());
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Add a CSR and Issue/Move
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void revokeCertificateNull() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+
+			ca.revokeCertificate(null, null, null);
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Double revoke a certificate instance
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void revokeCertificateDoubleRevoke() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			ca.unlock(PASSWORD);
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			Path csr = TestUtilities.getFile("ec_email.csr");
+			CertificateRequestProperties req = ca.addCertificateSigningRequest(csr);
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_REQUESTS, events.get(0).getPropertyName());
+
+			Collection<CertificateRequestProperties> requests = ca.getCertificateRequests();
+			assertEquals(4, requests.size());
+
+			events.clear();
+
+			IssuedCertificateProperties issued = ca.signAndStoreCertificateRequest(req.getCertificateRequest(),
+					ZonedDateTime.now(), ZonedDateTime.now().plusMonths(1), ca.getPassword());
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_ISSUED, events.get(0).getPropertyName());
+
+			events.clear();
+
+			ca.revokeCertificate(issued, null, null);
+
+			assertEquals(2, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_ISSUED, events.get(0).getPropertyName());
+			assertEquals(CertificateAuthority.PROPERTY_REVOKED, events.get(1).getPropertyName());
+			
+			ca.revokeCertificate(issued, null, null);
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+
+	/**
+	 * Update certificate properties
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void updateCertProperties() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			ca.unlock(PASSWORD);
+			
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+			
+			CertificateKeyPairTemplate template = new CertificateKeyPairTemplate();
+			template.setCreationDate(ZonedDateTime.now());
+			template.setDescription(CA_DESCRIPTION);
+			template.setKeyType(KeyType.DSTU4145_0);
+			template.setSubject(new X500Name("CN=MyCert"));
+
+			IssuedCertificateProperties issued = ca.signAndStoreCertificateRequest(template.asCertificateRequest(),
+					ZonedDateTime.now(), ZonedDateTime.now().plusMonths(1), ca.getPassword());
+
+			events.clear();
+
+			issued.setProperty(Key.comments, "New Comment");
+			ca.updateIssuedCertificateProperties(issued);
+			
+			Collection<IssuedCertificateProperties> elements = ca.getIssuedCertificates();
+			assertEquals(3, elements.size());
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/** 
+	 * Update certificate properties
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected=NullPointerException.class)
+	public void updateCertPropertiesNull() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+
+			ca.updateIssuedCertificateProperties(null);
+			
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/** 
+	 * Update certificate properties
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void updateCertPropertiesUnknown() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+
+			IssuedCertificateProperties prop = new IssuedCertificateProperties(ca);
+			
+			ca.updateIssuedCertificateProperties(prop);
+			
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/** 
+	 * Update certificate properties
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void updateRevokeCertProperties() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			ca.unlock(PASSWORD);
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			Path csr = TestUtilities.getFile("ec_email.csr");
+			CertificateRequestProperties req = ca.addCertificateSigningRequest(csr);
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_REQUESTS, events.get(0).getPropertyName());
+
+			Collection<CertificateRequestProperties> requests = ca.getCertificateRequests();
+			assertEquals(4, requests.size());
+
+			events.clear();
+
+			IssuedCertificateProperties issued = ca.signAndStoreCertificateRequest(req.getCertificateRequest(),
+					ZonedDateTime.now(), ZonedDateTime.now().plusMonths(1), ca.getPassword());
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_ISSUED, events.get(0).getPropertyName());
+
+			events.clear();
+
+			IssuedCertificateProperties revoked = ca.revokeCertificate(issued, null, null);
+
+			assertEquals(2, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_ISSUED, events.get(0).getPropertyName());
+			assertEquals(CertificateAuthority.PROPERTY_REVOKED, events.get(1).getPropertyName());
+			
+			revoked.setProperty(Key.comments, "Revoked");
+			
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Add a CSR
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void addCSRandUpdateProperties() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+
+			Path csr = TestUtilities.getFile("ec_email.csr");
+			CertificateRequestProperties req = ca.addCertificateSigningRequest(csr);
+
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_REQUESTS, events.get(0).getPropertyName());
+
+			req.setProperty(CertificateRequestProperties.Key.comments, "A comment");
+			ca.updateCertificateRequestProperties(req);
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	
+	/**
+	 * Update CSR properties
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected=NullPointerException.class)
+	public void udpdateCSRPropertiesNull() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+
+			ca.updateCertificateRequestProperties(null);
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Update CSR properties
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void udpdateCSRPropertiesUnknown() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			
+			CertificateRequestProperties prop = new CertificateRequestProperties(ca);
+
+			ca.updateCertificateRequestProperties(prop);
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Update CRL properties
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void createCRL() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			ca.unlock(PASSWORD);
+			
+			Collection<CRLProperties> crls = ca.getCRLs();
+			assertEquals(1, crls.size());
+			
+			BigInteger num = ca.peekNextSerialCRLNumber();
+			assertEquals(BigInteger.valueOf(2), num);
+			
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+			
+			CRLProperties crl = ca.createCRL(ZonedDateTime.now());
+			
+			num = ca.peekNextSerialCRLNumber();
+			assertEquals(BigInteger.valueOf(3), num);
+			
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_CRLS, events.get(0).getPropertyName());
+
+			crl.setProperty(CRLProperties.Key.comments, "A comment");
+			ca.updateCRLProperties(crl);
+
+			crls = ca.getCRLs();
+			assertEquals(2, crls.size());
+			
+			
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Update CRL properties
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void createCRLProperties() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			ca.unlock(PASSWORD);
+			
+			CRLProperties crl = new CRLProperties(ca);
+
+			crl.setProperty(CRLProperties.Key.comments, "A comment");
+			ca.updateCRLProperties(crl);
+			
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Update CSR properties
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test
+	public void createCRL2() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			ca.unlock(PASSWORD);
+			
+			List<PropertyChangeEvent> events = new ArrayList<>();
+			ca.addPropertyChangeListener((e) -> events.add(e));
+			
+			CRLProperties crl = ca.createCRL(null);
+			
+			assertEquals(1, events.size());
+			assertEquals(CertificateAuthority.PROPERTY_CRLS, events.get(0).getPropertyName());
+
+			crl.setProperty(CRLProperties.Key.comments, "A comment");
+			ca.updateCRLProperties(crl);
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
+	}
+	
+	/**
+	 * Update CSR properties
+	 * 
+	 * @throws Exception The opening of the CA failed.
+	 */
+	@Test(expected=DatastoreLockedException.class)
+	public void createCRLLocked() throws Exception {
+		Path path = TestUtilities.getFolder("CA");
+		Path dest = Paths.get(TestUtilities.TMP, "CA");
+		// Copy to /tmp
+		try {
+			TestUtilities.copyFolder(path, dest);
+
+			// Load as a CA, and ensure the value is updated.
+			CertificateAuthority ca = CertificateAuthority.open(dest);
+			assertEquals(UUID.fromString("7779894e-226f-4230-81ab-612c4387abff"), ca.getCertificateAuthorityID());
+			assertTrue(ca.isLocked());
+			
+			ca.createCRL(null);
+
+		} finally {
+			TestUtilities.cleanup(dest);
+		}
 	}
 }

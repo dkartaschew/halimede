@@ -44,6 +44,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -1021,6 +1022,8 @@ public class CertificateAuthority {
 	 * @throws IOException If updating the backing store fails.
 	 */
 	public void updateIssuedCertificateProperties(IssuedCertificateProperties properties) throws IOException {
+		Objects.requireNonNull(properties, "Missing Certificate Properties");
+		
 		this.logger.log(Level.INFO, "Update Certificate Properties {0}", 
 				properties.getProperty(IssuedCertificateProperties.Key.subject));
 		
@@ -1051,6 +1054,7 @@ public class CertificateAuthority {
 	 * @throws IOException If updating the backing store fails.
 	 */
 	public void updateCertificateRequestProperties(CertificateRequestProperties properties) throws IOException {
+		Objects.requireNonNull(properties, "Missing Certificate Request Properties");
 		this.logger.log(Level.INFO, "Update Certificate Request Properties {0}", 
 				properties.getProperty(CertificateRequestProperties.Key.subject));
 		// Find which element this one represents.
@@ -1073,6 +1077,7 @@ public class CertificateAuthority {
 	 * @throws IOException If updating the backing store fails.
 	 */
 	public void updateCRLProperties(CRLProperties properties) throws IOException {
+		Objects.requireNonNull(properties, "Missing CRL Properties");
 		this.logger.log(Level.INFO, "Update CRL Properties {0}", properties.getProperty(CRLProperties.Key.crlSerialNumber));
 		// Find which element this one represents.
 		Path p = crls.entrySet().stream()//
@@ -1206,6 +1211,7 @@ public class CertificateAuthority {
 	 * @throws IOException If storing the CA state fails.
 	 */
 	public synchronized void setSignatureAlgorithm(SignatureAlgorithm signatureAlg) throws IOException {
+		Objects.requireNonNull(signatureAlg, "Missing Signature Algorithm");
 		SignatureAlgorithm oldValue = settings.getSignatureAlgorithm();
 		settings.setSignatureAlgorithm(signatureAlg);
 		saveSettings();
@@ -1515,7 +1521,7 @@ public class CertificateAuthority {
 	@Override
 	public String toString() {
 		String value =  getDescription();
-		return value != null ? value : getCertificateAuthorityID().toString();
+		return (value != null && !value.trim().isEmpty()) ? value : getCertificateAuthorityID().toString();
 	}
 
 	/*
