@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 import java.time.ZonedDateTime;
@@ -31,7 +32,10 @@ import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.GeneralNamesBuilder;
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,12 +53,28 @@ import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyUsageEnum;
 import net.sourceforge.dkartaschew.halimede.enumeration.PKCS12Cipher;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
+import net.sourceforge.dkartaschew.halimede.random.NotSecureRandom;
 import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(Parameterized.class)
 public class TestSelfSignedCertificates {
 
+	@BeforeClass
+	public static void setup() throws NoSuchAlgorithmException {
+		ProviderUtil.setupProviders();
+		NotSecureRandom rnd = new NotSecureRandom();
+		CryptoServicesRegistrar.setSecureRandom(rnd);
+		KeyPairFactory.resetSecureRandom(rnd);
+	}
+	
+	@AfterClass
+	public static void teardown() {
+		CryptoServicesRegistrar.setSecureRandom(null);
+		KeyPairFactory.resetSecureRandom(null);
+	}
+	
 	/*-
 	 * Signature algorithms:
 	 * http://www.bouncycastle.org/wiki/display/JA1/X.509+Public+Key+Certificate+and+Certification+Request+Generation

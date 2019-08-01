@@ -69,7 +69,7 @@ public class KeyPairFactory {
 	/**
 	 * RND Generator for keying material.
 	 */
-	private final static SecureRandom random = CryptoServicesRegistrar.getSecureRandom();
+	private static SecureRandom random = CryptoServicesRegistrar.getSecureRandom();
 	
 	/*
 	 * Setup BC crypto provider.
@@ -278,6 +278,19 @@ public class KeyPairFactory {
 			return KeyType.forKey(PublicKeyDecoder.getPublicKey(subjectPublicKeyInfo));
 		} catch (NoSuchAlgorithmException | InvalidKeyException | UnknownKeyTypeException e) {
 			throw new IOException(e);
+		}
+	}
+	
+	/**
+	 * Reset the Secure Random provider for the KeyFactory.
+	 * 
+	 * @param rnd The Secure Random PRNG to use, or NULL to reset to default implementation.
+	 */
+	public static void resetSecureRandom(SecureRandom rnd) {
+		if (rnd != null) {
+			random = rnd;
+		} else {
+			random = CryptoServicesRegistrar.getSecureRandom();
 		}
 	}
 }

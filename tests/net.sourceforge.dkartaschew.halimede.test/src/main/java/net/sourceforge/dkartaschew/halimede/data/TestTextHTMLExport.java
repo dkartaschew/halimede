@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -35,7 +36,9 @@ import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.GeneralNamesBuilder;
 import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -54,6 +57,7 @@ import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyUsageEnum;
 import net.sourceforge.dkartaschew.halimede.enumeration.RevokeReasonCode;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
+import net.sourceforge.dkartaschew.halimede.random.NotSecureRandom;
 import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -69,8 +73,17 @@ public class TestTextHTMLExport {
 	private final String csrFilename = "ec_email.csr";
 
 	@BeforeClass
-	public static void setup() {
+	public static void setup() throws NoSuchAlgorithmException {
 		ProviderUtil.setupProviders();
+		NotSecureRandom rnd = new NotSecureRandom();
+		CryptoServicesRegistrar.setSecureRandom(rnd);
+		KeyPairFactory.resetSecureRandom(rnd);
+	}
+	
+	@AfterClass
+	public static void teardown() {
+		CryptoServicesRegistrar.setSecureRandom(null);
+		KeyPairFactory.resetSecureRandom(null);
 	}
 
 	/**

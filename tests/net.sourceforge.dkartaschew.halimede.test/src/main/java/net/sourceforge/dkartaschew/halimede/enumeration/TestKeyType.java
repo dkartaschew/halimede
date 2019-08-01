@@ -39,17 +39,36 @@ import java.util.stream.Collectors;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import net.sourceforge.dkartaschew.halimede.data.KeyPairFactory;
 import net.sourceforge.dkartaschew.halimede.exceptions.UnknownKeyTypeException;
+import net.sourceforge.dkartaschew.halimede.random.NotSecureRandom;
 import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 public class TestKeyType {
 
+	@BeforeClass
+	public static void setupTest() throws NoSuchAlgorithmException {
+		ProviderUtil.setupProviders();
+		NotSecureRandom rnd = new NotSecureRandom();
+		CryptoServicesRegistrar.setSecureRandom(rnd);
+		KeyPairFactory.resetSecureRandom(rnd);
+	}
+	
+	@AfterClass
+	public static void teardown() {
+		CryptoServicesRegistrar.setSecureRandom(null);
+		KeyPairFactory.resetSecureRandom(null);
+	}
+	
 	@After
 	public void tearDown() {
 		System.clearProperty(KeyType.ALLOWED);

@@ -28,7 +28,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.SecureRandom;
 import java.security.cert.Certificate;
 import java.security.interfaces.ECPrivateKey;
 import java.util.Arrays;
@@ -51,6 +50,7 @@ import net.sourceforge.dkartaschew.halimede.data.impl.IssuedCertificate;
 import net.sourceforge.dkartaschew.halimede.enumeration.EncodingType;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.enumeration.PKCS8Cipher;
+import net.sourceforge.dkartaschew.halimede.random.NotSecureRandom;
 import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
 import net.sourceforge.dkartaschew.halimede.util.Strings;
 
@@ -65,12 +65,15 @@ public class TestGenerateKeyingMaterial {
 	
 	@BeforeClass
 	public static void setup() throws NoSuchAlgorithmException {
-		CryptoServicesRegistrar.setSecureRandom(SecureRandom.getInstance("SHA1PRNG"));
+		NotSecureRandom rnd = new NotSecureRandom();
+		CryptoServicesRegistrar.setSecureRandom(rnd);
+		KeyPairFactory.resetSecureRandom(rnd);
 	}
 	
 	@AfterClass
 	public static void teardown() {
 		CryptoServicesRegistrar.setSecureRandom(null);
+		KeyPairFactory.resetSecureRandom(null);
 	}
 	
 	@Parameters(name = "{0}")

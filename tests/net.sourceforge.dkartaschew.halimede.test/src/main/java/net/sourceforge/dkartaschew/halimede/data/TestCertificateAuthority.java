@@ -34,6 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
@@ -48,6 +49,8 @@ import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -66,6 +69,7 @@ import net.sourceforge.dkartaschew.halimede.enumeration.PKCS8Cipher;
 import net.sourceforge.dkartaschew.halimede.enumeration.RevokeReasonCode;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
 import net.sourceforge.dkartaschew.halimede.exceptions.DatastoreLockedException;
+import net.sourceforge.dkartaschew.halimede.random.NotSecureRandom;
 import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -77,8 +81,17 @@ public class TestCertificateAuthority {
 	private X500Name issuer = new X500Name("CN=MyCACert");
 
 	@BeforeClass
-	public static void setup() {
+	public static void setup() throws NoSuchAlgorithmException {
 		ProviderUtil.setupProviders();
+		NotSecureRandom rnd = new NotSecureRandom();
+		CryptoServicesRegistrar.setSecureRandom(rnd);
+		KeyPairFactory.resetSecureRandom(rnd);
+	}
+	
+	@AfterClass
+	public static void teardown() {
+		CryptoServicesRegistrar.setSecureRandom(null);
+		KeyPairFactory.resetSecureRandom(null);
 	}
 
 	/**

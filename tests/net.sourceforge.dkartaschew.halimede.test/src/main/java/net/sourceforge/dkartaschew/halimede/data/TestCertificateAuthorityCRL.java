@@ -39,9 +39,11 @@ import org.bouncycastle.asn1.x509.GeneralName;
 import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.GeneralNamesBuilder;
 import org.bouncycastle.asn1.x509.KeyUsage;
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
 import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -62,6 +64,7 @@ import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyUsageEnum;
 import net.sourceforge.dkartaschew.halimede.enumeration.RevokeReasonCode;
 import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
+import net.sourceforge.dkartaschew.halimede.random.NotSecureRandom;
 import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
 import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
@@ -77,8 +80,17 @@ public class TestCertificateAuthorityCRL {
 	private X500Name subject2 = new X500Name("CN=MySubjectCert2");
 
 	@BeforeClass
-	public static void setup() {
+	public static void setup() throws NoSuchAlgorithmException {
 		ProviderUtil.setupProviders();
+		NotSecureRandom rnd = new NotSecureRandom();
+		CryptoServicesRegistrar.setSecureRandom(rnd);
+		KeyPairFactory.resetSecureRandom(rnd);
+	}
+	
+	@AfterClass
+	public static void teardown() {
+		CryptoServicesRegistrar.setSecureRandom(null);
+		KeyPairFactory.resetSecureRandom(null);
 	}
 
 	@Parameters(name = "{0}")

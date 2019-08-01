@@ -33,7 +33,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.bouncycastle.crypto.CryptoServicesRegistrar;
 import org.eclipse.core.databinding.validation.ValidationStatus;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,12 +49,28 @@ import net.sourceforge.dkartaschew.halimede.data.impl.IssuedCertificate;
 import net.sourceforge.dkartaschew.halimede.enumeration.EncodingType;
 import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 import net.sourceforge.dkartaschew.halimede.exceptions.InvalidPasswordException;
+import net.sourceforge.dkartaschew.halimede.random.NotSecureRandom;
 import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
+import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(Parameterized.class)
 public class TestExportPublicKeyMaterial {
 
+	@BeforeClass
+	public static void setup() throws NoSuchAlgorithmException {
+		ProviderUtil.setupProviders();
+		NotSecureRandom rnd = new NotSecureRandom();
+		CryptoServicesRegistrar.setSecureRandom(rnd);
+		KeyPairFactory.resetSecureRandom(rnd);
+	}
+	
+	@AfterClass
+	public static void teardown() {
+		CryptoServicesRegistrar.setSecureRandom(null);
+		KeyPairFactory.resetSecureRandom(null);
+	}
+	
 	@Parameters(name = "{0}")
 	public static Collection<KeyType> data() {
 		KeyTypeWarningValidator v = new KeyTypeWarningValidator();
