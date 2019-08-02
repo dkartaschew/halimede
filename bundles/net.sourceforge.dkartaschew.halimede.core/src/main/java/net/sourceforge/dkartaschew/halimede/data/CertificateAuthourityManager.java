@@ -34,7 +34,7 @@ import org.eclipse.e4.core.di.annotations.Creatable;
 import net.sourceforge.dkartaschew.halimede.util.ProviderUtil;
 
 /**
- * Manager class for handling Certificate Authourities.
+ * Manager class for handling Certificate Authorities.
  *
  */
 @Creatable
@@ -83,7 +83,7 @@ public class CertificateAuthourityManager implements PropertyChangeListener {
 	 * Open an exiting instance of CA data store.
 	 * 
 	 * @param path The filepath of the CAs datastore.
-	 * @return The Certificate Authority instance.
+	 * @return The Certificate Authority instance. Returns NULL if the CA wasn't created or added (possible duplicate).
 	 * @throws IOException If opening/reading the datastore failed.
 	 */
 	public CertificateAuthority open(Path path) throws IOException {
@@ -96,7 +96,11 @@ public class CertificateAuthourityManager implements PropertyChangeListener {
 		if (ca != null) {
 			ca.addPropertyChangeListener(this);
 			Set<CertificateAuthority> old = new HashSet<>(certificateAuthorities);
-			certificateAuthorities.add(ca);
+			if (!certificateAuthorities.add(ca)) {
+				// Duplicate so kill it.
+				ca.removePropertyChangeListener(this);
+				ca = null;
+			}
 			this.propertySupport.firePropertyChange(PROPERTY, old, certificateAuthorities);
 		}
 		return ca;
@@ -129,7 +133,11 @@ public class CertificateAuthourityManager implements PropertyChangeListener {
 	 * @return TRUE if the element was removed.
 	 */
 	public boolean remove(CertificateAuthority ca) {
+		if (ca == null) {
+			return false;
+		}
 		Set<CertificateAuthority> old = new HashSet<>(certificateAuthorities);
+		ca.lock();
 		ca.removePropertyChangeListener(this);
 		boolean res = certificateAuthorities.remove(ca);
 		this.propertySupport.firePropertyChange(PROPERTY, old, certificateAuthorities);
@@ -159,6 +167,9 @@ public class CertificateAuthourityManager implements PropertyChangeListener {
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt == null) {
+			return;
+		}
 		this.propertySupport.firePropertyChange(evt);
 	}
 }

@@ -270,6 +270,9 @@ public class CertificateAuthority {
 		if (certificate.getPrivateKey() == null) {
 			throw new IOException("Missing Private Key");
 		}
+		if (Files.exists(basePath.resolve(CA_PKCS12_FILENAME))) {
+			throw new IOException("Location appears to be use for another Certificate Authority");
+		}
 		return new CertificateAuthority(basePath, certificate, description);
 	}
 
