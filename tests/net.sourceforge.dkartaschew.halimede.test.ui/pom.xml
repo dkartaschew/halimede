@@ -22,7 +22,7 @@
 					<useUIHarness>true</useUIHarness>
 					<useUIThread>false</useUIThread>
 					<product>net.sourceforge.dkartaschew.halimede.e4rcp.CAManager</product>
-					<application>net.sourceforge.dkartaschew.halimede.startup.E4Application</application>
+					<application>org.eclipse.e4.ui.workbench.swt.E4Application</application>
 				</configuration>
 			</plugin>
 		</plugins>
