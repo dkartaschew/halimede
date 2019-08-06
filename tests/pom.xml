@@ -14,5 +14,6 @@
 
     <modules>
         <module>net.sourceforge.dkartaschew.halimede.test</module>
+	<module>net.sourceforge.dkartaschew.halimede.test.ui</module>
     </modules>
 </project>
