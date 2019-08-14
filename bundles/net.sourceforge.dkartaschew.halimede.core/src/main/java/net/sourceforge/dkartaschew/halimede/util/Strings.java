@@ -435,5 +435,107 @@ public class Strings {
 		return "0x" + s.toString(16) + " (" + s.toString() + ")";
 	}
 
+	/**
+	 * Unescape the given iETF string.
+	 * <p>
+	 * Note: This is taken from IETFUtils from Bouncycastle (bcprov).
+	 * 
+	 * @param elt The string to unescape.
+	 * @return The unescaped version.
+	 */
+	public static String unescape(String elt) {
+		if (elt.length() == 0 || (elt.indexOf('\\') < 0 && elt.indexOf('"') < 0)) {
+			return elt.trim();
+		}
+
+		char[] elts = elt.toCharArray();
+		boolean escaped = false;
+		boolean quoted = false;
+		StringBuffer buf = new StringBuffer(elt.length());
+		int start = 0;
+
+		// if it's an escaped hash string and not an actual encoding in string form
+		// we need to leave it escaped.
+		if (elts[0] == '\\') {
+			if (elts[1] == '#') {
+				start = 2;
+				buf.append("\\#");
+			}
+		}
+
+		boolean nonWhiteSpaceEncountered = false;
+		int lastEscaped = 0;
+		char hex1 = 0;
+
+		for (int i = start; i != elts.length; i++) {
+			char c = elts[i];
+
+			if (c != ' ') {
+				nonWhiteSpaceEncountered = true;
+			}
+
+			if (c == '"') {
+				if (!escaped) {
+					quoted = !quoted;
+				} else {
+					buf.append(c);
+				}
+				escaped = false;
+			} else if (c == '\\' && !(escaped || quoted)) {
+				escaped = true;
+				lastEscaped = buf.length();
+			} else {
+				if (c == ' ' && !escaped && !nonWhiteSpaceEncountered) {
+					continue;
+				}
+				if (escaped && isHexDigit(c)) {
+					if (hex1 != 0) {
+						buf.append((char) (convertHex(hex1) * 16 + convertHex(c)));
+						escaped = false;
+						hex1 = 0;
+						continue;
+					}
+					hex1 = c;
+					continue;
+				}
+				buf.append(c);
+				escaped = false;
+			}
+		}
+
+		if (buf.length() > 0) {
+			while (buf.charAt(buf.length() - 1) == ' ' && lastEscaped != (buf.length() - 1)) {
+				buf.setLength(buf.length() - 1);
+			}
+		}
+
+		return buf.toString();
+	}
+
+	/**
+	 * Is the digit a hex value
+	 * 
+	 * @param c The char to check
+	 * @return TRUE if the char is a valid character for hex.
+	 */
+	private static boolean isHexDigit(char c) {
+		return ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F');
+	}
+
+	/**
+	 * Convert the char to hex equivalent.
+	 * 
+	 * @param c The char to convert
+	 * @return The char as hex encoded
+	 */
+	private static int convertHex(char c) {
+		if ('0' <= c && c <= '9') {
+			return c - '0';
+		}
+		if ('a' <= c && c <= 'f') {
+			return c - 'a' + 10;
+		}
+		return c - 'A' + 10;
+	}
 
 }

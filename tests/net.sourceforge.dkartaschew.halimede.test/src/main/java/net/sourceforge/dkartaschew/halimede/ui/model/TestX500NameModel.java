@@ -171,4 +171,134 @@ public class TestX500NameModel {
 		X500NameModel model = new X500NameModel();
 		model.setCountry(null);
 	}
+	
+	@Test
+	public void testEscapted() {
+		X500NameModel model = new X500NameModel();
+		model.setCommonName("CN=CA Manager,New Manager");
+		assertEquals("CN=CA Manager,New Manager", model.getCommonName());
+		X500Name n = new X500Name("CN=CN\\=CA Manager\\,New Manager");
+		assertEquals(n, model.asX500Name());
+		
+		// Ensure escaped chars are handled correctly...
+		X500NameModel newModel = X500NameModel.create(n);
+		assertEquals("CN=CA Manager,New Manager", newModel.getCommonName());
+	}
+	
+	@Test
+	public void testEscapted2() {
+		X500NameModel model = new X500NameModel();
+		model.setCommonName("CN=CA Manager\\,New Manager");
+		assertEquals("CN=CA Manager\\,New Manager", model.getCommonName());
+		X500Name n = new X500Name("CN=CN\\=CA Manager\\\\\\,New Manager");
+		assertEquals(n, model.asX500Name());
+		
+		// Ensure escaped chars are handled correctly...
+		X500NameModel newModel = X500NameModel.create(n);
+		assertEquals("CN=CA Manager\\,New Manager", newModel.getCommonName());
+	}
+	
+	@Test
+	public void testEscapted3() {
+		X500NameModel model = new X500NameModel();
+		model.setCommonName("CN=CA Manager\\,New Manager # 12345");
+		model.setCountry("AU");
+		model.setEmailAddress("\"user\\.a@aolc.om");
+		model.setLocation("My Home");
+		model.setOrganisation("Org. Inc. Pty/Ltd #asd");
+		model.setOrganisationUnit("Development Farm");
+		model.setState("Queensland");
+		model.setStreet("1234 nowhere place");
+		
+		X500Name n = model.asX500Name();
+
+		X500NameModel newModel = X500NameModel.create(n);
+		X500Name n2 = newModel.asX500Name();
+
+		X500NameModel newModel2 = X500NameModel.create(n2);
+		X500Name n3 = newModel2.asX500Name();
+		
+		System.out.println(n.toString());
+		// Ensure escaped / Unicode chars are handled correctly...
+		assertEquals(n, n2);
+		assertEquals(n2, n3);
+	}
+	
+	@Test
+	public void testUnicodeUA() {
+		X500NameModel model = new X500NameModel();
+		model.setCommonName("Моє ім'я");
+		model.setCountry("UA");
+		model.setEmailAddress("my.name@bestisp.com");
+		model.setLocation("Київ Україна");
+		model.setOrganisation("Київська політехніка");
+		model.setOrganisationUnit("розробка програмного забезпечення");
+		model.setState("Україна");
+		model.setStreet("Пр. Перемоги, 37");
+		
+		X500Name n = model.asX500Name();
+
+		X500NameModel newModel = X500NameModel.create(n);
+		X500Name n2 = newModel.asX500Name();
+
+		X500NameModel newModel2 = X500NameModel.create(n2);
+		X500Name n3 = newModel2.asX500Name();
+		
+		System.out.println(n.toString());
+		// Ensure escaped / Unicode chars are handled correctly...
+		assertEquals(n, n2);
+		assertEquals(n2, n3);
+	}
+	
+	@Test
+	public void testUnicodeDK() {
+		X500NameModel model = new X500NameModel();
+		model.setCommonName("Elin Lykke");
+		model.setCountry("DK");
+		model.setEmailAddress("elin@lykke.co.dk");
+		model.setLocation("Rønne");
+		model.setOrganisation("Lykke Hjemmesoftware");
+		model.setOrganisationUnit("markedsføring");
+		model.setState("Bornholm");
+		model.setStreet("1, ingen gade");
+		
+		X500Name n = model.asX500Name();
+
+		X500NameModel newModel = X500NameModel.create(n);
+		X500Name n2 = newModel.asX500Name();
+
+		X500NameModel newModel2 = X500NameModel.create(n2);
+		X500Name n3 = newModel2.asX500Name();
+		
+		System.out.println(n.toString());
+		// Ensure escaped / Unicode chars are handled correctly...
+		assertEquals(n, n2);
+		assertEquals(n2, n3);
+	}
+	
+	@Test
+	public void testUnicodeIL() {
+		X500NameModel model = new X500NameModel();
+		model.setCommonName("יוסף");
+		model.setCountry("IL");
+		model.setEmailAddress("jo@isp.il");
+		model.setLocation("תֵּל־אָבִיב–יָפוֹ");
+		model.setOrganisation("אוניברסיטת תל אביב");
+		model.setOrganisationUnit("מהנדס תוכנה");
+		model.setState("");
+		model.setStreet("1, אין רחוב");
+		
+		X500Name n = model.asX500Name();
+		
+		X500NameModel newModel = X500NameModel.create(n);
+		X500Name n2 = newModel.asX500Name();
+
+		X500NameModel newModel2 = X500NameModel.create(n2);
+		X500Name n3 = newModel2.asX500Name();
+		
+		System.out.println(n.toString());
+		// Ensure escaped / Unicode chars are handled correctly...
+		assertEquals(n, n2);
+		assertEquals(n2, n3);
+	}
 }

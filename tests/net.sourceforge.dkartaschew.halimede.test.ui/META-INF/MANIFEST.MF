@@ -13,6 +13,7 @@ Require-Bundle: org.mockito;bundle-version="2.23.0",
  net.bytebuddy.byte-buddy-agent;bundle-version="1.9.0",
  org.eclipse.swtbot.go;bundle-version="2.8.0",
  org.eclipse.swtbot.junit4_x;bundle-version="2.8.0",
- org.eclipse.swtbot.swt.finder;bundle-version="2.8.0"
+ org.eclipse.swtbot.swt.finder;bundle-version="2.8.0",
+ org.eclipse.swtbot.e4.finder;bundle-version="2.8.0"
 Automatic-Module-Name: net.sourceforge.dkartaschew.halimede.test.ui
 Export-Package: net.sourceforge.dkartaschew.halimede.test.ui

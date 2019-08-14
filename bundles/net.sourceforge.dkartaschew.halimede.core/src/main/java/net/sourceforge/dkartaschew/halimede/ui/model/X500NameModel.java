@@ -26,6 +26,8 @@ import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
 
+import net.sourceforge.dkartaschew.halimede.util.Strings;
+
 /**
  * Very simple X500 Name model.
  */
@@ -132,35 +134,35 @@ public class X500NameModel {
 		if (name != null) {
 			RDN[] rdns = name.getRDNs(BCStyle.CN);
 			if (rdns.length > 0) {
-				model.commonName = IETFUtils.valueToString(rdns[0].getFirst().getValue());
+				model.commonName = Strings.unescape(IETFUtils.valueToString(rdns[0].getFirst().getValue()));
 			}
 			rdns = name.getRDNs(BCStyle.EmailAddress);
 			if (rdns.length > 0) {
-				model.emailAddress = IETFUtils.valueToString(rdns[0].getFirst().getValue());
+				model.emailAddress = Strings.unescape(IETFUtils.valueToString(rdns[0].getFirst().getValue()));
 			}
 			rdns = name.getRDNs(BCStyle.OU);
 			if (rdns.length > 0) {
-				model.organisationUnit = IETFUtils.valueToString(rdns[0].getFirst().getValue());
+				model.organisationUnit = Strings.unescape(IETFUtils.valueToString(rdns[0].getFirst().getValue()));
 			}
 			rdns = name.getRDNs(BCStyle.O);
 			if (rdns.length > 0) {
-				model.organisation = IETFUtils.valueToString(rdns[0].getFirst().getValue());
+				model.organisation = Strings.unescape(IETFUtils.valueToString(rdns[0].getFirst().getValue()));
 			}
 			rdns = name.getRDNs(BCStyle.L);
 			if (rdns.length > 0) {
-				model.location = IETFUtils.valueToString(rdns[0].getFirst().getValue());
+				model.location = Strings.unescape(IETFUtils.valueToString(rdns[0].getFirst().getValue()));
 			}
 			rdns = name.getRDNs(BCStyle.STREET);
 			if (rdns.length > 0) {
-				model.street = IETFUtils.valueToString(rdns[0].getFirst().getValue());
+				model.street = Strings.unescape(IETFUtils.valueToString(rdns[0].getFirst().getValue()));
 			}
 			rdns = name.getRDNs(BCStyle.ST);
 			if (rdns.length > 0) {
-				model.state = IETFUtils.valueToString(rdns[0].getFirst().getValue());
+				model.state = Strings.unescape(IETFUtils.valueToString(rdns[0].getFirst().getValue()));
 			}
 			rdns = name.getRDNs(BCStyle.C);
 			if (rdns.length > 0) {
-				model.country = IETFUtils.valueToString(rdns[0].getFirst().getValue());
+				model.country = Strings.unescape(IETFUtils.valueToString(rdns[0].getFirst().getValue()));
 			}
 		}
 		return model;
