@@ -3,7 +3,7 @@
 <target name="Eclipse 2019-06" sequenceNumber="11">
 <locations>
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
-		<unit id="org.eclipse.nebula.widgets.cdatetime.feature.feature.group" version="1.3.0.201812241324"/>
+		<unit id="org.eclipse.nebula.widgets.cdatetime.feature.feature.group" version="0.0.0"/>
 		<repository location="http://download.eclipse.org/nebula/releases/latest"/>
 	</location>
 	<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
