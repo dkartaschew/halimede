@@ -63,7 +63,7 @@ public class DatePeriodValidator extends MultiValidator {
 		ZonedDateTime field1 = (ZonedDateTime) startDate.getValue();
 		ZonedDateTime field2 = (ZonedDateTime) endDate.getValue();
 		if (field1 == null || field2 == null) {
-			return ValidationStatus.ok();
+			return ValidationStatus.error("Missing date information.");
 		}
 		if (field2.isBefore(field1)) {
 			return ValidationStatus.error("The start date must be before the end date.");

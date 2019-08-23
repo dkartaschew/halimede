@@ -21,7 +21,10 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Date;
 
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swtbot.e4.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
@@ -34,6 +37,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import net.sourceforge.dkartaschew.halimede.test.swtbot.SWTBotCDateTime;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
 public class TestCreateCA {
@@ -50,25 +55,27 @@ public class TestCreateCA {
 
 	@Test
 	public void createCA() throws Exception {
-		
+
 		SWTBotTree primaryTree = bot.tree();
-		
+
 		primaryTree.contextMenu("Create a New Certificate Authority").click();
-		
+
 		assertFalse(bot.button("Create").isEnabled());
-		
+
 		bot.textWithLabel("Description:").setText("Test");
 		bot.textWithLabel("Location:").setText(tmp);
-		
+
 		SWTBotButton createButton = bot.button("Create");
 		SWTBotText subjectField = bot.textWithLabel("Subject:");
 		SWTBotText passphrase1Field = bot.textWithLabel("Passphrase:");
 		SWTBotText passphrase2Field = bot.textWithLabel("Confirmation:");
-		
+		SWTBotCDateTime date1 = SWTBotCDateTime.get(bot, 0);
+		SWTBotCDateTime date2 = SWTBotCDateTime.get(bot, 1);
+
 		assertFalse(createButton.isEnabled());
-		
+
 		assertTrue(subjectField.getText().isEmpty());
-		
+
 		bot.button("...", 1).click();
 		bot.waitUntil(Conditions.shellIsActive("X500 Name Assistant"));
 		SWTBotShell x500Dialog = bot.activeShell();
@@ -80,12 +87,26 @@ public class TestCreateCA {
 		bot.textWithLabel("Organizational Unit Name (OU):").setText("Test");
 		assertTrue(updateButton.isEnabled());
 		updateButton.click();
-		
+
 		bot.waitUntil(Conditions.shellCloses(x500Dialog));
-		
+
 		assertFalse(subjectField.getText().isEmpty());
 		assertTrue(createButton.isEnabled());
-		
+
+		Date date = date1.getDate();
+		date1.setDate(null);
+		assertFalse(createButton.isEnabled());
+
+		date1.setDate(date);
+		assertTrue(createButton.isEnabled());
+
+		date = date2.getDate();
+		date2.setDate(null);
+		assertFalse(createButton.isEnabled());
+
+		date2.setDate(date);
+		assertTrue(createButton.isEnabled());
+
 		passphrase1Field.setText("Password");
 		assertFalse(createButton.isEnabled());
 		passphrase2Field.setText("Passwor");
@@ -93,9 +114,9 @@ public class TestCreateCA {
 		passphrase2Field.setText("Password");
 		assertTrue(createButton.isEnabled());
 		createButton.click();
-		
+
 		bot.waitUntilWidgetAppears(Conditions.treeHasRows(primaryTree, 1));
-		
+
 		primaryTree.getTreeItem("Test").expand();
 		primaryTree.getTreeItem("Test").getNode("CRLs").select();
 		primaryTree.getTreeItem("Test").getNode("Issued").select();
@@ -108,5 +129,20 @@ public class TestCreateCA {
 	public static void sleep() throws IOException {
 		TestUtilities.cleanup(Paths.get(tmp, "Test"));
 		SWTBotPreferences.PLAYBACK_DELAY = 0;
+	}
+
+	/**
+	 * Creates an event.
+	 *
+	 * @param widget The widget
+	 * @return an event that encapsulates {@link #widget} and {@link #display}. Subclasses may override to set other
+	 *         event properties.
+	 */
+	protected Event createEvent(Widget widget) {
+		Event event = new Event();
+		event.time = (int) System.currentTimeMillis();
+		event.widget = widget;
+		event.display = widget.getDisplay();
+		return event;
 	}
 }

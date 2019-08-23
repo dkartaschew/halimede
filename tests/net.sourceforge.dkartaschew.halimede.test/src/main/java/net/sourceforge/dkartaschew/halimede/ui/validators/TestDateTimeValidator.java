@@ -76,7 +76,7 @@ public class TestDateTimeValidator {
 		when(endDate.getValue()).thenReturn(ZonedDateTime.now());
 
 		DatePeriodValidator v = new DatePeriodValidator(startDate, endDate, null, null);
-		assertEquals(ValidationStatus.ok(), v.validate());
+		assertEquals(ValidationStatus.error("").getSeverity(), v.validate().getSeverity());
 	}
 
 	@Test
@@ -87,7 +87,7 @@ public class TestDateTimeValidator {
 		when(endDate.getValue()).thenReturn(null);
 
 		DatePeriodValidator v = new DatePeriodValidator(startDate, endDate, null, null);
-		assertEquals(ValidationStatus.ok(), v.validate());
+		assertEquals(ValidationStatus.error("").getSeverity(), v.validate().getSeverity());
 	}
 
 	@Test
