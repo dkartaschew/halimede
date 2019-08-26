@@ -17,9 +17,8 @@
 
 package net.sourceforge.dkartaschew.halimede.data;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -55,13 +54,13 @@ public class X509CRLEncoder {
 
 	public static X509CRL open(Path filename) throws IOException {
 		try (PEMParser pemParser = new PEMParser(new InputStreamReader(
-				new FileInputStream(filename.toFile()), StandardCharsets.UTF_8))) {
+				Files.newInputStream(filename), StandardCharsets.UTF_8))) {
 			Object object = pemParser.readObject();
 			if (object == null) {
 				// May be plain DER without enough info for PEMParser
 
 				// Try simple X509 CRL .
-				try (FileInputStream fis = new FileInputStream(filename.toFile());) {
+				try (InputStream fis = Files.newInputStream(filename)) {
 					return new JcaX509CRLConverter().getCRL(new X509CRLHolder(fis));
 				} catch (CRLException | CertIOException e) {
 					// throw new IOException("Parsing of file failed", e);
@@ -130,7 +129,7 @@ public class X509CRLEncoder {
 	 * @throws IOException Writing to the file failed
 	 */
 	public static void create(Path filename, EncodingType encoding, X509CRL crl) throws IOException {
-		try (OutputStream out = new FileOutputStream(filename.toFile())) {
+		try (OutputStream out = Files.newOutputStream(filename)) {
 			switch (encoding) {
 			case PEM:
 				try (JcaPEMWriter writer = new JcaPEMWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));) {

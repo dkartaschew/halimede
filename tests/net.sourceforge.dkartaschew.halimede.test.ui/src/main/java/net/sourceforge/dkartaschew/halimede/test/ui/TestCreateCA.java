@@ -16,20 +16,22 @@
  */
 package net.sourceforge.dkartaschew.halimede.test.ui;
 
+import static org.eclipse.swtbot.swt.finder.waits.Conditions.shellCloses;
+import static org.eclipse.swtbot.swt.finder.waits.Conditions.shellIsActive;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Date;
 
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swtbot.e4.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotButton;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotRadio;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
@@ -45,6 +47,7 @@ public class TestCreateCA {
 
 	private static SWTBot bot;
 	private static String tmp;
+	private static String keyMaterialPassword = "changeme";
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
@@ -57,9 +60,11 @@ public class TestCreateCA {
 	public void createCA() throws Exception {
 
 		SWTBotTree primaryTree = bot.tree();
-
+		int rows = primaryTree.rowCount();
+		
 		primaryTree.contextMenu("Create a New Certificate Authority").click();
 
+		bot.waitUntil(shellIsActive("Create Certificate Authority"));
 		assertFalse(bot.button("Create").isEnabled());
 
 		bot.textWithLabel("Description:").setText("Test");
@@ -115,7 +120,7 @@ public class TestCreateCA {
 		assertTrue(createButton.isEnabled());
 		createButton.click();
 
-		bot.waitUntilWidgetAppears(Conditions.treeHasRows(primaryTree, 1));
+		bot.waitUntilWidgetAppears(Conditions.treeHasRows(primaryTree, rows + 1));
 
 		primaryTree.getTreeItem("Test").expand();
 		primaryTree.getTreeItem("Test").getNode("CRLs").select();
@@ -123,26 +128,161 @@ public class TestCreateCA {
 		primaryTree.getTreeItem("Test").getNode("Pending").select();
 		primaryTree.getTreeItem("Test").getNode("Revoked").select();
 		primaryTree.getTreeItem("Test").getNode("Template").select();
+		
+		primaryTree.getTreeItem("Test").collapse();
+	}
+	
+	@Test
+	public void createCAExistingP12() throws Exception {
+
+		SWTBotTree primaryTree = bot.tree();
+		int rows = primaryTree.rowCount();
+
+		primaryTree.contextMenu("Create a New Certificate Authority from Existing Certificate").click();
+
+		bot.waitUntil(shellIsActive("Create Certificate Authority"));
+		assertFalse(bot.button("Create").isEnabled());
+		
+		bot.textWithLabel("Description:").setText("Test2");
+		bot.textWithLabel("Location:").setText(tmp);
+
+		SWTBotButton createButton = bot.button("Create");
+		SWTBotText passphrase1Field = bot.textWithLabel("Passphrase:");
+		SWTBotText passphrase2Field = bot.textWithLabel("Confirmation:");
+		SWTBotText pkcs12Field = bot.textWithLabel("Filename:");
+		SWTBotText privKeyField = bot.textWithLabel("Private Key:");
+		SWTBotText certField = bot.textWithLabel("Certificate:");
+		
+		SWTBotRadio pkcs12 = bot.radio("PKCS#12");
+		SWTBotRadio certPriv = bot.radio("Certificate/Key Pair");
+		
+		assertTrue(pkcs12.isEnabled());
+		assertTrue(certPriv.isEnabled());
+		assertTrue(pkcs12Field.isEnabled());
+		assertFalse(certField.isEnabled());
+		assertFalse(privKeyField.isEnabled());
+				
+		pkcs12.click();
+		assertFalse(createButton.isEnabled());
+		pkcs12Field.setText(TestUtilities.getFile("dsa4096.p12").toString());
+		assertTrue(createButton.isEnabled());
+		
+		passphrase1Field.setText("Password");
+		assertFalse(createButton.isEnabled());
+		passphrase2Field.setText("Passwor");
+		assertFalse(createButton.isEnabled());
+		passphrase2Field.setText("Password");
+		assertTrue(createButton.isEnabled());
+		
+		createButton.click();
+		
+		bot.waitUntilWidgetAppears(shellIsActive("Keying Material Passphrase"));
+		SWTBotShell passwordDialog = bot.activeShell();
+		bot.text().setText(keyMaterialPassword);
+		bot.button("OK").click();
+		bot.waitUntil(shellCloses(passwordDialog));
+		
+		bot.waitUntilWidgetAppears(Conditions.treeHasRows(primaryTree, rows + 1));
+
+		primaryTree.getTreeItem("Test2").expand();
+		primaryTree.getTreeItem("Test2").getNode("CRLs").select();
+		primaryTree.getTreeItem("Test2").getNode("Issued").select();
+		primaryTree.getTreeItem("Test2").getNode("Pending").select();
+		primaryTree.getTreeItem("Test2").getNode("Revoked").select();
+		primaryTree.getTreeItem("Test2").getNode("Template").select();
+		
+		primaryTree.getTreeItem("Test2").collapse();
 	}
 
+	@Test
+	public void createCAExistingCertKey() throws Exception {
+
+		SWTBotTree primaryTree = bot.tree();
+		int rows = primaryTree.rowCount();
+
+		primaryTree.contextMenu("Create a New Certificate Authority from Existing Certificate").click();
+
+		bot.waitUntil(shellIsActive("Create Certificate Authority"));
+		assertFalse(bot.button("Create").isEnabled());
+		
+		bot.textWithLabel("Description:").setText("Test3");
+		bot.textWithLabel("Location:").setText(tmp);
+
+		SWTBotButton createButton = bot.button("Create");
+		SWTBotText passphrase1Field = bot.textWithLabel("Passphrase:");
+		SWTBotText passphrase2Field = bot.textWithLabel("Confirmation:");
+		SWTBotText pkcs12Field = bot.textWithLabel("Filename:");
+		SWTBotText privKeyField = bot.textWithLabel("Private Key:");
+		SWTBotText certField = bot.textWithLabel("Certificate:");
+		
+		SWTBotRadio pkcs12 = bot.radio("PKCS#12");
+		SWTBotRadio certPriv = bot.radio("Certificate/Key Pair");
+		
+		assertTrue(pkcs12.isEnabled());
+		assertTrue(certPriv.isEnabled());
+		assertTrue(pkcs12Field.isEnabled());
+		assertFalse(certField.isEnabled());
+		assertFalse(privKeyField.isEnabled());
+				
+		certPriv.click();
+		assertFalse(createButton.isEnabled());
+		certField.setText(TestUtilities.getFile("dsacert.pem").toString());
+		privKeyField.setText(TestUtilities.getFile("dsa4096key_des3.pem").toString());
+		assertTrue(createButton.isEnabled());
+		
+		passphrase1Field.setText("Password");
+		assertFalse(createButton.isEnabled());
+		passphrase2Field.setText("Passwor");
+		assertFalse(createButton.isEnabled());
+		passphrase2Field.setText("Password");
+		assertTrue(createButton.isEnabled());
+		
+		createButton.click();
+		
+		bot.waitUntilWidgetAppears(shellIsActive("Keying Material Passphrase"));
+		SWTBotShell passwordDialog = bot.activeShell();
+		bot.text().setText(keyMaterialPassword);
+		bot.button("OK").click();
+		bot.waitUntil(shellCloses(passwordDialog));
+		
+		bot.waitUntilWidgetAppears(Conditions.treeHasRows(primaryTree, rows + 1));
+
+		primaryTree.getTreeItem("Test3").expand();
+		primaryTree.getTreeItem("Test3").getNode("CRLs").select();
+		primaryTree.getTreeItem("Test3").getNode("Issued").select();
+		primaryTree.getTreeItem("Test3").getNode("Pending").select();
+		primaryTree.getTreeItem("Test3").getNode("Revoked").select();
+		primaryTree.getTreeItem("Test3").getNode("Template").select();
+		
+		primaryTree.getTreeItem("Test3").collapse();
+		
+	}
+	
+	@Test
+	public void testCreateCAMenu() {
+		bot.menu("File").menu("Create New Certificate Authority").click();
+		SWTBotShell shell = bot.shell("Create Certificate Authority");
+		assertNotNull(shell);
+		bot.sleep(2000);
+		bot.button("Cancel").click();
+	}
+	
+	@Test
+	public void testCreateCAExistingMenu() {
+		bot.menu("File").menu("Create New Certificate Authority from Existing Material").click();
+		SWTBotShell shell = bot.shell("Create Certificate Authority");
+		assertNotNull(shell);
+		bot.sleep(2000);
+		bot.button("Cancel").click();
+	}
+	
 	@AfterClass
 	public static void sleep() throws IOException {
 		TestUtilities.cleanup(Paths.get(tmp, "Test"));
+		TestUtilities.cleanup(Paths.get(tmp, "Test2"));
+		TestUtilities.cleanup(Paths.get(tmp, "Test3"));
 		SWTBotPreferences.PLAYBACK_DELAY = 0;
 	}
 
-	/**
-	 * Creates an event.
-	 *
-	 * @param widget The widget
-	 * @return an event that encapsulates {@link #widget} and {@link #display}. Subclasses may override to set other
-	 *         event properties.
-	 */
-	protected Event createEvent(Widget widget) {
-		Event event = new Event();
-		event.time = (int) System.currentTimeMillis();
-		event.widget = widget;
-		event.display = widget.getDisplay();
-		return event;
-	}
 }
+

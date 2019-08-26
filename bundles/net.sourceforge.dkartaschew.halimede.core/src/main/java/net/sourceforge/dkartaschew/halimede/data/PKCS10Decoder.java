@@ -26,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.pkcs.PKCS10CertificationRequest;
 import net.sourceforge.dkartaschew.halimede.data.impl.CertificateRequestPKCS10;
@@ -59,6 +60,8 @@ public class PKCS10Decoder {
 				// Encrypted key - we will use provided password
 				PKCS10CertificationRequest ckp = (PKCS10CertificationRequest) object;
 				return new CertificateRequestPKCS10(ckp);
+			} else if (object instanceof ContentInfo) {
+				throw new IOException("Unexpected PKCS#7 CMS Data?");
 			} else {
 				throw new UnsupportedEncodingException("Unhandled class: " + object.getClass().getName());
 			}

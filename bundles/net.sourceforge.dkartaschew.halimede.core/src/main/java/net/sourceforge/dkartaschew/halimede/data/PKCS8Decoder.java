@@ -25,12 +25,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyPair;
+
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.DERNull;
+import org.bouncycastle.asn1.cms.ContentInfo;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.pkcs.RSAPrivateKey;
@@ -138,6 +140,8 @@ public class PKCS8Decoder {
 				} catch (PEMException | PKCSException e) {
 					return tryEncryptedPEMPrivateKey(pkcs8, pass, BouncyCastlePQCProvider.PROVIDER_NAME);
 				}
+			} else if (object instanceof ContentInfo) {
+				throw new IOException("Unexpected PKCS#7 CMS Data?");
 			} else {
 				throw new UnsupportedEncodingException("Unhandled class: " + object.getClass().getName());
 			}

@@ -477,6 +477,16 @@ public class TestPKCS8Decoder {
 	public void test_EC521_3DES_PEM_BADPASSWORD() throws IOException, InvalidPasswordException {
 		test("ec521key_des3.pem", null);
 	}
+	
+	@Test(expected=IOException.class)
+	public void testPKCS7Open() throws IOException, InvalidPasswordException {
+		test("dsacert.p7b", null);
+	}
+	
+	@Test(expected=IOException.class)
+	public void testPKCS12Open() throws IOException, InvalidPasswordException {
+		test("dsa4096.p12", null);
+	}
 
 	private void test(String filename, String password) throws IOException, InvalidPasswordException {
 		Path file = TestUtilities.getFile(filename);
