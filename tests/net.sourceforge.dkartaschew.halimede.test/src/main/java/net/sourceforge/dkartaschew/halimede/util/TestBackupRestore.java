@@ -52,6 +52,7 @@ public class TestBackupRestore {
 
 	private final String CA_DESCRIPTION = "My CA";
 	private final UUID CA_ID = UUID.fromString("7779894e-226f-4230-81ab-612c4387abff");
+	private final static Random rnd = new Random();
 
 	/**
 	 * Basic progress monitor to console.
@@ -410,7 +411,7 @@ public class TestBackupRestore {
 				try {
 					zip.putNextEntry(e);
 					byte[] data = new byte[32];
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					zip.write(data, 0, data.length);
 
 				} finally {
@@ -664,7 +665,7 @@ public class TestBackupRestore {
 				try {
 					zip.putNextEntry(e);
 					byte[] data = new byte[32];
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					zip.write(data, 0, data.length);
 					
 					manifest.addEntry(new BackupManifestEntry(e.getName() + ".", //
@@ -703,7 +704,7 @@ public class TestBackupRestore {
 				try {
 					zip.putNextEntry(e);
 					byte[] data = new byte[32];
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					zip.write(data, 0, data.length);
 					
 					manifest.addEntry(new BackupManifestEntry(e.getName(), //
@@ -742,7 +743,7 @@ public class TestBackupRestore {
 				try {
 					zip.putNextEntry(e);
 					byte[] data = new byte[32];
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					zip.write(data, 0, data.length);
 					
 					manifest.addEntry(new BackupManifestEntry("", //
@@ -781,7 +782,7 @@ public class TestBackupRestore {
 				try {
 					zip.putNextEntry(e);
 					byte[] data = new byte[32];
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					zip.write(data, 0, data.length);
 					
 					manifest.addEntry(new BackupManifestEntry(null, //
@@ -820,7 +821,7 @@ public class TestBackupRestore {
 				try {
 					zip.putNextEntry(e);
 					byte[] data = new byte[32];
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					zip.write(data, 0, data.length);
 					
 					manifest.addEntry(new BackupManifestEntry("    ", //
@@ -859,7 +860,7 @@ public class TestBackupRestore {
 				try {
 					zip.putNextEntry(e);
 					byte[] data = new byte[32];
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					zip.write(data, 0, data.length);
 					
 					manifest.addEntry(new BackupManifestEntry(e.getName(), //
@@ -898,10 +899,10 @@ public class TestBackupRestore {
 				try {
 					zip.putNextEntry(e);
 					byte[] data = new byte[32];
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					zip.write(data, 0, data.length);
 					
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					manifest.addEntry(new BackupManifestEntry(e.getName(), //
 							data.length, //
 							Strings.toHexString(Digest.sha512(data))));
@@ -938,10 +939,10 @@ public class TestBackupRestore {
 				try {
 					zip.putNextEntry(e);
 					byte[] data = new byte[32];
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					zip.write(data, 0, data.length);
 					
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					manifest.addEntry(new BackupManifestEntry(e.getName(), //
 							data.length, //
 							""));
@@ -978,10 +979,10 @@ public class TestBackupRestore {
 				try {
 					zip.putNextEntry(e);
 					byte[] data = new byte[32];
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					zip.write(data, 0, data.length);
 					
-					new Random().nextBytes(data);
+					rnd.nextBytes(data);
 					manifest.addEntry(new BackupManifestEntry(e.getName(), //
 							data.length, //
 							null));
@@ -1037,7 +1038,7 @@ public class TestBackupRestore {
 		try {
 			zip.putNextEntry(e);
 			byte[] data = new byte[32];
-			new Random().nextBytes(data);
+			rnd.nextBytes(data);
 			zip.write(data, 0, data.length);
 			
 			manifest.addEntry(new BackupManifestEntry(e.getName(), //

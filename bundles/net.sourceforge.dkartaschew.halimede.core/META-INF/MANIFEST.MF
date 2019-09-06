@@ -54,3 +54,5 @@ Export-Package: net.sourceforge.dkartaschew.halimede,
  net.sourceforge.dkartaschew.halimede.util
 Bundle-Vendor: net.sourceforge.dkartaschew.halimede
 Automatic-Module-Name: net.sourceforge.dkartaschew.halimede.core
+Bundle-ActivationPolicy: lazy
+Bundle-Activator: net.sourceforge.dkartaschew.halimede.Activator

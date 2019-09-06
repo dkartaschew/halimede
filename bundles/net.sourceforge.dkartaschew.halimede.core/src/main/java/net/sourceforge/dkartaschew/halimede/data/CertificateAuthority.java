@@ -946,8 +946,12 @@ public class CertificateAuthority {
 		}
 		filename = filename.substring(0, filename.lastIndexOf('.')) + ICertificateRequest.DEFAULT_EXTENSION;
 		Path target = basePath.resolve(ISSUED_PATH).resolve(filename);
+		Path file = target.getFileName();
+		if (file == null) {
+			throw new NoSuchElementException("Missing required certificate information");
+		}
 		Files.copy(path, target, StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
-		newCert.setProperty(IssuedCertificateProperties.Key.csrStore, target.getFileName().toString());
+		newCert.setProperty(IssuedCertificateProperties.Key.csrStore, file.toString());
 		try (FileOutputStream out = new FileOutputStream(basePath.resolve(ISSUED_PATH)
 				.resolve(newCert.getProperty(IssuedCertificateProperties.Key.filename)).toFile())) {
 			newCert.store(out);
@@ -1348,7 +1352,7 @@ public class CertificateAuthority {
 						seenPaths.add(x);
 						IssuedCertificateProperties icp =  IssuedCertificateProperties.create(this, x);
 						BigInteger serial = new BigInteger(icp.getProperty(IssuedCertificateProperties.Key.certificateSerialNumber));
-						synchronized (maxCertSerial) {
+						synchronized (this) {
 							if (maxCertSerial.get().compareTo(serial) <= 0) {
 								maxCertSerial.set(serial);
 							}
@@ -1379,7 +1383,7 @@ public class CertificateAuthority {
 						seenPaths.add(x);
 						IssuedCertificateProperties icp =  IssuedCertificateProperties.create(this, x);
 						BigInteger serial = new BigInteger(icp.getProperty(IssuedCertificateProperties.Key.certificateSerialNumber));
-						synchronized (maxCertSerial) {
+						synchronized (this) {
 							if (maxCertSerial.get().compareTo(serial) <= 0) {
 								maxCertSerial.set(serial);
 							}
@@ -1466,7 +1470,7 @@ public class CertificateAuthority {
 						seenPaths.add(x);
 						CRLProperties crl = CRLProperties.create(this, x);
 						BigInteger crlSerial = new BigInteger(crl.getProperty(CRLProperties.Key.crlSerialNumber));
-						synchronized (maxCRLSerial) {
+						synchronized (this) {
 							if (maxCRLSerial.get().compareTo(crlSerial) <= 0) {
 								maxCRLSerial.set(crlSerial);
 							}

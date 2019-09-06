@@ -37,6 +37,8 @@ import net.sourceforge.dkartaschew.halimede.enumeration.SignatureAlgorithm;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestCertificateAuthoritySettings {
+	
+	private final static Random rnd = new Random();
 
 	/**
 	 * Basic test to create and read a configuration.
@@ -48,8 +50,8 @@ public class TestCertificateAuthoritySettings {
 		CertificateAuthoritySettings settings = new CertificateAuthoritySettings();
 		settings.setDescription("My CA");
 		settings.setPkcs12Filename("store.p12");
-		settings.setSerial(new Random().nextLong());
-		settings.setCRLSerial(BigInteger.valueOf(new Random().nextLong()).abs());
+		settings.setSerial(rnd.nextLong());
+		settings.setCRLSerial(BigInteger.valueOf(rnd.nextLong()).abs());
 		settings.setUuid(UUID.randomUUID());
 		settings.setSignatureAlgorithm(SignatureAlgorithm.SHA512withECDSA);
 		settings.setExpiryDays(265);
@@ -167,7 +169,7 @@ public class TestCertificateAuthoritySettings {
 		assertEquals(BigInteger.valueOf(3l), settings.getAndIncrementSerial());
 		assertEquals(BigInteger.valueOf(4l), settings.getAndIncrementSerial());
 
-		long next = Math.abs(new Random().nextLong());
+		long next = Math.abs(rnd.nextLong());
 		settings.setSerial(next);
 		assertEquals(BigInteger.valueOf(next), settings.getAndIncrementSerial());
 		assertEquals(BigInteger.valueOf(next + 1), settings.getAndIncrementSerial());
@@ -183,7 +185,7 @@ public class TestCertificateAuthoritySettings {
 		assertEquals(BigInteger.valueOf(3l), settings.getAndIncrementCRLSerial());
 		assertEquals(BigInteger.valueOf(4l), settings.getAndIncrementCRLSerial());
 
-		BigInteger nextCRL = BigInteger.valueOf(new Random().nextLong()).abs();
+		BigInteger nextCRL = BigInteger.valueOf(rnd.nextLong()).abs();
 		settings.setCRLSerial(nextCRL);
 		assertEquals(nextCRL, settings.getAndIncrementCRLSerial());
 		assertEquals(nextCRL.add(BigInteger.ONE), settings.getAndIncrementCRLSerial());
@@ -220,7 +222,7 @@ public class TestCertificateAuthoritySettings {
 		assertEquals(BigInteger.valueOf(3l), settings.getAndIncrementSerial());
 		assertEquals(BigInteger.valueOf(4l), settings.getAndIncrementSerial());
 
-		long next = Math.abs(new Random().nextLong());
+		long next = Math.abs(rnd.nextLong());
 		while(next > System.currentTimeMillis()) {
 			next = next / 2;
 		}

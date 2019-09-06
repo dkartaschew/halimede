@@ -20,8 +20,8 @@
 		<site.plugin.version>3.7.1</site.plugin.version>
 		<site.markdown.plugin.version>1.8</site.markdown.plugin.version>
 		<site.reports.plugin.version>2.9</site.reports.plugin.version>
-		<spotbugs.version>3.1.10</spotbugs.version>
-		<pmd.version>3.11.0</pmd.version>
+		<spotbugs.version>3.1.12</spotbugs.version>
+		<spotbugs.runtime.version>4.0.0-beta3</spotbugs.runtime.version>
 	</properties>
 
 	<build>
@@ -100,17 +100,34 @@
 					</environments>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>com.github.spotbugs</groupId>
-				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>${spotbugs.version}</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-pmd-plugin</artifactId>
-				<version>${pmd.version}</version>
-			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>com.github.spotbugs</groupId>
+					<artifactId>spotbugs-maven-plugin</artifactId>
+					<version>${spotbugs.version}</version>
+					<executions>
+						<execution>
+							<id>spotbugs</id>
+							<phase>process-classes</phase>
+							<goals>
+								<goal>spotbugs</goal>
+							</goals>
+						</execution>
+					</executions>
+					<dependencies>
+						<!-- overwrite dependency on spotbugs if you want to specify the version 
+							of spotbugs -->
+						<dependency>
+							<groupId>com.github.spotbugs</groupId>
+							<artifactId>spotbugs</artifactId>
+							<version>${spotbugs.runtime.version}</version>
+						</dependency>
+					</dependencies>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 
 	<dependencies>

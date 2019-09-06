@@ -101,7 +101,7 @@ public class BackupUtil {
 					entry = entry.substring(1);
 				}
 				// Ensure entry uses '/' as path - 4.4.17.1 of the zip spec.
-				entry.replace('\\', '/');
+				entry = entry.replace('\\', '/');
 				entry = manifest.getDescription() + "/" + entry;
 
 				if (listener != null) {
@@ -255,8 +255,12 @@ public class BackupUtil {
 					throw new IOException("Invalid entry in backup file found. File entry size is different for entry '"
 							+ e.getFilename() + "'");
 				}
-				if (!Files.exists(target.getParent())) {
-					Files.createDirectories(target.getParent());
+				Path parent = target.getParent();
+				if (parent == null) {
+					throw new IOException("Invalid entry in backup file found. Missing parent information");
+				}
+				if (!Files.exists(parent)) {
+					Files.createDirectories(parent);
 				}
 
 				/*
