@@ -548,7 +548,7 @@ public class CertificateAuthority {
 	 * 
 	 * @return The CA's UUID.
 	 */
-	public UUID getCertificateAuthorityID() {
+	public synchronized UUID getCertificateAuthorityID() {
 		return settings.getUuid();
 	}
 
@@ -1278,7 +1278,7 @@ public class CertificateAuthority {
 	 * 
 	 * @return The next serial number
 	 */
-	public BigInteger peekNextSerialCRLNumber() {
+	public synchronized BigInteger peekNextSerialCRLNumber() {
 		return settings.getCRLSerial();
 	}
 

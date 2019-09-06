@@ -111,14 +111,14 @@ public class PluginDefaults {
 	 * <p>
 	 * Note: Non-final to allow consumers to modify to suite application theme
 	 */
-	public static RGB HEADER_COLOUR_LIGHT = new RGB(26, 82, 118); // Midnight Blue
+	public static final RGB HEADER_COLOUR_LIGHT = new RGB(26, 82, 118); // Midnight Blue
 
 	/**
 	 * The colour to use on the header (Certificate Details view) when a dark theme is in use.
 	 * <p>
 	 * Note: Non-final to allow consumers to modify to suite application theme
 	 */
-	public static RGB HEADER_COLOUR_DARK = new RGB(133, 193, 233); 
+	public static final RGB HEADER_COLOUR_DARK = new RGB(133, 193, 233); 
 	
 	/**
 	 * Local resource manager for any images.

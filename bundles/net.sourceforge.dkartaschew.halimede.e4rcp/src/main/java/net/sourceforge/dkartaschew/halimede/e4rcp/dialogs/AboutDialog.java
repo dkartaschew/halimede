@@ -123,14 +123,7 @@ public class AboutDialog extends Dialog {
 		Link lblSite = new Link(container, SWT.NONE);
 		lblSite.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		lblSite.setText("<A>" + PluginDefaults.APPLICATION_WEBSITE + "</A>");
-		lblSite.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Program.launch(PluginDefaults.APPLICATION_WEBSITE);
-			}
-
-		});
+		lblSite.addListener(SWT.Selection, e ->	Program.launch(PluginDefaults.APPLICATION_WEBSITE));
 		Label lblLicense = new Label(container, SWT.NONE);
 		lblLicense.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		lblLicense.setText("Product is licensed under the EPL v2.0" + System.lineSeparator() + 

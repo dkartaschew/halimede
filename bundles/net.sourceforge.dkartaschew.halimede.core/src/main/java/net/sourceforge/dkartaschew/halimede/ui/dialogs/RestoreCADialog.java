@@ -209,7 +209,7 @@ public class RestoreCADialog extends Dialog {
 		 */
 		IObservableValue<?> addManagerWidget = WidgetProperties.selection().observe(buttonAddToManager);
 		IObservableValue<?> addManagerModel = PojoProperties.value("addToManager").observe(model);
-		b = bindingContext.bindValue(addManagerWidget, addManagerModel);
+		bindingContext.bindValue(addManagerWidget, addManagerModel);
 
 		/*
 		 * Bind the OK button for enablement.

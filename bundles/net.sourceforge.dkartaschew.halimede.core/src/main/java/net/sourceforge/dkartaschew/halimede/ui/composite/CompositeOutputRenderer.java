@@ -52,7 +52,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	/**
 	 * Annotation to use for drawing the line.
 	 */
-	class HRAnnotation extends Annotation {
+	private static class HRAnnotation extends Annotation {
 
 		public static final String TYPE = PluginDefaults.ID + ".annotation.hr";
 
