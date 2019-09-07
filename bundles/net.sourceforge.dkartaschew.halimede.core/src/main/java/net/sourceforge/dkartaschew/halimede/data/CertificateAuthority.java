@@ -548,7 +548,7 @@ public class CertificateAuthority {
 	 * 
 	 * @return The CA's UUID.
 	 */
-	public synchronized UUID getCertificateAuthorityID() {
+	public UUID getCertificateAuthorityID() {
 		return settings.getUuid();
 	}
 
@@ -1278,7 +1278,7 @@ public class CertificateAuthority {
 	 * 
 	 * @return The next serial number
 	 */
-	public synchronized BigInteger peekNextSerialCRLNumber() {
+	public BigInteger peekNextSerialCRLNumber() {
 		return settings.getCRLSerial();
 	}
 
@@ -1353,11 +1353,12 @@ public class CertificateAuthority {
 						seenPaths.add(x);
 						IssuedCertificateProperties icp =  IssuedCertificateProperties.create(this, x);
 						BigInteger serial = new BigInteger(icp.getProperty(IssuedCertificateProperties.Key.certificateSerialNumber));
-						synchronized (this) {
-							if (maxCertSerial.get().compareTo(serial) <= 0) {
-								maxCertSerial.set(serial);
-							}
-						}
+						maxCertSerial.updateAndGet(i -> i.compareTo(serial) <= 0 ? serial : i);
+//						synchronized (maxCertSerial) {
+//							if (maxCertSerial.get().compareTo(serial) <= 0) {
+//								maxCertSerial.set(serial);
+//							}
+//						}
 						return icp;
 					} catch (IOException e) {
 						return null;
@@ -1385,11 +1386,12 @@ public class CertificateAuthority {
 						seenPaths.add(x);
 						IssuedCertificateProperties icp =  IssuedCertificateProperties.create(this, x);
 						BigInteger serial = new BigInteger(icp.getProperty(IssuedCertificateProperties.Key.certificateSerialNumber));
-						synchronized (this) {
-							if (maxCertSerial.get().compareTo(serial) <= 0) {
-								maxCertSerial.set(serial);
-							}
-						}
+						maxCertSerial.updateAndGet(i -> i.compareTo(serial) <= 0 ? serial : i);
+//						synchronized (maxCertSerial) {
+//							if (maxCertSerial.get().compareTo(serial) <= 0) {
+//								maxCertSerial.set(serial);
+//							}
+//						}
 						return icp;
 					} catch (IOException e) {
 						return null;
@@ -1476,11 +1478,12 @@ public class CertificateAuthority {
 						seenPaths.add(x);
 						CRLProperties crl = CRLProperties.create(this, x);
 						BigInteger crlSerial = new BigInteger(crl.getProperty(CRLProperties.Key.crlSerialNumber));
-						synchronized (this) {
-							if (maxCRLSerial.get().compareTo(crlSerial) <= 0) {
-								maxCRLSerial.set(crlSerial);
-							}
-						}
+						maxCRLSerial.updateAndGet(i -> i.compareTo(crlSerial) <= 0 ? crlSerial : i);
+//						synchronized (maxCRLSerial) {
+//							if (maxCRLSerial.get().compareTo(crlSerial) <= 0) {
+//								maxCRLSerial.set(crlSerial);
+//							}
+//						}
 						return crl;
 					} catch (IOException e) {
 						return null;
