@@ -93,7 +93,7 @@ public class CreateSelfSignedCertificateListener implements SelectionListener {
 
 	@Override
 	public void widgetSelected(SelectionEvent e) {
-		if (e.detail == SWT.ARROW) {
+		if (e.detail == SWT.ARROW || validationStatus == null) {
 			return;
 		}
 		IStatus s = validationStatus.getValue();

@@ -97,8 +97,9 @@ public class PassphraseDialog extends Dialog {
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 		// do this here because setting the text will set enablement on the ok
 		// button
-		text.setFocus();
-		if (value != null) {
+		if (text != null)
+			text.setFocus();
+		if (value != null && text != null) {
 			text.setText(value);
 			text.selectAll();
 		}
@@ -120,9 +121,7 @@ public class PassphraseDialog extends Dialog {
 
 		text = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
 		text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-		text.addModifyListener(o1 -> {
-			value = text.getText();
-		});
+		text.addModifyListener(o1 -> value = text.getText());
 
 		if (errorMessage != null) {
 			Label errorLabel = new Label(composite, SWT.WRAP);

@@ -123,7 +123,11 @@ public class PluginDefaults {
 	/**
 	 * Local resource manager for any images.
 	 */
-	private static ResourceManager resourceManager = null;
+	private static volatile ResourceManager resourceManager = null;
+	/**
+	 * Access lock for resource manager.
+	 */
+	private final static Object resourceManagerLock = new Object();
 	
 	/**
 	 * Dispose the resource manager.
@@ -131,8 +135,11 @@ public class PluginDefaults {
 	public static void dispose() {
 		// garbage collect system resources
 		if (resourceManager != null) {
-			resourceManager.dispose();
-			resourceManager = null;
+			synchronized (resourceManagerLock) {
+				if (resourceManager != null)
+					resourceManager.dispose();
+				resourceManager = null;
+			}
 		}
 	}
 
@@ -143,7 +150,10 @@ public class PluginDefaults {
 	 */
 	public static ResourceManager getResourceManager() {
 		if (resourceManager == null) {
-			resourceManager = new LocalResourceManager(JFaceResources.getResources());
+			synchronized (resourceManagerLock) {
+				if (resourceManager == null)
+					resourceManager = new LocalResourceManager(JFaceResources.getResources());
+			}
 		}
 		return resourceManager;
 	}

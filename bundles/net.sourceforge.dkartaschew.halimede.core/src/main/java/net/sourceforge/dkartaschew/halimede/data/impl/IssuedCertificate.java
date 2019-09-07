@@ -482,27 +482,14 @@ public class IssuedCertificate implements IIssuedCertificate {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see net.sourceforge.dkartaschew.halimede.data.IIssuedCertificate#toString()
-	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		if (certFilename != null) {
 			Path filename = certFilename.getFileName();
 			if (filename != null) {
-				String res = filename.toString();
-				if (res != null) {
-					sb.append(res);
-					sb.append(" ");
-				}
+				sb.append(filename.toString());
+				sb.append(" ");
 			}
 		}
 		if (certificates[0] instanceof X509Certificate) {

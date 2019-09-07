@@ -120,7 +120,7 @@ public class CertificateAuthorityNode implements ICertificateTreeNode {
 
 	@Override
 	public Object[] getItems() {
-		return null;
+		return new Object[0];
 	}
 
 	@Override

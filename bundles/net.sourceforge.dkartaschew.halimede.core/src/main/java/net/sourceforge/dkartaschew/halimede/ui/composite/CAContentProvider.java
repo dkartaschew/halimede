@@ -38,7 +38,7 @@ public class CAContentProvider implements ITreeContentProvider {
 		if (parentElement instanceof CertificateAuthorityNode) {
 			return ((CertificateAuthorityNode) parentElement).getChildren();
 		}
-		return null;
+		return new Object[0];
 	}
 
 	@Override

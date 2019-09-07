@@ -55,6 +55,20 @@ public class ConsoleActivityLog implements IActivityLogger {
 	private final Logger logger;
 
 	/**
+	 * Formatter for console
+	 */
+	private static class ConsoleFormatter extends Formatter {
+
+		@Override
+		public synchronized String format(LogRecord lr) {
+			return String.format(TEMPLATE, ZonedDateTime.ofInstant(//
+					Instant.ofEpochMilli(lr.getMillis()), ZONE), //
+					lr.getLevel().getLocalizedName(), //
+					formatMessage(lr));
+		}
+	}
+	
+	/**
 	 * Create a new log.
 	 * 
 	 * @param ca The certificate authority.
@@ -69,16 +83,7 @@ public class ConsoleActivityLog implements IActivityLogger {
 		UUID id = ca.getCertificateAuthorityID();
 
 		ConsoleHandler handler = new ConsoleHandler();
-		handler.setFormatter(new Formatter() {
-
-			@Override
-			public synchronized String format(LogRecord lr) {
-				return String.format(TEMPLATE, ZonedDateTime.ofInstant(//
-						Instant.ofEpochMilli(lr.getMillis()), ZONE), //
-						lr.getLevel().getLocalizedName(), //
-						formatMessage(lr));
-			}
-		});
+		handler.setFormatter(new ConsoleFormatter());
 
 		logger = Logger.getLogger(PluginDefaults.ID + "." + id.toString());
 		logger.setUseParentHandlers(false);

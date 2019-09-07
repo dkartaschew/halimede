@@ -113,7 +113,7 @@ public class CertificateAuthorityElement implements ICertificateTreeNode {
 		case CRLs:
 			return parent.getCertificateAuthority().getCRLs().toArray();
 		default:
-			return null;
+			return new Object[0];
 		}
 	}
 

@@ -21,6 +21,13 @@ import net.sourceforge.dkartaschew.halimede.e4rcp.dialogs.ListSelectionDialog;
 @SuppressWarnings("restriction")
 public class HalimedeSaveHandler extends PartServiceSaveHandler {
 
+	private static class SaveHandlerLabelProvider extends LabelProvider {
+		@Override
+		public String getText(Object element) {
+			return ((MPart) element).getLocalizedLabel();
+		}
+	};
+	
 	@Inject
 	private Shell shell;
 
@@ -50,12 +57,7 @@ public class HalimedeSaveHandler extends PartServiceSaveHandler {
 		if (dirtyParts.size() == 1) {
 			return new Save[] { promptToSave(dirtyParts.iterator().next()) };
 		}
-		LabelProvider labelProvider = new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return ((MPart) element).getLocalizedLabel();
-			}
-		};
+		LabelProvider labelProvider = new SaveHandlerLabelProvider();
 		List<MPart> parts = new ArrayList<>(dirtyParts);
 		ListSelectionDialog dialog = new ListSelectionDialog(shell, parts,
 				ArrayContentProvider.getInstance(), labelProvider,

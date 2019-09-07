@@ -36,7 +36,7 @@ public class Activator implements BundleActivator {
 	/**
 	 * The bundle that THIS class resides in.
 	 */
-	private static Bundle bundle;
+	private Bundle bundle;
 
 	/**
 	 * The constructor

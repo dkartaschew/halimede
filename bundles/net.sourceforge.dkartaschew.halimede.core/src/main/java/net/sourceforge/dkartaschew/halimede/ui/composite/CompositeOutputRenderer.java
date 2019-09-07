@@ -70,7 +70,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	/**
 	 * Drawing strategy for the line.
 	 */
-	class HRDrawingStrategy implements AnnotationPainter.IDrawingStrategy {
+	private class HRDrawingStrategy implements AnnotationPainter.IDrawingStrategy {
 
 		@Override
 		public void draw(Annotation annotation, GC gc, StyledText textWidget, int offset, int length, Color color) {
@@ -111,8 +111,25 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 				textWidget.redrawRange(offset, length, true);
 			}
 		}
-
 	}
+	
+	/**
+	 * Annotation service.
+	 */
+	private static class CompositeAnnotationAccess implements IAnnotationAccess {
+		@Override
+		public Object getType(Annotation annotation) {
+			return annotation.getType();
+		}
+		@Override
+		public boolean isMultiLine(Annotation annotation) {
+			return true;
+		}
+		@Override
+		public boolean isTemporary(Annotation annotation) {
+			return true;
+		}
+	};
 
 	/**
 	 * The widget to display the contents.
@@ -211,19 +228,7 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		/*
 		 * Start creation of annotation services.
 		 */
-		IAnnotationAccess annotationAccess = new IAnnotationAccess() {
-			public Object getType(Annotation annotation) {
-				return annotation.getType();
-			}
-
-			public boolean isMultiLine(Annotation annotation) {
-				return true;
-			}
-
-			public boolean isTemporary(Annotation annotation) {
-				return true;
-			}
-		};
+		IAnnotationAccess annotationAccess = new CompositeAnnotationAccess();
 
 		/**
 		 * Create a custom painter to draw horizontal line.

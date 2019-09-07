@@ -95,10 +95,10 @@ public class ViewCRLAction extends Action implements Runnable {
 	@Override
 	public void run() {
 
-		Job job = Job.create("View CRL - " + crl.getProperty(Key.crlSerialNumber).toString(), monitor -> {
+		Job job = Job.create("View CRL - " + crl.getProperty(Key.crlSerialNumber), monitor -> {
 
 			try {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, "View CRL - " + crl.getProperty(Key.crlSerialNumber).toString(), 2);
+				SubMonitor subMonitor = SubMonitor.convert(monitor, "View CRL - " + crl.getProperty(Key.crlSerialNumber), 2);
 
 				if (crl.getCertificateAuthority() != null) {
 					crl.getCertificateAuthority().getActivityLogger().log(Level.INFO,
@@ -113,7 +113,7 @@ public class ViewCRLAction extends Action implements Runnable {
 
 				// Create a new one.
 				MPart part = MBasicFactory.INSTANCE.createPart();
-				part.setLabel(CRLDetailsPart.LABEL + " '" + crl.getProperty(Key.crlSerialNumber).toString() + "'");
+				part.setLabel(CRLDetailsPart.LABEL + " '" + crl.getProperty(Key.crlSerialNumber) + "'");
 				part.setDescription(CRLDetailsPart.DESCRIPTION);
 				part.setContributionURI("bundleclass://" + PluginDefaults.ID + "/" + CRLDetailsPart.class.getName());
 				part.setElementId(CRLDetailsPart.ID + "#" + System.currentTimeMillis());

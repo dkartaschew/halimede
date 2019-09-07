@@ -70,6 +70,8 @@ public class Activator implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		this.context = null;
+		// Free any resources.
+		PluginDefaults.dispose();
 	}
 
 }

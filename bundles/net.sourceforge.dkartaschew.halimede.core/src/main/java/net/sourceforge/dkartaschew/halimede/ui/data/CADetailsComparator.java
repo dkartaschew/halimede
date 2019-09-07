@@ -105,12 +105,11 @@ public class CADetailsComparator<U> extends ViewerComparator implements Comparat
 	 */
 	@SuppressWarnings("unchecked")
 	private int compare(int column, Object e1, Object e2) {
-		int rc = comparator.compare(column, (U)e1, (U)e2);
-		// If reversed order, flip the direction
 		if (column != -1 && direction == REVERSED) {
-			rc = -rc;
+			// If reversed order, flip the direction
+			return comparator.compare(column, (U)e2, (U)e1);
 		}
-		return rc;
+		return comparator.compare(column, (U)e1, (U)e2);
 	}
 
 }

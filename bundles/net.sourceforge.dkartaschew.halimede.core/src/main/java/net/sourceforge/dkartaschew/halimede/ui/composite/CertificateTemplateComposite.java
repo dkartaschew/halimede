@@ -99,8 +99,6 @@ public class CertificateTemplateComposite extends Composite {
 	private DataBindingContext m_bindingContext;
 
 	private final NewCertificateModel model;
-	@SuppressWarnings("unused")
-	private final CertificateHeaderComposite header;
 
 	private Text textCertDescription;
 	private Text textX500Name;
@@ -129,7 +127,6 @@ public class CertificateTemplateComposite extends Composite {
 			CertificateHeaderComposite header) {
 		super(parent, SWT.BORDER);
 		this.model = model;
-		this.header = header;
 		setLayout(new GridLayout(1, false));
 
 		ScrolledComposite scrolledArea = new ScrolledComposite(this, SWT.H_SCROLL | SWT.V_SCROLL);
@@ -704,7 +701,7 @@ public class CertificateTemplateComposite extends Composite {
 			 */
 			IObservableValue<?> capasswordWidget = WidgetProperties.selection().observe(btnUseCAPassword);
 			IObservableValue<Boolean> capasswordModel = PojoProperties.value("useCAPassword").observe(model);
-			b = bindingContext.bindValue(capasswordWidget, capasswordModel, null, null);
+			bindingContext.bindValue(capasswordWidget, capasswordModel, null, null);
 
 			/*
 			 * Password field

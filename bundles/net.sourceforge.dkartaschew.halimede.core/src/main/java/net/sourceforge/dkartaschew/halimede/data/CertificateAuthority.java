@@ -1345,9 +1345,10 @@ public class CertificateAuthority {
 		final Set<Path> seenPaths = new HashSet<>();
 		Files.list(path).parallel()//
 				.filter(Files::isRegularFile)//
-				.filter(p -> p.getFileName().toString().toLowerCase()
-						.endsWith(IssuedCertificateProperties.DEFAULT_EXTENSION))
-				.forEach(p -> issuedCertificates.computeIfAbsent(p, (x -> {
+				.filter(p -> {
+					Path f = p.getFileName();
+					return f != null && f.toString().toLowerCase().endsWith(IssuedCertificateProperties.DEFAULT_EXTENSION);
+				}).forEach(p -> issuedCertificates.computeIfAbsent(p, (x -> {
 					try {
 						seenPaths.add(x);
 						IssuedCertificateProperties icp =  IssuedCertificateProperties.create(this, x);
@@ -1376,9 +1377,10 @@ public class CertificateAuthority {
 		seenPaths.clear();
 		Files.list(path).parallel()//
 				.filter(Files::isRegularFile)//
-				.filter(p -> p.getFileName().toString().toLowerCase()
-						.endsWith(IssuedCertificateProperties.DEFAULT_EXTENSION))
-				.forEach(p -> revokedCertificates.computeIfAbsent(p, (x -> {
+				.filter(p -> {
+					Path f = p.getFileName();
+					return f != null && f.toString().toLowerCase().endsWith(IssuedCertificateProperties.DEFAULT_EXTENSION);
+				}).forEach(p -> revokedCertificates.computeIfAbsent(p, (x -> {
 					try {
 						seenPaths.add(x);
 						IssuedCertificateProperties icp =  IssuedCertificateProperties.create(this, x);
@@ -1412,9 +1414,10 @@ public class CertificateAuthority {
 		seenPaths.clear();
 		Files.list(path).parallel()//
 				.filter(Files::isRegularFile)//
-				.filter(p -> p.getFileName().toString().toLowerCase()
-						.endsWith(CertificateRequestProperties.DEFAULT_EXTENSION))
-				.forEach(p -> requests.computeIfAbsent(p, (x -> {
+				.filter(p -> {
+					Path f = p.getFileName();
+					return f != null && f.toString().toLowerCase().endsWith(CertificateRequestProperties.DEFAULT_EXTENSION);
+				}).forEach(p -> requests.computeIfAbsent(p, (x -> {
 					try {
 						seenPaths.add(x);
 						return CertificateRequestProperties.create(this, x);
@@ -1437,9 +1440,10 @@ public class CertificateAuthority {
 		seenPaths.clear();
 		Files.list(path).parallel()//
 				.filter(Files::isRegularFile)//
-				.filter(p -> p.getFileName().toString().toLowerCase()
-						.endsWith(ICertificateKeyPairTemplate.DEFAULT_EXTENSION))
-				.forEach(p -> templates.computeIfAbsent(p, (x -> {
+				.filter(p -> {
+					Path f = p.getFileName();
+					return f != null && f.toString().toLowerCase().endsWith(ICertificateKeyPairTemplate.DEFAULT_EXTENSION);
+				}).forEach(p -> templates.computeIfAbsent(p, (x -> {
 					try {
 						seenPaths.add(x);
 						return ICertificateKeyPairTemplate.open(x);
@@ -1464,8 +1468,10 @@ public class CertificateAuthority {
 		seenPaths.clear();
 		Files.list(path).parallel()//
 				.filter(Files::isRegularFile)//
-				.filter(p -> p.getFileName().toString().toLowerCase().endsWith(CRLProperties.DEFAULT_EXTENSION))
-				.forEach(p -> crls.computeIfAbsent(p, (x -> {
+				.filter(p -> {
+					Path f = p.getFileName();
+					return f != null && f.toString().toLowerCase().endsWith(CRLProperties.DEFAULT_EXTENSION);
+				}).forEach(p -> crls.computeIfAbsent(p, (x -> {
 					try {
 						seenPaths.add(x);
 						CRLProperties crl = CRLProperties.create(this, x);

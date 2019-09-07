@@ -61,6 +61,20 @@ public class FileActivityLog implements IActivityLogger {
 	private final Logger logger;
 
 	/**
+	 * Formatter for file
+	 */
+	private static class FileLogFormatter extends Formatter {
+
+		@Override
+		public synchronized String format(LogRecord lr) {
+			return String.format(TEMPLATE, ZonedDateTime.ofInstant(//
+					Instant.ofEpochMilli(lr.getMillis()), ZONE), //
+					lr.getLevel().getLocalizedName(), //
+					formatMessage(lr));
+		}
+	};
+	
+	/**
 	 * Create a new log.
 	 * 
 	 * @param ca The certificate authority.
@@ -78,16 +92,7 @@ public class FileActivityLog implements IActivityLogger {
 		String logFile = baseLocation.toString() + File.separator + id.toString() + ".%g.log";
 
 		FileHandler handler = new FileHandler(logFile, LOG_SIZE, 1000, true);
-		handler.setFormatter(new Formatter() {
-
-			@Override
-			public synchronized String format(LogRecord lr) {
-				return String.format(TEMPLATE, ZonedDateTime.ofInstant(//
-						Instant.ofEpochMilli(lr.getMillis()), ZONE), //
-						lr.getLevel().getLocalizedName(), //
-						formatMessage(lr));
-			}
-		});
+		handler.setFormatter(new FileLogFormatter());
 
 		logger = Logger.getLogger(PluginDefaults.ID + "." + id.toString());
 		logger.setUseParentHandlers(false);

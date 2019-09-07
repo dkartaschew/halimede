@@ -63,7 +63,7 @@ public class X500NameValidator implements IValidator {
 				for (AttributeTypeAndValue attr : r.getTypesAndValues()) {
 					if (attr != null) {
 						String commonName = attr.getValue().toString();
-						if (commonName != null && !commonName.isEmpty()) {
+						if (!commonName.isEmpty()) {
 							return ValidationStatus.ok();
 						}
 					}
