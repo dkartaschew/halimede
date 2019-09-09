@@ -17,6 +17,7 @@
 
 package net.sourceforge.dkartaschew.halimede.test.ui;
 
+import static org.eclipse.swtbot.swt.finder.waits.Conditions.shellIsActive;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -32,6 +33,17 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
+import java.util.UUID;
+
+import org.eclipse.e4.core.contexts.EclipseContextFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.ui.workbench.IWorkbench;
+import org.eclipse.swtbot.e4.finder.waits.Conditions;
+import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
+import org.osgi.framework.BundleContext;
+
+import net.sourceforge.dkartaschew.halimede.e4rcp.Activator;
 
 public class TestUtilities {
 
@@ -153,6 +165,35 @@ public class TestUtilities {
 
 	public static void copyFolder(Path sourceDir, Path targetDir) throws IOException {
 		Files.walkFileTree(sourceDir, new CopyDir(sourceDir, targetDir));
+	}
+	
+	public static IEclipseContext getEclipseContext() {
+		BundleContext bndCtx = Activator.getDefault().getContext();
+		IEclipseContext rootContext = EclipseContextFactory.getServiceContext(bndCtx);
+		IEclipseContext app = rootContext.get(IWorkbench.class).getApplication().getContext();
+		return app;
+	}
+	
+	public static String createBasicCA(SWTBot bot, String location) {
+		final String caName = "Test-" + UUID.randomUUID().toString();
+
+		SWTBotTree primaryTree = bot.tree();
+		int rows = primaryTree.rowCount();
+
+		primaryTree.contextMenu("Create a New Certificate Authority").click();
+
+		bot.waitUntil(shellIsActive("Create Certificate Authority"));
+		bot.textWithLabel("Description:").setText(caName);
+		bot.textWithLabel("Location:").setText(location);
+		bot.textWithLabel("Subject:").setText("CN=" + caName.replace("-", ""));
+		bot.textWithLabel("Passphrase:").setText("Password");
+		bot.textWithLabel("Confirmation:").setText("Password");
+		bot.button("Create").click();
+
+		bot.waitUntilWidgetAppears(Conditions.treeHasRows(primaryTree, rows + 1));
+
+		primaryTree.getTreeItem(caName).expand();
+		return caName;
 	}
 
 }
