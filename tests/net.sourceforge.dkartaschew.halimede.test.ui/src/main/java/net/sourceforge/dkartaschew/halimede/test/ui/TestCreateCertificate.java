@@ -16,6 +16,9 @@
  */
 package net.sourceforge.dkartaschew.halimede.test.ui;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -24,12 +27,13 @@ import java.util.List;
 import org.eclipse.swtbot.e4.finder.waits.Conditions;
 import org.eclipse.swtbot.e4.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.e4.finder.widgets.SWTWorkbenchBot;
-import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotStyledText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
+import org.hamcrest.Matchers;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,6 +41,7 @@ import org.junit.runner.RunWith;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthourityManager;
+import net.sourceforge.dkartaschew.halimede.ui.CertificateDetailsPart;
 import net.sourceforge.dkartaschew.halimede.ui.NewCertificateDetailsPart;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
@@ -83,27 +88,35 @@ public class TestCreateCertificate {
 		primaryTree.contextMenu("Create New Client Key/Certificate Pair").click();
 
 		// Bot.waitUnitl we have a part relies on a running perspective...
-		SWTBotView v = bot.activePart();
-		long s = System.currentTimeMillis();
-		while (!v.getId().startsWith(NewCertificateDetailsPart.ID)) {
-			if (System.currentTimeMillis() - s > 5000) {
-				throw new WidgetNotFoundException("View not found");
-			}
-			Thread.yield();
-			v = bot.activePart();
-		}
+		TestUtilities.waitForActivePart(bot, Matchers.startsWith(NewCertificateDetailsPart.ID));
 
-		System.out.println(v.getTitle());
-		System.out.println(v.getId());
+		String certDescription = "C_" + Long.toString(System.currentTimeMillis(), Character.MAX_RADIX);
 
-		bot.textWithLabel("Description:").setText(caName);
+		bot.textWithLabel("Description:").setText(certDescription);
 		bot.textWithLabel("Subject:").setText("CN=User");
+		bot.comboBox(0).setSelection("RSA 512");
 		SWTBotToolbarDropDownButton btn2 = bot.toolbarDropDownButton();
 		btn2.click();
 
 		primaryTree.getTreeItem(caName).getNode("Issued").select();
 		bot.waitUntil(Conditions.tableHasRows(table, tableRows + 1));
 
+		table.doubleClick(table.indexOf(certDescription), 0);
+
+		SWTBotView v = TestUtilities.waitForActivePart(bot, Matchers.startsWith(CertificateDetailsPart.ID));
+
+		try {
+			SWTBotStyledText text = bot.styledText();
+			List<String> lines = text.getLines();
+			String caSubj = TestUtilities.createCASubjectName(caName);
+			assertEquals(certDescription, lines.get(0));
+			assertTrue(TestUtilities.hasKeyValue(lines, "Key Algorithm:", "RSA"));
+			assertTrue(TestUtilities.hasKeyValue(lines, "Key Length/Size:", "512"));
+			assertTrue(TestUtilities.hasKeyValue(lines, "Subject", "X.500 Name:", "CN=User"));
+			assertTrue(TestUtilities.hasKeyValue(lines, "Issuer", "X.500 Name:", caSubj));
+		} finally {
+			v.close();
+		}
 	}
 
 }

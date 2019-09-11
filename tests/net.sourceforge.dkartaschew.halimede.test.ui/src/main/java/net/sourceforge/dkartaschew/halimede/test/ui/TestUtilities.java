@@ -33,14 +33,19 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.swtbot.e4.finder.waits.Conditions;
+import org.eclipse.swtbot.e4.finder.widgets.SWTBotView;
+import org.eclipse.swtbot.e4.finder.widgets.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.SWTBot;
+import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
+import org.hamcrest.Matcher;
 import org.osgi.framework.BundleContext;
 
 import net.sourceforge.dkartaschew.halimede.e4rcp.Activator;
@@ -166,14 +171,14 @@ public class TestUtilities {
 	public static void copyFolder(Path sourceDir, Path targetDir) throws IOException {
 		Files.walkFileTree(sourceDir, new CopyDir(sourceDir, targetDir));
 	}
-	
+
 	public static IEclipseContext getEclipseContext() {
 		BundleContext bndCtx = Activator.getDefault().getContext();
 		IEclipseContext rootContext = EclipseContextFactory.getServiceContext(bndCtx);
 		IEclipseContext app = rootContext.get(IWorkbench.class).getApplication().getContext();
 		return app;
 	}
-	
+
 	public static String createBasicCA(SWTBot bot, String location) {
 		final String caName = "Test-" + UUID.randomUUID().toString();
 
@@ -185,7 +190,7 @@ public class TestUtilities {
 		bot.waitUntil(shellIsActive("Create Certificate Authority"));
 		bot.textWithLabel("Description:").setText(caName);
 		bot.textWithLabel("Location:").setText(location);
-		bot.textWithLabel("Subject:").setText("CN=" + caName.replace("-", ""));
+		bot.textWithLabel("Subject:").setText(createCASubjectName(caName));
 		bot.textWithLabel("Passphrase:").setText("Password");
 		bot.textWithLabel("Confirmation:").setText("Password");
 		bot.button("Create").click();
@@ -194,6 +199,44 @@ public class TestUtilities {
 
 		primaryTree.getTreeItem(caName).expand();
 		return caName;
+	}
+
+	public static String createCASubjectName(final String caName) {
+		return "CN=" + caName.replace("-", "");
+	}
+
+	public static SWTBotView waitForActivePart(SWTWorkbenchBot bot, Matcher<String> matcher) {
+		SWTBotView v = bot.activePart();
+		long s = System.currentTimeMillis();
+		while (!matcher.matches(v.getId())) {
+			if (System.currentTimeMillis() - s > 5000) {
+				throw new WidgetNotFoundException("View not found");
+			}
+			Thread.yield();
+			v = bot.activePart();
+		}
+		return v;
+	}
+
+	public static boolean hasKeyValue(List<String> lines, String... values) {
+		if (values.length == 0) {
+			return true;
+		}
+		if (values.length == 1) {
+			return lines.contains(values[0]);
+		}
+		for (int i = 0; i < lines.size(); i++) {
+			if (lines.get(i).equals(values[0])) {
+				boolean found = true;
+				for (int j = 1; j < values.length; j++) {
+					found &= lines.get(i + j).equals(values[j]);
+				}
+				if (found) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }
