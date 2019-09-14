@@ -20,4 +20,5 @@ Require-Bundle: org.mockito;bundle-version="2.23.0",
  bcpkix;bundle-version="1.62.0",
  bcprov;bundle-version="1.62.0"
 Automatic-Module-Name: net.sourceforge.dkartaschew.halimede.test.ui
-Export-Package: net.sourceforge.dkartaschew.halimede.test.ui
+Export-Package: net.sourceforge.dkartaschew.halimede.test.swtbot,
+ net.sourceforge.dkartaschew.halimede.test.ui
