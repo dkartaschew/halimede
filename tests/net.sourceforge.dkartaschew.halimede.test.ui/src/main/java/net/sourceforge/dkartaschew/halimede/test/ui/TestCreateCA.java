@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.swtbot.e4.finder.waits.Conditions;
 import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
@@ -54,6 +57,9 @@ public class TestCreateCA {
 	private static String tmp;
 	private static String keyMaterialPassword = "changeme";
 	private static CertificateAuthourityManager manager;
+	
+	@Inject
+	private CertificateAuthourityManager holder;
 
 	@BeforeClass
 	public static void beforeClass() throws Exception {
@@ -65,7 +71,8 @@ public class TestCreateCA {
 	@Before
 	public void setup() {
 		if (manager != null) {
-			manager = TestUtilities.getEclipseContext().get(CertificateAuthourityManager.class);
+			ContextInjectionFactory.inject(this, TestUtilities.getEclipseContext());
+			manager = holder;
 		}
 	}
 

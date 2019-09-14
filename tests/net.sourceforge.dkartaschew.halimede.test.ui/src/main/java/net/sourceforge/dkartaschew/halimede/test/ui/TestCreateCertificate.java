@@ -24,6 +24,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.swtbot.e4.finder.waits.Conditions;
 import org.eclipse.swtbot.e4.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.e4.finder.widgets.SWTWorkbenchBot;
@@ -31,10 +34,10 @@ import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotStyledText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
-import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.hamcrest.Matchers;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,13 +54,15 @@ public class TestCreateCertificate {
 	private static String tmp;
 	private static String caName;
 	private static CertificateAuthourityManager manager;
+	
+	@Inject
+	private CertificateAuthourityManager holder;
 
 	@BeforeClass
-	public static void setup() throws Exception {
+	public static void beforeClass() throws Exception {
 		SWTBotPreferences.PLAYBACK_DELAY = 10;
 		tmp = TestUtilities.TMP;
 		bot = new SWTWorkbenchBot(TestUtilities.getEclipseContext());
-		manager = TestUtilities.getEclipseContext().get(CertificateAuthourityManager.class);
 		caName = TestUtilities.createBasicCA(bot, tmp);
 	}
 
@@ -72,6 +77,14 @@ public class TestCreateCertificate {
 			TestUtilities.cleanup(Paths.get(tmp, caName));
 		} catch (IOException e) {
 			// Ignore.
+		}
+	}
+	
+	@Before
+	public void setup() {
+		if (manager != null) {
+			ContextInjectionFactory.inject(this, TestUtilities.getEclipseContext());
+			manager = holder;
 		}
 	}
 
@@ -95,8 +108,7 @@ public class TestCreateCertificate {
 		bot.textWithLabel("Description:").setText(certDescription);
 		bot.textWithLabel("Subject:").setText("CN=User");
 		bot.comboBox(0).setSelection("RSA 512");
-		SWTBotToolbarDropDownButton btn2 = bot.toolbarDropDownButton();
-		btn2.click();
+		bot.toolbarDropDownButton().click();
 
 		primaryTree.getTreeItem(caName).getNode("Issued").select();
 		bot.waitUntil(Conditions.tableHasRows(table, tableRows + 1));
