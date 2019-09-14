@@ -47,6 +47,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthourityManager;
 import net.sourceforge.dkartaschew.halimede.test.swtbot.SWTBotCDateTime;
@@ -93,7 +94,7 @@ public class TestCreateCA {
 	@After
 	public void closeShells() {
 		SWTBotShell shell = bot.activeShell();
-		while (!shell.getText().contains("Halimede Certificate Authority")) {
+		while (!shell.getText().contains(PluginDefaults.APPLICATION_FULLNAME)) {
 			shell.close();
 			shell = bot.activeShell();
 		}

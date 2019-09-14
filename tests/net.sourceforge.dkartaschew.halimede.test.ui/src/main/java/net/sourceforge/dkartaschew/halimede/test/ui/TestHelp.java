@@ -28,6 +28,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import net.sourceforge.dkartaschew.halimede.PluginDefaults;
+
 @RunWith(SWTBotJunit4ClassRunner.class)
 public class TestHelp {
 
@@ -56,7 +58,7 @@ public class TestHelp {
 	@After
 	public void closeShells() {
 		SWTBotShell shell = bot.activeShell();
-		while (!shell.getText().contains("Halimede Certificate Authority")) {
+		while (!shell.getText().contains(PluginDefaults.APPLICATION_FULLNAME)) {
 			shell.close();
 			shell = bot.activeShell();
 		}
