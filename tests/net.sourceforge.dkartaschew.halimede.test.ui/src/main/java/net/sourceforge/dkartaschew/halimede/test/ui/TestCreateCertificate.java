@@ -32,10 +32,12 @@ import org.eclipse.swtbot.e4.finder.widgets.SWTBotView;
 import org.eclipse.swtbot.e4.finder.widgets.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotStyledText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -82,9 +84,18 @@ public class TestCreateCertificate {
 	
 	@Before
 	public void setup() {
-		if (manager != null) {
+		if (manager == null) {
 			ContextInjectionFactory.inject(this, TestUtilities.getEclipseContext());
 			manager = holder;
+		}
+	}
+	
+	@After
+	public void closeShells() {
+		SWTBotShell shell = bot.activeShell();
+		while (!shell.getText().contains("Halimede Certificate Authority")) {
+			shell.close();
+			shell = bot.activeShell();
 		}
 	}
 

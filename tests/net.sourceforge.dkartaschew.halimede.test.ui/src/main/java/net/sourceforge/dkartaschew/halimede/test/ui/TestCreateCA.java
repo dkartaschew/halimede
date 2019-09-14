@@ -40,6 +40,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotRadio;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -68,14 +69,6 @@ public class TestCreateCA {
 		tmp = TestUtilities.TMP;
 	}
 
-	@Before
-	public void setup() {
-		if (manager != null) {
-			ContextInjectionFactory.inject(this, TestUtilities.getEclipseContext());
-			manager = holder;
-		}
-	}
-
 	@AfterClass
 	public static void cleanup() throws IOException {
 		if (manager != null) {
@@ -87,6 +80,23 @@ public class TestCreateCA {
 		TestUtilities.cleanup(Paths.get(tmp, "Test2"));
 		TestUtilities.cleanup(Paths.get(tmp, "Test3"));
 		SWTBotPreferences.PLAYBACK_DELAY = 0;
+	}
+	
+	@Before
+	public void setup() {
+		if (manager == null) {
+			ContextInjectionFactory.inject(this, TestUtilities.getEclipseContext());
+			manager = holder;
+		}
+	}
+
+	@After
+	public void closeShells() {
+		SWTBotShell shell = bot.activeShell();
+		while (!shell.getText().contains("Halimede Certificate Authority")) {
+			shell.close();
+			shell = bot.activeShell();
+		}
 	}
 
 	@Test

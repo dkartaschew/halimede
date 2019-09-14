@@ -23,7 +23,7 @@ import org.eclipse.swtbot.swt.finder.SWTBot;
 import org.eclipse.swtbot.swt.finder.exceptions.WidgetNotFoundException;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,9 +52,13 @@ public class TestHelp {
 			// expected!
 		}
 	}
-
-	@AfterClass
-	public static void sleep() {
-		bot.sleep(2000);
+	
+	@After
+	public void closeShells() {
+		SWTBotShell shell = bot.activeShell();
+		while (!shell.getText().contains("Halimede Certificate Authority")) {
+			shell.close();
+			shell = bot.activeShell();
+		}
 	}
 }
