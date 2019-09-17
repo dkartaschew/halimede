@@ -30,10 +30,12 @@ import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
@@ -55,6 +57,8 @@ public class TestUtilities {
 	public final static String TMP = System.getProperty("java.io.tmpdir");
 
 	public final static int TEST_MAX_KEY_LENGTH = 2048;
+	
+	public final static Random RND = new Random();
 
 	public static class NullOutputStream extends OutputStream {
 		@Override
@@ -239,4 +243,11 @@ public class TestUtilities {
 		return false;
 	}
 
+	public static Path constructTempFile(String prefix, String extension) {
+		Path path = null;
+		do {
+			path = Paths.get(TMP, prefix + Long.toUnsignedString(RND.nextLong(), Character.MAX_RADIX) + extension);
+		} while (Files.exists(path));
+		return path;
+	}
 }
