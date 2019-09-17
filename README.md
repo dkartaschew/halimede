@@ -1,16 +1,53 @@
 
-# Certificate Authority
+# Halimede Certificate Authority
 
-A simple Certificate Authority Plugin for Eclipse Oxygen or Eclipse e4 RCP applications.
+Halimede is a simple to use Certificate Authority. It supports multiple CA (Certificate Authorities)
+from a single interface, with each CA is stored within it's own datastore instance.
 
-## Requirements
+Halimede supports a large range of public key ciphers, including RSA, DSA, ECDSA (NIST/SEC/ANSI 
+X9.62/Brainpool Curves), EdDSA (ED25519/ED448), GOST R34.10, DSTU 4145-2002 and numerous Post-Quantum 
+Ciphers including Rainbow, SPHINCS-256, XMSS/XMSS-MT and qTESLA for X509 Certificate generation.
+
+Halimede is available as either a Standalone Application, as a Plugin for the Eclipse IDE, or 
+can be integrated with any other Eclipse e4 RCP based application.
+
+## Features
+
+* X509 Certificate Management
+* Wide range of key ciphers, including RSA, DSA, EC, ED25519/ED448, GOST R34.10, DSTU4145, Rainbow, SPHINCS-256, XMSS/XMSS-MT and qTESLA
+* X509 Certificate Templates
+* Export Certificates and keying material in both PEM and DER formats.
+* Create self-signed general purpose X509 Certificates.
+* Certificate and keying material details exported as either HTML or Plain Text reports.
+* Able to support definition of Key Usage, Extended Key Usage and Subject Alternative Names for Certificate generation, allowing defined usage of issued Certificates.
+* Each CA is password protected, with the option that each issued certificate details are protected by individual independent passwords within the datastore.
+* The datastore uses AES-256 cipher by default to protect Certificates and keying material.
+
+## Standalone Requirements
+
+* Operating Systems
+    * Microsoft Windows 7, 8, 8.1 or 10 x64.
+    * Apple macOS
+    * GNU/Linux - Ubuntu 16.04LTS+, RHEL 7+, Debian 9+, Arch Linux
+* Harwdare
+    * 1GHz x86 64bit CPU
+    * 2GB RAM
+    * 100MB free HDD space
+
+## Standalone Installation
+
+* Windows - MSI installer will be available shortly, or extract the application from the zip file.
+* macOS - PKG installer will be available shortly, or extract the App from the zip file and copy to Applications.
+* GNU/Linux - Download the *.tar.gz file and extract to /opt/halimede
+
+## Eclipse IDE Plugin Requirements
 
 * Eclipse Oxygen
 * OpenJDK8 or Java 8 with the JCE Installed
 
 Oracle Java 8 JCE: [Java JCE Download](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
 
-## Installation
+## Eclipse IDE Plugin Installation
 
 Simply place the plugin jars file into the /dropins or /plugins folder of your Eclipse 
 installation, and restart Eclipse. Use the Window > CA Manager to open it.
