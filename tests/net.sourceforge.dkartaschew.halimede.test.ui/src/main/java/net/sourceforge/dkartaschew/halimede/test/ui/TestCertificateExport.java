@@ -19,6 +19,7 @@ package net.sourceforge.dkartaschew.halimede.test.ui;
 import static org.eclipse.swtbot.swt.finder.waits.Conditions.shellIsActive;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -26,6 +27,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -56,7 +59,12 @@ import org.junit.runner.RunWith;
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthourityManager;
+import net.sourceforge.dkartaschew.halimede.data.IIssuedCertificate;
+import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
+import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties.Key;
 import net.sourceforge.dkartaschew.halimede.data.PKCS7Decoder;
+import net.sourceforge.dkartaschew.halimede.data.PKCS8Decoder;
+import net.sourceforge.dkartaschew.halimede.data.PublicKeyDecoder;
 import net.sourceforge.dkartaschew.halimede.ui.CertificateDetailsPart;
 import net.sourceforge.dkartaschew.halimede.ui.NewCertificateDetailsPart;
 
@@ -157,7 +165,7 @@ public class TestCertificateExport {
 	}
 
 	@Test
-	public void createSimpleCertificatePEM() throws Exception {
+	public void exportCertificatePEM() throws Exception {
 		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
 		btn.menuItem("Export the Certificate").click();
 
@@ -194,4 +202,598 @@ public class TestCertificateExport {
 		}
 	}
 
+	@Test
+	public void exportCertificateDER() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Certificate").click();
+
+		bot.waitUntil(shellIsActive("Export Certificate"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".cer");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("DER");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Certificate(s) Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			byte[] data = Files.readAllBytes(filename);
+			assertNotEquals('-', data[0]);
+			assertNotEquals('-', data[1]);
+			assertNotEquals('-', data[2]);
+			assertNotEquals('-', data[3]);
+			assertNotEquals('-', data[4]);
+
+			// Open and confirm it's ours.
+			PKCS7Decoder pkcs7 = PKCS7Decoder.open(filename);
+			Certificate[] certs = pkcs7.getCertificateChain();
+			assertEquals(1, certs.length);
+			X509Certificate cert = (X509Certificate) certs[0];
+			X500Principal subject = cert.getSubjectX500Principal();
+			X500Principal expected = new X500Principal(subjectDN);
+			assertEquals(expected, subject);
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+
+	@Test
+	public void exportCertificateChainPEM() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Certificate Chain").click();
+
+		bot.waitUntil(shellIsActive("Export Certificate"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".cer");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("PEM");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Certificate(s) Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			List<String> lines = Files.readAllLines(filename, StandardCharsets.UTF_8);
+			assertEquals("-----BEGIN CERTIFICATE-----", lines.get(0));
+
+			// Open and confirm it's ours.
+			PKCS7Decoder pkcs7 = PKCS7Decoder.open(filename);
+			Certificate[] certs = pkcs7.getCertificateChain();
+			assertEquals(2, certs.length);
+			X509Certificate cert = (X509Certificate) certs[0];
+			X500Principal subject = cert.getSubjectX500Principal();
+			X500Principal expected = new X500Principal(subjectDN);
+			assertEquals(expected, subject);
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+
+	@Test
+	public void exportCertificateChainDER() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Certificate Chain").click();
+
+		bot.waitUntil(shellIsActive("Export Certificate"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".cer");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("DER");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Certificate(s) Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			byte[] data = Files.readAllBytes(filename);
+			assertNotEquals('-', data[0]);
+			assertNotEquals('-', data[1]);
+			assertNotEquals('-', data[2]);
+			assertNotEquals('-', data[3]);
+			assertNotEquals('-', data[4]);
+
+			// Open and confirm it's ours.
+			PKCS7Decoder pkcs7 = PKCS7Decoder.open(filename);
+			Certificate[] certs = pkcs7.getCertificateChain();
+			assertEquals(2, certs.length);
+			X509Certificate cert = (X509Certificate) certs[0];
+			X500Principal subject = cert.getSubjectX500Principal();
+			X500Principal expected = new X500Principal(subjectDN);
+			assertEquals(expected, subject);
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+
+	@Test
+	public void exportPublicKeyPEM() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Public Key").click();
+
+		bot.waitUntil(shellIsActive("Export Public Key"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".key");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("PEM");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Public Key Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			List<String> lines = Files.readAllLines(filename, StandardCharsets.UTF_8);
+			assertEquals("-----BEGIN PUBLIC KEY-----", lines.get(0));
+
+			// Open and confirm it's ours.
+			PublicKey publicKey = PublicKeyDecoder.open(filename);
+			assertEquals("RSA", publicKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PublicKey k = ic.getPublicKey();
+			assertEquals(k, publicKey);
+
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+
+	@Test
+	public void exportPublicKeyDER() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Public Key").click();
+
+		bot.waitUntil(shellIsActive("Export Public Key"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".key");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("DER");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Public Key Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			byte[] data = Files.readAllBytes(filename);
+			assertNotEquals('-', data[0]);
+			assertNotEquals('-', data[1]);
+			assertNotEquals('-', data[2]);
+			assertNotEquals('-', data[3]);
+			assertNotEquals('-', data[4]);
+
+			// Open and confirm it's ours.
+			PublicKey publicKey = PublicKeyDecoder.open(filename);
+			assertEquals("RSA", publicKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PublicKey k = ic.getPublicKey();
+			assertEquals(k, publicKey);
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+
+	@Test
+	public void exportPrivateKeyPEMNoPassword() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Private Key").click();
+
+		bot.waitUntil(shellIsActive("Export Private Key"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".key");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("PEM");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Private Key Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			List<String> lines = Files.readAllLines(filename, StandardCharsets.UTF_8);
+			assertEquals("-----BEGIN PRIVATE KEY-----", lines.get(0));
+
+			// Open and confirm it's ours.
+			PKCS8Decoder privKey = PKCS8Decoder.open(filename, null);
+			PrivateKey privateKey = privKey.getKeyPair().getPrivate();
+			assertEquals("RSA", privateKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PrivateKey k = ic.getPrivateKey();
+			assertEquals(k, privateKey);
+
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+
+	@Test
+	public void exportPrivateKeyPEMPassword_AES() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Private Key").click();
+
+		bot.waitUntil(shellIsActive("Export Private Key"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".key");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("PEM");
+			bot.comboBox(1).setSelection("AES_256_CBC");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.text(1).setText("changeme");
+			assertFalse(bot.button("Export").isEnabled());
+			bot.text(2).setText("changeme");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.text(1).setText("changeme1");
+			assertFalse(bot.button("Export").isEnabled());
+
+			bot.text(1).setText("changeme");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Private Key Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			List<String> lines = Files.readAllLines(filename, StandardCharsets.UTF_8);
+			assertEquals("-----BEGIN ENCRYPTED PRIVATE KEY-----", lines.get(0));
+
+			// Open and confirm it's ours.
+			PKCS8Decoder privKey = PKCS8Decoder.open(filename, "changeme");
+			PrivateKey privateKey = privKey.getKeyPair().getPrivate();
+			assertEquals("RSA", privateKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PrivateKey k = ic.getPrivateKey();
+			assertEquals(k, privateKey);
+
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+
+	@Test
+	public void exportPrivateKeyPEMPassword_DES() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Private Key").click();
+
+		bot.waitUntil(shellIsActive("Export Private Key"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".key");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("PEM");
+			bot.comboBox(1).setSelection("DES3_CBC");
+			bot.text(1).setText("changeme");
+			bot.text(2).setText("changeme");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Private Key Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			List<String> lines = Files.readAllLines(filename, StandardCharsets.UTF_8);
+			assertEquals("-----BEGIN ENCRYPTED PRIVATE KEY-----", lines.get(0));
+
+			// Open and confirm it's ours.
+			PKCS8Decoder privKey = PKCS8Decoder.open(filename, "changeme");
+			PrivateKey privateKey = privKey.getKeyPair().getPrivate();
+			assertEquals("RSA", privateKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PrivateKey k = ic.getPrivateKey();
+			assertEquals(k, privateKey);
+
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+
+	@Test
+	public void exportPrivateKeyPEMPassword_RC2() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Private Key").click();
+
+		bot.waitUntil(shellIsActive("Export Private Key"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".key");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("PEM");
+			bot.comboBox(1).setSelection("PBE_SHA1_RC2_40");
+			bot.text(1).setText("changeme");
+			bot.text(2).setText("changeme");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Private Key Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			List<String> lines = Files.readAllLines(filename, StandardCharsets.UTF_8);
+			assertEquals("-----BEGIN ENCRYPTED PRIVATE KEY-----", lines.get(0));
+
+			// Open and confirm it's ours.
+			PKCS8Decoder privKey = PKCS8Decoder.open(filename, "changeme");
+			PrivateKey privateKey = privKey.getKeyPair().getPrivate();
+			assertEquals("RSA", privateKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PrivateKey k = ic.getPrivateKey();
+			assertEquals(k, privateKey);
+
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+
+	@Test
+	public void exportPrivateKeyDERNoPassword() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Private Key").click();
+
+		bot.waitUntil(shellIsActive("Export Private Key"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".key");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("DER");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Private Key Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			byte[] data = Files.readAllBytes(filename);
+			assertNotEquals('-', data[0]);
+			assertNotEquals('-', data[1]);
+			assertNotEquals('-', data[2]);
+			assertNotEquals('-', data[3]);
+			assertNotEquals('-', data[4]);
+
+			// Open and confirm it's ours.
+			PKCS8Decoder privKey = PKCS8Decoder.open(filename, null);
+			PrivateKey privateKey = privKey.getKeyPair().getPrivate();
+			assertEquals("RSA", privateKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PrivateKey k = ic.getPrivateKey();
+			assertEquals(k, privateKey);
+
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+
+	@Test
+	public void exportPrivateKeyDERPassword_AES() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Private Key").click();
+
+		bot.waitUntil(shellIsActive("Export Private Key"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".key");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("DER");
+			bot.comboBox(1).setSelection("AES_256_CBC");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.text(1).setText("changeme");
+			assertFalse(bot.button("Export").isEnabled());
+			bot.text(2).setText("changeme");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.text(1).setText("changeme1");
+			assertFalse(bot.button("Export").isEnabled());
+
+			bot.text(1).setText("changeme");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Private Key Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			byte[] data = Files.readAllBytes(filename);
+			assertNotEquals('-', data[0]);
+			assertNotEquals('-', data[1]);
+			assertNotEquals('-', data[2]);
+			assertNotEquals('-', data[3]);
+			assertNotEquals('-', data[4]);
+
+			// Open and confirm it's ours.
+			PKCS8Decoder privKey = PKCS8Decoder.open(filename, "changeme");
+			PrivateKey privateKey = privKey.getKeyPair().getPrivate();
+			assertEquals("RSA", privateKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PrivateKey k = ic.getPrivateKey();
+			assertEquals(k, privateKey);
+
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+
+	@Test
+	public void exportPrivateKeyDERPassword_DES() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Private Key").click();
+
+		bot.waitUntil(shellIsActive("Export Private Key"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".key");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("DER");
+			bot.comboBox(1).setSelection("DES3_CBC");
+			bot.text(1).setText("changeme");
+			bot.text(2).setText("changeme");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Private Key Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			byte[] data = Files.readAllBytes(filename);
+			assertNotEquals('-', data[0]);
+			assertNotEquals('-', data[1]);
+			assertNotEquals('-', data[2]);
+			assertNotEquals('-', data[3]);
+			assertNotEquals('-', data[4]);
+
+			// Open and confirm it's ours.
+			PKCS8Decoder privKey = PKCS8Decoder.open(filename, "changeme");
+			PrivateKey privateKey = privKey.getKeyPair().getPrivate();
+			assertEquals("RSA", privateKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PrivateKey k = ic.getPrivateKey();
+			assertEquals(k, privateKey);
+
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+
+	@Test
+	public void exportPrivateKeyDERPassword_RC2() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export the Private Key").click();
+
+		bot.waitUntil(shellIsActive("Export Private Key"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".key");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("DER");
+			bot.comboBox(1).setSelection("PBE_SHA1_RC2_40");
+			bot.text(1).setText("changeme");
+			bot.text(2).setText("changeme");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Private Key Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			byte[] data = Files.readAllBytes(filename);
+			assertNotEquals('-', data[0]);
+			assertNotEquals('-', data[1]);
+			assertNotEquals('-', data[2]);
+			assertNotEquals('-', data[3]);
+			assertNotEquals('-', data[4]);
+
+			// Open and confirm it's ours.
+			PKCS8Decoder privKey = PKCS8Decoder.open(filename, "changeme");
+			PrivateKey privateKey = privKey.getKeyPair().getPrivate();
+			assertEquals("RSA", privateKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PrivateKey k = ic.getPrivateKey();
+			assertEquals(k, privateKey);
+
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
 }

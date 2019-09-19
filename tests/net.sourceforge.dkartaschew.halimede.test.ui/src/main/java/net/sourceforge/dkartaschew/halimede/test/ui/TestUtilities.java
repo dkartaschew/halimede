@@ -57,7 +57,7 @@ public class TestUtilities {
 	public final static String TMP = System.getProperty("java.io.tmpdir");
 
 	public final static int TEST_MAX_KEY_LENGTH = 2048;
-	
+
 	public final static Random RND = new Random();
 
 	public static class NullOutputStream extends OutputStream {
@@ -230,14 +230,18 @@ public class TestUtilities {
 			return lines.contains(values[0]);
 		}
 		for (int i = 0; i < lines.size(); i++) {
-			if (lines.get(i).equals(values[0])) {
-				boolean found = true;
-				for (int j = 1; j < values.length; j++) {
-					found &= lines.get(i + j).equals(values[j]);
+			try {
+				if (lines.get(i).equals(values[0])) {
+					boolean found = true;
+					for (int j = 1; j < values.length; j++) {
+						found &= lines.get(i + j).equals(values[j]);
+					}
+					if (found) {
+						return true;
+					}
 				}
-				if (found) {
-					return true;
-				}
+			} catch (IndexOutOfBoundsException e) {
+				// ignore.
 			}
 		}
 		return false;
