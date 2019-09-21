@@ -100,8 +100,7 @@ public class TestAuditLog {
 
 			// Should NOT throw
 			logger.propertyChange(null);
-			logger.propertyChange(
-					new PropertyChangeEvent(logger, CertificateAuthority.PROPERTY_ENABLE_LOG, null, new Long(1)));
+			logger.propertyChange(new PropertyChangeEvent(logger, CertificateAuthority.PROPERTY_ENABLE_LOG, null, Long.valueOf(1)));
 
 			// Write out some logs.
 			logger.log(Level.INFO, "Log 1");
@@ -186,8 +185,7 @@ public class TestAuditLog {
 
 			// Should NOT throw
 			logger.propertyChange(null);
-			logger.propertyChange(
-					new PropertyChangeEvent(logger, CertificateAuthority.PROPERTY_ENABLE_LOG, null, new Long(1)));
+			logger.propertyChange(new PropertyChangeEvent(logger, CertificateAuthority.PROPERTY_ENABLE_LOG, null, Long.valueOf(1)));
 
 			// Write out some logs.
 			logger.log(Level.INFO, "Log 1");
