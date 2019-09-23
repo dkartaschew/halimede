@@ -62,6 +62,7 @@ import net.sourceforge.dkartaschew.halimede.data.CertificateAuthourityManager;
 import net.sourceforge.dkartaschew.halimede.data.IIssuedCertificate;
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties.Key;
+import net.sourceforge.dkartaschew.halimede.data.PKCS12Decoder;
 import net.sourceforge.dkartaschew.halimede.data.PKCS7Decoder;
 import net.sourceforge.dkartaschew.halimede.data.PKCS8Decoder;
 import net.sourceforge.dkartaschew.halimede.data.PublicKeyDecoder;
@@ -791,6 +792,156 @@ public class TestCertificateExport {
 			IIssuedCertificate ic = is.loadIssuedCertificate("");
 			PrivateKey k = ic.getPrivateKey();
 			assertEquals(k, privateKey);
+
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+	
+	@Test
+	public void exportPKCS12_NoPassword() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export as PKCS#12 Keystore").click();
+
+		bot.waitUntil(shellIsActive("Export Key Information (PKCS#12)"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".p12");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("DES3");
+			//bot.text(1).setText("changeme");
+			//bot.text(2).setText("changeme");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Key Information Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			byte[] data = Files.readAllBytes(filename);
+			assertNotEquals('-', data[0]);
+			assertNotEquals('-', data[1]);
+			assertNotEquals('-', data[2]);
+			assertNotEquals('-', data[3]);
+			assertNotEquals('-', data[4]);
+
+			// Open and confirm it's ours.
+			PKCS12Decoder privKey = PKCS12Decoder.open(filename, null);
+			PrivateKey privateKey = privKey.getKeyPair().getPrivate();
+			assertEquals("RSA", privateKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PrivateKey k = ic.getPrivateKey();
+			assertEquals(k, privateKey);
+			Certificate cert = privKey.getCertificateChain()[0];
+			assertEquals(ic.getCertificateChain()[0], cert);
+
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+	
+	@Test
+	public void exportPKCS12_DES3() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export as PKCS#12 Keystore").click();
+
+		bot.waitUntil(shellIsActive("Export Key Information (PKCS#12)"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".p12");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("DES3");
+			bot.text(1).setText("changeme");
+			bot.text(2).setText("changeme");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Key Information Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			byte[] data = Files.readAllBytes(filename);
+			assertNotEquals('-', data[0]);
+			assertNotEquals('-', data[1]);
+			assertNotEquals('-', data[2]);
+			assertNotEquals('-', data[3]);
+			assertNotEquals('-', data[4]);
+
+			// Open and confirm it's ours.
+			PKCS12Decoder privKey = PKCS12Decoder.open(filename, "changeme");
+			PrivateKey privateKey = privKey.getKeyPair().getPrivate();
+			assertEquals("RSA", privateKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PrivateKey k = ic.getPrivateKey();
+			assertEquals(k, privateKey);
+			Certificate cert = privKey.getCertificateChain()[0];
+			assertEquals(ic.getCertificateChain()[0], cert);
+
+		} finally {
+			TestUtilities.delete(filename);
+		}
+	}
+	
+	@Test
+	public void exportPKCS12_AES256() throws Exception {
+		SWTBotToolbarDropDownButton btn = bot.toolbarDropDownButton();
+		btn.menuItem("Export as PKCS#12 Keystore").click();
+
+		bot.waitUntil(shellIsActive("Export Key Information (PKCS#12)"));
+
+		bot.activeShell();
+		assertFalse(bot.button("Export").isEnabled());
+		Path filename = TestUtilities.constructTempFile("certificate.", ".p12");
+		try {
+			bot.text().setText(filename.toString());
+			bot.comboBox().setSelection("AES256");
+			bot.text(1).setText("changeme");
+			bot.text(2).setText("changeme");
+			assertTrue(bot.button("Export").isEnabled());
+
+			bot.button("Export").click();
+
+			bot.waitUntil(shellIsActive("Key Information Exported"));
+			bot.activeShell();
+			bot.button("OK").click();
+
+			// Now check out file is PEM and a single certificate.
+			byte[] data = Files.readAllBytes(filename);
+			assertNotEquals('-', data[0]);
+			assertNotEquals('-', data[1]);
+			assertNotEquals('-', data[2]);
+			assertNotEquals('-', data[3]);
+			assertNotEquals('-', data[4]);
+
+			// Open and confirm it's ours.
+			PKCS12Decoder privKey = PKCS12Decoder.open(filename, "changeme");
+			PrivateKey privateKey = privKey.getKeyPair().getPrivate();
+			assertEquals("RSA", privateKey.getAlgorithm());
+			CertificateAuthority ca = manager.getCertificateAuthorities().stream()
+					.filter(c -> c.getDescription().equals(caName)).findFirst().get();
+			IssuedCertificateProperties is = ca.getIssuedCertificates().stream()
+					.filter(c -> c.getProperty(Key.subject).equals(subjectDN)).findFirst().get();
+			IIssuedCertificate ic = is.loadIssuedCertificate("");
+			PrivateKey k = ic.getPrivateKey();
+			assertEquals(k, privateKey);
+			Certificate cert = privKey.getCertificateChain()[0];
+			assertEquals(ic.getCertificateChain()[0], cert);
 
 		} finally {
 			TestUtilities.delete(filename);
