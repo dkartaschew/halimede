@@ -22,6 +22,7 @@
 -XX:+UseStringDeduplication
 -Dsun.jnu.encoding=UTF-8 
 -Dfile.encoding=UTF-8 
+-Dorg.eclipse.swt.display.useSystemTheme=true
 -Xmx2G
 --add-modules=ALL-SYSTEM
       </vmArgs>
