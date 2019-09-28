@@ -17,6 +17,7 @@
 		<tycho.version>1.4.0</tycho.version>
 		<compiler.plugin.version>3.8.0</compiler.plugin.version>
 		<dependency.plugin.version>3.1.1</dependency.plugin.version>
+		<jarsigner.plugin.version>3.0.0</jarsigner.plugin.version>
 		<site.plugin.version>3.7.1</site.plugin.version>
 		<site.markdown.plugin.version>1.8</site.markdown.plugin.version>
 		<site.reports.plugin.version>2.9</site.reports.plugin.version>
@@ -102,6 +103,25 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jarsigner-plugin</artifactId>
+					<version>${jarsigner.plugin.version}</version>
+					<configuration>
+						<keystore>${user.home}/.keystore/halimede.p12</keystore>
+						<alias>halimede</alias>						
+						<storetype>pkcs12</storetype>
+						<tsa>http://sha256timestamp.ws.symantec.com/sha256/timestamp</tsa>
+			        </configuration>
+					<executions>
+						<execution>
+							<id>sign</id>
+							<goals>
+								<goal>sign</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 				<plugin>
 					<groupId>com.github.spotbugs</groupId>
 					<artifactId>spotbugs-maven-plugin</artifactId>
