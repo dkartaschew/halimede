@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define UpgradeCode="82c49498-1cb9-43fe-9a3b-63112db00467" ?>
+  <?define InfoURL="https://halimede.sourceforge.io/" ?>
+  <?define PlatformProgramFilesFolder = "ProgramFiles64Folder" ?>
+  <Product Id="*" Name="!(loc.ApplicationName)" Language="!(loc.Language)" Version="$(var.VersionNumber)" Manufacturer="!(loc.ManufacturerFullName)" UpgradeCode="$(var.UpgradeCode)">
+    <Package Id="*" InstallerVersion="400" Compressed="yes" InstallScope="perMachine" Description="!(loc.ProductDescription)" Comments="!(loc.Comments) $(var.VersionNumber)"/>
+    <WixVariable Id="WixUILicenseRtf" Value="halimede\COPYING.rtf"/>
+    <WixVariable Id="WixUIBannerBmp" Value="images\TopBanner.bmp"/>
+    <WixVariable Id="WixUIDialogBmp" Value="images\Dialog.bmp"/>
+    <Icon Id="Icon.exe" SourceFile="images\application-icon.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="Icon.exe"/>
+    <Property Id="ARPHELPLINK" Value="$(var.InfoURL)"/>
+    <Property Id="ARPNOREPAIR" Value="yes" Secure="yes"/>
+    <MajorUpgrade DowngradeErrorMessage="!(loc.NewerInstalled)" AllowSameVersionUpgrades="yes"/>
+    <InstallExecuteSequence>
+      <Custom Action="SetARPINSTALLLOCATION" After="InstallValidate"/>
+    </InstallExecuteSequence>
+    <CustomAction Id="SetARPINSTALLLOCATION" Property="ARPINSTALLLOCATION" Value="[INSTALLDIR]"/>
+    <Condition Message="!(loc.OS2Old)"><![CDATA[Installed OR (VersionNT >= 601)]]></Condition>
+    <Condition Message="(loc.x64VersionRequired)"><![CDATA[VersionNT64]]></Condition>
+    <CustomAction Id="SaveCmdLineValueINSTALLDIR" Property="CMDLINE_INSTALLDIR" Value="[INSTALLDIR]" Execute="firstSequence"/>
+    <CustomAction Id="SetFromCmdLineValueINSTALLDIR" Property="INSTALLDIR" Value="[CMDLINE_INSTALLDIR]" Execute="firstSequence"/>
+    <InstallUISequence>
+      <Custom Action="SaveCmdLineValueINSTALLDIR" Before="AppSearch"/>
+      <Custom Action="SetFromCmdLineValueINSTALLDIR" After="AppSearch">CMDLINE_INSTALLDIR</Custom>
+    </InstallUISequence>
+    <InstallExecuteSequence>
+      <Custom Action="SaveCmdLineValueINSTALLDIR" Before="AppSearch"/>
+      <Custom Action="SetFromCmdLineValueINSTALLDIR" After="AppSearch">CMDLINE_INSTALLDIR</Custom>
+    </InstallExecuteSequence>
+    <Property Id="INSTALLDIR">
+      <RegistrySearch Id="DetermineInstallLocation" Type="raw" Root="HKLM" Key="Software\!(loc.ManufacturerName)\InstalledProducts\!(loc.ApplicationName)" Name="InstallLocation"/>
+    </Property>
+    <Media Id="1" Cabinet="media1.cab" EmbedCab="yes"/>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
+        <Directory Id="ProgramFilesHeCA" Name="!(loc.ManufacturerName)">
+          <Directory Id="INSTALLDIR" Name="!(loc.ApplicationName)">
+            <Component Id="INSTALLDIR_comp" Guid="82c49498-1cb9-43fe-9a3b-63112db00467">
+              <CreateFolder/>
+              <RemoveFile Id="RemoveFilesFromAppDirectory" Name="*.*" On="uninstall"/>
+            </Component>
+          </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ApplicationProgramsFolder" Name="!(loc.ApplicationName)"/>
+      </Directory>
+      <Component Id="RegValInstallLocation_comp" Guid="82c49498-1cb9-43fe-9a3b-63112db00468">
+        <RegistryKey Root="HKLM" Key="Software\!(loc.ManufacturerName)\InstalledProducts\!(loc.ApplicationName)">
+          <RegistryValue Name="InstallLocation" Value="[INSTALLDIR]" Type="string" KeyPath="yes"/>
+        </RegistryKey>
+      </Component>
+    </Directory>
+    <DirectoryRef Id="ApplicationProgramsFolder">
+      <Component Id="ApplicationShortcut" Guid="*">
+        <Shortcut Id="ApplicationStartMenuShortcut" Name="!(loc.ApplicationName)" Description="!(loc.ProductDescription)" Target="[INSTALLDIR]halimede.exe" WorkingDirectory="INSTALLDIR"/>
+        <RemoveFolder Id="RemoveApplicationProgramsFolder" Directory="ApplicationProgramsFolder" On="uninstall"/>
+        <RegistryValue Root="HKCU" Key="Software\!(loc.ManufacturerName)\!(loc.ApplicationName)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+      </Component>
+    </DirectoryRef>
+    <Feature Id="Complete" Title="!(loc.ApplicationName)" Description="!(loc.FeatureCompleteDescription)" Display="expand" Level="1" ConfigurableDirectory="INSTALLDIR">
+      <Feature Id="MainProgram" Title="!(loc.FeatureMainProgramTitle)" Description="!(loc.FeatureMainProgramDescription)" Level="1">
+        <ComponentRef Id="INSTALLDIR_comp"/>
+        <ComponentGroupRef Id="HalimedeCAFiles"/>
+        <ComponentRef Id="RegValInstallLocation_comp"/>
+        <ComponentRef Id="ApplicationShortcut"/>
+      </Feature>
+    </Feature>
+    <UI>
+      <UIRef Id="WixUI_InstallDir"/>
+    </UI>
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR"/>
+  </Product>
+</Wix>

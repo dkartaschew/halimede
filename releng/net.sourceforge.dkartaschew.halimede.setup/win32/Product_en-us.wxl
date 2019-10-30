@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization xmlns="http://schemas.microsoft.com/wix/2006/localization" Culture="en-us" Codepage="1252">
+  <String Id="Language">1033</String>
+  <!-- Supported language and codepage codes can be found here: http://www.tramontana.co.hu/wix/lesson2.php#2.4 -->
+  <String Id="ApplicationName">Halimede Certificate Authority</String>
+  <String Id="ManufacturerName">Halimede</String>
+  <String Id="ManufacturerFullName">Halimede</String>
+  <String Id="ProductDescription">Halimede Certificate Authority</String>
+  <String Id="Comments">Installs Halimede Certificate Authority</String>
+  <String Id="LicenseRtf" Overridable="yes">halimede\COPYING.rtf</String>
+  <String Id="OS2Old">This product requires at least Windows 7 / Server 2008r2.</String>
+  <String Id="NewerInstalled">The same or a newer version of this product is already installed.</String>
+  <String Id="x64VersionRequired">This product is only for 64-bit Windows.</String>
+  <String Id="FeatureCompleteDescription">The complete package.</String>
+  <String Id="FeatureMainProgramDescription">The main version including all dependencies.</String>
+  <String Id="FeatureMainProgramTitle">Main program</String>
+</WixLocalization>

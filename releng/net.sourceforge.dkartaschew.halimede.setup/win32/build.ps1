@@ -17,9 +17,9 @@
 $halimede = "Halimede CA-win32.win32.x86_64.zip" 
 $zulu = "zulu11.33.15-ca-jre11.0.4-win_x64"
 $PASSWORD = $args[0]
-$RH = "ResourceHacker"
-$AI = "AdvancedInstaller"
-$BUILD = Get-Date -Format "yyyyMMdd"
+# Build is the number of days from 1/Jan/2000, following Visual Studios  
+# automatic assignment for build/revision.
+$BUILD = (New-TimeSpan -Start (Get-Date -Year 2000 -Month 1 -Day 1)).Days
 
 $url = "https://cdn.azul.com/zulu/bin/$zulu.zip"
 $output = "$zulu.zip"
@@ -40,37 +40,36 @@ if (!(Test-Path $output)) {
 if ((Test-Path $buildFolder)){
 	Remove-Item $buildFolder -Recurse -Force -ErrorAction Ignore
 }
+
 New-Item -Name $buildFolder -ItemType "directory"
 Expand-Archive -Path $halimede -DestinationPath $buildFolder
 Expand-Archive -Path $output -DestinationPath $buildFolder
 Rename-Item -Path "$buildFolder/$zulu" -NewName jre
 
-# Update *.exe resources and signatures.
-signtool remove /s "$buildFolder/eclipsec.exe"
-signtool remove /s "$buildFolder/halimede.exe"
-
+# Cleanup old items.
 if ((Test-Path "Resource.rc")){
 	Remove-Item "Resource.rc"
 }
+if ((Test-Path "Halimede CA-win32.x86_64.zip")){
+	Remove-Item "Halimede CA-win32.x86_64.zip"
+}
+if ((Test-Path "delcert.exe")){
+	Remove-Item "delcert.exe"
+}
+Expand-Archive -Path delcert.zip -DestinationPath ./
+
+# Remove current signatures. (Note: signtool remove doesn't do this).
+./delcert.exe "$buildFolder/eclipsec.exe" | Out-Default
+./delcert.exe "$buildFolder/halimede.exe" | Out-Default
 
 # Write out a resource file to include.
 @"
-#include "winres.h"
 
-LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_AUS
-
-VS_VERSION_INFO VERSIONINFO
+1 VERSIONINFO
  FILEVERSION 1,0,0,$BUILD
  PRODUCTVERSION 1,0,0,$BUILD
- FILEFLAGSMASK 0x3fL
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
  FILEOS 0x40004L
  FILETYPE 0x1L
- FILESUBTYPE 0x0L
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
@@ -92,11 +91,13 @@ BEGIN
     END
 END
 
-"@ | Set-Content -Path "Resource.rc"
+"@ | Set-Content -Path "Resource.rc" 
 
-$RH -open Resources.rc -save Resources.res -action compile -log NUL
-$RH -open "$buildFolder/eclipsec.exe" -save "$buildFolder/eclipsec.exe.new" -resource Resource.res -action addoverwrite
-$RH -open "$buildFolder/halimede.exe" -save "$buildFolder/halimede.exe.new" -resource Resource.res -action addoverwrite
+# Update *.exe resources and signatures.
+
+Start-Process ResourceHacker -NoNewWindow -Wait -ArgumentList "-open","Resource.rc","-save","Resource.res","-action","compile"
+Start-Process ResourceHacker -NoNewWindow -Wait -ArgumentList "-open","$buildFolder/eclipsec.exe","-save","$buildFolder/eclipsec.exe.new","-resource","Resource.res","-action","addoverwrite"
+Start-Process ResourceHacker -NoNewWindow -Wait -ArgumentList "-open","$buildFolder/halimede.exe","-save","$buildFolder/halimede.exe.new","-resource","Resource.res","-action","addoverwrite"
 
 Remove-Item "Resource.rc"
 Remove-Item "Resource.res"
@@ -106,14 +107,36 @@ Remove-Item "$buildFolder/halimede.exe"
 Rename-Item -Path "$buildFolder/eclipsec.exe.new" -NewName eclipsec.exe
 Rename-Item -Path "$buildFolder/halimede.exe.new" -NewName halimede.exe
 
-signtool sign /f "$HOME/.keystore/halimede.p12" /p "$PASSWORD" /t $tsa "$buildFolder/eclipsec.exe"
-signtool sign /f "$HOME/.keystore/halimede.p12" /p "$PASSWORD" /t $tsa "$buildFolder/halimede.exe"
+signtool sign /f "$HOME/.keystore/halimede.p12" /p "$PASSWORD" /fd sha256 /tr http://timestamp.digicert.com /td sha256 "$buildFolder/eclipsec.exe" | Out-Default
+signtool sign /f "$HOME/.keystore/halimede.p12" /p "$PASSWORD" /fd sha256 /tr http://timestamp.digicert.com /td sha256 "$buildFolder/halimede.exe" | Out-Default
 
 # Build the MSI installer.
-$AI /rebuild halimede.aip
-signtool sign /f "$HOME/.keystore/halimede.p12" /p "$PASSWORD" /t $tsa "Halimede CA.msi"
+heat dir "$buildFolder" -cg HalimedeCAFiles -dr INSTALLDIR -var var.HalimedeFilesDir -o obj\ProductFiles.wxs -sreg -sfrag -ag -srd -ke | Out-Default
+candle Product.wxs -arch x64 -o obj\ -ext WixUIExtension -dVersionNumber="1.0.0.$BUILD" | Out-Default
+candle obj\ProductFiles.wxs -arch x64 -o obj\ -ext WixUIExtension -dHalimedeFilesDir="$buildFolder" | Out-Default
+light obj\Product.wixobj obj\ProductFiles.wixobj -o "Halimede CA.msi" -cultures:en-us -loc Product_en-us.wxl -ext WixUIExtension -sice:ICE61 | Out-Default
+
+signtool sign /f "$HOME/.keystore/halimede.p12" /p "$PASSWORD"  /fd sha256 /tr http://timestamp.digicert.com /td sha256 "Halimede CA.msi" | Out-Default
 
 # Rebuild the distribution ZIP
 Remove-Item $buildFolder/jre -Recurse -Force -ErrorAction Ignore
 Compress-Archive -Path $buildFolder -DestinationPath "Halimede CA-win32.x86_64.zip"
 
+# Clean up Wix Temp files
+if ((Test-Path obj)){
+	Remove-Item obj -Recurse -Force -ErrorAction Ignore
+}
+if ((Test-Path "Halimede CA.wixpdb")){
+	Remove-Item "Halimede CA.wixpdb"
+}
+# Clean up extracted build folder.
+if ((Test-Path $buildFolder)){
+	Remove-Item $buildFolder -Recurse -Force -ErrorAction Ignore
+}
+# Cleanup old items.
+if ((Test-Path "Resource.rc")){
+	Remove-Item "Resource.rc"
+}
+if ((Test-Path "delcert.exe")){
+	Remove-Item "delcert.exe"
+}
