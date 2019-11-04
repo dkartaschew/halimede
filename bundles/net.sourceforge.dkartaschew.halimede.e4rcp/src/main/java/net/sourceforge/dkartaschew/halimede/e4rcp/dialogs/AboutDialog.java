@@ -17,10 +17,15 @@
 
 package net.sourceforge.dkartaschew.halimede.e4rcp.dialogs;
 
-import org.eclipse.jface.dialogs.IDialogConstants;
+import javax.inject.Inject;
+
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,13 +35,27 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.Version;
 
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
+import net.sourceforge.dkartaschew.halimede.ui.util.SWTColorUtils;
 
 public class AboutDialog extends Dialog {
+
+	/**
+	 * Application context.
+	 */
+	@Inject
+	private IEclipseContext context;
+	
+	/**
+	 * The help button (null if none).
+	 */
+	private ToolItem fHelpButton;
 
 	/**
 	 * Create the dialog.
@@ -45,13 +64,6 @@ public class AboutDialog extends Dialog {
 	 */
 	public AboutDialog(Shell parentShell) {
 		super(parentShell);
-	}
-
-	@Override
-	public void create() {
-		super.create();
-		//setTitle(PluginDefaults.APPLICATION_NAME);
-		//setTitleImage(PluginDefaults.createImageDescriptor(PluginDefaults.IMG_APPLICATION).createImage());
 	}
 
 	@Override
@@ -81,7 +93,7 @@ public class AboutDialog extends Dialog {
 		layout.marginWidth = 0;
 		container.setLayout(layout);
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+
 		Label lblSplashIcon = new Label(container, SWT.NONE);
 		lblSplashIcon.setAlignment(SWT.CENTER);
 		lblSplashIcon.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
@@ -121,14 +133,35 @@ public class AboutDialog extends Dialog {
 		Link lblSite = new Link(container, SWT.NONE);
 		lblSite.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
 		lblSite.setText("<A>" + PluginDefaults.APPLICATION_WEBSITE + "</A>");
-		lblSite.addListener(SWT.Selection, e ->	Program.launch(PluginDefaults.APPLICATION_WEBSITE));
+		lblSite.addListener(SWT.Selection, e -> Program.launch(PluginDefaults.APPLICATION_WEBSITE));
 		Label lblLicense = new Label(container, SWT.NONE);
 		lblLicense.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-		lblLicense.setText("Product is licensed under the EPL v2.0" + System.lineSeparator() + 
-				"w/GPL v2+ w/CE secondary license");
+		lblLicense.setText(
+				"Product is licensed under the EPL v2.0" + System.lineSeparator() + "w/GPL v2+ w/CE secondary license");
 		lblLicense.setAlignment(SWT.CENTER);
 
 		return area;
+	}
+
+	@Override
+	protected Control createButtonBar(Composite parent) {
+		Composite composite = new Composite(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.horizontalSpacing = 0;
+		composite.setLayout(layout);
+		composite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
+		composite.setFont(parent.getFont());
+
+		// create help control if needed
+		Control helpControl = createHelpControl(composite);
+		((GridData) helpControl.getLayoutData()).horizontalIndent = convertHorizontalDLUsToPixels(
+				IDialogConstants.HORIZONTAL_MARGIN);
+
+		Control buttonSection = super.createButtonBar(composite);
+		((GridData) buttonSection.getLayoutData()).grabExcessHorizontalSpace = true;
+		return composite;
 	}
 
 	/**
@@ -139,6 +172,40 @@ public class AboutDialog extends Dialog {
 	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.CLOSE_LABEL, true);
+	}
+
+	/*
+	 * Creates a button with a info image. 
+	 * 
+	 * @param parent The parent
+	 * 
+	 * @return the Toolbar.
+	 */
+	protected ToolBar createHelpControl(Composite parent) {
+		ToolBar toolBar = new ToolBar(parent, SWT.FLAT | SWT.NO_FOCUS);
+		((GridLayout) parent.getLayout()).numColumns++;
+		toolBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
+		toolBar.setCursor(parent.getDisplay().getSystemCursor(SWT.CURSOR_HAND));
+		fHelpButton = new ToolItem(toolBar, SWT.NONE);
+		fHelpButton.setImage(PluginDefaults.getResourceManager()//
+				.createImage(PluginDefaults.createImageDescriptor(//
+						SWTColorUtils.isDarkColour(toolBar.getBackground()) //
+								? PluginDefaults.IMG_SYSTEM_INFORMATION_DARK
+								: PluginDefaults.IMG_SYSTEM_INFORMATION)));
+		fHelpButton.setToolTipText("System Information"); //$NON-NLS-1$
+		fHelpButton.addListener(SWT.Selection, e -> infoPressed());
+		return toolBar;
+	}
+
+	/**
+	 * The info button was pressed.
+	 */
+	private void infoPressed() {
+			BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+				SystemInformationDialog dialog = new SystemInformationDialog(getShell());
+				ContextInjectionFactory.inject(dialog, context);
+				dialog.open();
+			});
 	}
 
 }

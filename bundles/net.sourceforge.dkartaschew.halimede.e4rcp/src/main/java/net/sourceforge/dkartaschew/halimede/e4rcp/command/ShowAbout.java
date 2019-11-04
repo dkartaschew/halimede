@@ -17,6 +17,8 @@
 
 package net.sourceforge.dkartaschew.halimede.e4rcp.command;
 
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.swt.widgets.Shell;
 
@@ -25,7 +27,9 @@ import net.sourceforge.dkartaschew.halimede.e4rcp.dialogs.AboutDialog;
 public class ShowAbout {
 
 	@Execute
-	public void showAbout(Shell shell) {
-		new AboutDialog(shell).open();
+	public void showAbout(Shell shell, IEclipseContext context) {
+		AboutDialog dialog = new AboutDialog(shell);
+		ContextInjectionFactory.inject(dialog, context);
+		dialog.open();
 	}
 }

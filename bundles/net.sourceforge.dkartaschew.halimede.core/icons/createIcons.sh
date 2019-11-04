@@ -13,6 +13,16 @@ inkscape -z -e menu-icon@3x.png -w 48 -h 48 application-icon.svg;
 
 inkscape -z -e Icon1024.png -w 1024 -h 1024 application-icon.svg; 
 
+inkscape -z -e dialog-question.png -w 16 -h 16 dialog-question-symbolic.svg; 
+inkscape -z -e dialog-question@1.5x.png -w 24 -h 24 dialog-question-symbolic.svg; 
+inkscape -z -e dialog-question@2x.png -w 32 -h 32 dialog-question-symbolic.svg; 
+inkscape -z -e dialog-question@3x.png -w 48 -h 48 dialog-question-symbolic.svg; 
+
+inkscape -z -e dialog-question-dark.png -w 16 -h 16 dialog-question-symbolic-dark.svg; 
+inkscape -z -e dialog-question-dark@1.5x.png -w 24 -h 24 dialog-question-symbolic-dark.svg; 
+inkscape -z -e dialog-question-dark@2x.png -w 32 -h 32 dialog-question-symbolic-dark.svg; 
+inkscape -z -e dialog-question-dark@3x.png -w 48 -h 48 dialog-question-symbolic-dark.svg; 
+
 # SVG to XPM
 inkscape -z -e application-icon-256.png -w 256 -h 256 application-icon.svg;
 convert application-icon-256.png application-icon.xpm

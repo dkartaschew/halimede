@@ -8,7 +8,8 @@ Origin source: https://git.eclipse.org/c/platform/eclipse.platform.images.git/
 
 ---------------
 
-Certificate, Folder, List Add and List Remove Icons from Adwaita Icon Theme
+Certificate, Folder, Info, List Add and List Remove Icons from Adwaita Icon
+Theme
 
 https://github.com/GNOME/adwaita-icon-theme
 

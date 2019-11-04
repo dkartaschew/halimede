@@ -82,14 +82,22 @@ public class PluginDefaults {
 	public static final String IMG_LOCK_OVERLAY = "icons/deadlock_ovr.png";
 	
 	/**
-	 * Default image for Folder at size 16px
+	 * Default image for List add at size 16px
 	 */
 	public static final String IMG_LIST_ADD = "icons/list-add.png";
 	
 	/**
-	 * Default image for Folder at size 16px
+	 * Default image for List remove at size 16px
 	 */
 	public static final String IMG_LIST_REMOVE = "icons/list-remove.png";
+	/**
+	 * Default image for System Information at size 16px
+	 */
+	public static final String IMG_SYSTEM_INFORMATION = "icons/dialog-question.png";
+	/**
+	 * Default image for System Information at size 16px
+	 */
+	public static final String IMG_SYSTEM_INFORMATION_DARK = "icons/dialog-question-dark.png";
 	
 	/**
 	 * The node with the preferences for the base paths.

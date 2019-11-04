@@ -109,6 +109,23 @@ public class HTMLOutputRenderer implements ICertificateOutputRenderer {
 	}
 
 	@Override
+	public void addContentLine(String value) {
+		out.println("<tr>");
+		out.println("<td colspan=2>");
+		value = HTMLEncode.escape(value);
+		if (!value.contains(System.lineSeparator())) {
+			out.println(value);
+		} else {
+			String[] lines = value.split(System.lineSeparator());
+			for (String line : lines) {
+				out.println(line + "<br>");
+			}
+		}
+		out.println("</td>");
+		out.println("</tr>");
+	}
+	
+	@Override
 	public void addContentLine(String key, String value) {
 		addContentLine(key, value, false);
 	}

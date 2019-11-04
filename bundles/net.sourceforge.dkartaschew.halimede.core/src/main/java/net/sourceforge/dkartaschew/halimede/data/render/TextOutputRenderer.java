@@ -69,6 +69,25 @@ public class TextOutputRenderer implements ICertificateOutputRenderer {
 	}
 
 	@Override
+	public void addContentLine(String value) {
+		if (value == null) {
+			out.println();
+			return;
+		}
+		if (!value.contains(System.lineSeparator())) {
+			out.print(TAB);
+			out.println(value);
+		} else {
+			String[] lines = value.split(System.lineSeparator());
+			for (String line : lines) {
+				out.print(TAB);
+				out.println(line);
+			}
+		}
+		lastWasHR = false;
+	}
+	
+	@Override
 	public void addContentLine(String key, String value) {
 		addContentLine(key, value, false);
 	}

@@ -266,6 +266,12 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 	}
 
 	@Override
+	public Menu getMenu () {
+		checkWidget();
+		return textArea.getMenu();
+	}
+	
+	@Override
 	public void addHeaderLine(String value) {
 		StyleRange range = new StyleRange();
 		range.start = currentLength;
@@ -284,6 +290,27 @@ public class CompositeOutputRenderer extends Composite implements ICertificateOu
 		currentLength += EOLLength;
 	}
 
+	@Override
+	public void addContentLine(String value) {
+		value = notNull(value);
+		if (value.length() > DEFAULT_WRAP) {
+			if (value.contains(EOL)) {
+				// As WordUtils.wrap() is for single lines, lets split/rejoin...
+				StringBuilder sb = new StringBuilder();
+				Arrays.stream(value.split(EOL)).forEach(l -> {
+					sb.append(WordUtils.wrap(l, DEFAULT_WRAP));
+					sb.append(EOL);
+				});
+				value = sb.toString();
+			} else {
+				value = WordUtils.wrap(value, DEFAULT_WRAP);
+			}
+		}
+		textArea.append(value);
+		textArea.append(EOL);
+		currentLength += (value.length() + EOLLength);
+	}
+	
 	@Override
 	public void addContentLine(String key, String value) {
 		addContentLine(key, value, false);

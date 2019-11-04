@@ -41,6 +41,14 @@ public interface ICertificateOutputRenderer {
 	 * Add a line to the output stream. <br>
 	 * Value is rendered with normal font.
 	 * 
+	 * @param value The String to add
+	 */
+	void addContentLine(String value);
+	
+	/**
+	 * Add a line to the output stream. <br>
+	 * Value is rendered with normal font.
+	 * 
 	 * @param key The key field.
 	 * @param value The text to add.
 	 */
@@ -64,4 +72,6 @@ public interface ICertificateOutputRenderer {
 	 * Finalise the render process.
 	 */
 	void finaliseRender();
+
+
 }
