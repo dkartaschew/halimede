@@ -19,12 +19,22 @@ package net.sourceforge.dkartaschew.halimede.e4rcp.command;
 
 import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public class PreferencesHandler {
 
 	@Execute
-	public void execute(Shell shell) {
+	public void execute(Display display) {
+		Shell shell = display.getActiveShell();
+		if (shell == null) {
+			Shell[] shells = display.getShells();
+			if (shells == null || shells.length == 0) {
+				shell = new Shell(display);
+			} else {
+				shell = shells[0];
+			}
+		}
 		MessageDialog.openInformation(shell, "Preferences", //
 				"Preferences are set per Certificate Authority. " + System.lineSeparator()
 						+ "Please right-click on the Certificate Authority to "
