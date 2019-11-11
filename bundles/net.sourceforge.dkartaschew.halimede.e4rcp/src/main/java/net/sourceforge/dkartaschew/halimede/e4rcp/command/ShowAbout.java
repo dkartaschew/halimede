@@ -17,29 +17,51 @@
 
 package net.sourceforge.dkartaschew.halimede.e4rcp.command;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Execute;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.e4rcp.dialogs.AboutDialog;
 
 public class ShowAbout {
 
+	/**
+	 * Active Shell instance
+	 */
+	@Inject
+	@Named(IServiceConstants.ACTIVE_SHELL)
+	protected Shell shell;
+
+	/**
+	 * Is the dialog active/displayed flag;
+	 * <p>
+	 * This flag is needed for macOS application support. The application menu allows this handler to be called multiple
+	 * times irrespective if the dialog is already open.<br>
+	 * Note: We don't need to worry about thread safety, as the execute method is only run in the UI thread.
+	 */
+	protected boolean active = false;
+
+	/**
+	 * Open the about dialog if not already shown.
+	 * 
+	 * @param context The current application context.
+	 */
 	@Execute
-	public void showAbout(Display display, IEclipseContext context) {
-		Shell shell = display.getActiveShell();
-		if (shell == null) {
-			Shell[] shells = display.getShells();
-			if (shells == null || shells.length == 0) {
-				shell = new Shell(display);
-			} else {
-				shell = shells[0];
+	public void showAbout(IEclipseContext context) {
+		if (!active) {
+			active = true;
+			try {
+				AboutDialog dialog = new AboutDialog(shell);
+				ContextInjectionFactory.inject(dialog, context);
+				dialog.open();
+			} finally {
+				active = false;
 			}
 		}
-		AboutDialog dialog = new AboutDialog(shell);
-		ContextInjectionFactory.inject(dialog, context);
-		dialog.open();
 	}
 }
