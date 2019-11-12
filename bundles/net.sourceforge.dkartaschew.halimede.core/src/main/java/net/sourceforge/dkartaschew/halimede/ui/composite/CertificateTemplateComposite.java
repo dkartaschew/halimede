@@ -67,6 +67,8 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
 import net.sourceforge.dkartaschew.halimede.data.CertificateRequestProperties;
@@ -84,6 +86,7 @@ import net.sourceforge.dkartaschew.halimede.ui.labelproviders.GeneralNameLabelPr
 import net.sourceforge.dkartaschew.halimede.ui.model.GeneralNameModel;
 import net.sourceforge.dkartaschew.halimede.ui.model.NewCertificateModel;
 import net.sourceforge.dkartaschew.halimede.ui.model.X500NameModel;
+import net.sourceforge.dkartaschew.halimede.ui.util.SWTColorUtils;
 import net.sourceforge.dkartaschew.halimede.ui.validators.DatePeriodValidator;
 import net.sourceforge.dkartaschew.halimede.ui.validators.KeyTypeWarningValidator;
 import net.sourceforge.dkartaschew.halimede.ui.validators.PassphraseValidator;
@@ -114,6 +117,9 @@ public class CertificateTemplateComposite extends Composite {
 	private CheckboxTableViewer chkBoxKeyUsage;
 	private CheckboxTableViewer chkBoxExtKeyUsage;
 	private ListViewer listSubjectAltNames;
+	private ToolItem addSubjectAltName;
+	private ToolItem editSubjectAltName;
+	private ToolItem remSubjectAltName;
 
 	/**
 	 * Create the composite.
@@ -152,7 +158,8 @@ public class CertificateTemplateComposite extends Composite {
 
 			textCertDescription = new Text(grpCertificateAndKeying, SWT.BORDER);
 			textCertDescription.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1));
-			textCertDescription.setToolTipText("The descriptive name for this Certificate (only used if saving as a template).");
+			textCertDescription
+					.setToolTipText("The descriptive name for this Certificate (only used if saving as a template).");
 		}
 
 		Label lblX500Name = new Label(grpCertificateAndKeying, SWT.NONE);
@@ -368,81 +375,57 @@ public class CertificateTemplateComposite extends Composite {
 
 		Group grpSubAltNames = new Group(grpCertificateProperties, SWT.NONE);
 		grpSubAltNames.setText("Subject Alternate Names");
-		grpSubAltNames.setLayout(new GridLayout(2, false));
+		grpSubAltNames.setLayout(new GridLayout(1, false));
 		grpSubAltNames.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 2));
 
-		listSubjectAltNames = new ListViewer(grpSubAltNames, SWT.BORDER);
+		Composite sanTable = new Composite(grpSubAltNames, SWT.BORDER);
+		GridLayout sanTableLayout = new GridLayout(1, false);
+		sanTableLayout.horizontalSpacing = 0;
+		sanTableLayout.marginHeight = 0;
+		sanTableLayout.marginWidth = 0;
+		sanTableLayout.verticalSpacing = 0;
+		sanTable.setLayout(sanTableLayout);
+		sanTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+		
+		listSubjectAltNames = new ListViewer(sanTable, SWT.NONE);
 		listSubjectAltNames.setContentProvider(new ArrayContentProvider());
 		listSubjectAltNames.setLabelProvider(new GeneralNameLabelProvider());
 
 		List tblSubjectAltNames = listSubjectAltNames.getList();
-		tblSubjectAltNames.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2));
+		tblSubjectAltNames.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		if (model.getSubjectAlternativeName() != null) {
 			listSubjectAltNames.setInput(((GeneralNames) model.getSubjectAlternativeName()).getNames());
 		} else {
 			listSubjectAltNames.setInput(new GeneralName[0]);
 		}
+
+		listSubjectAltNames.getList().addListener(SWT.MouseDoubleClick, l -> editSANItem(model));
+		listSubjectAltNames.getList().addListener(SWT.Selection, l -> updateSANToolbar());
 		
-		listSubjectAltNames.getList().addListener(SWT.MouseDoubleClick, l -> {
-			IStructuredSelection selected = listSubjectAltNames.getStructuredSelection();
-			if(selected != null && !selected.isEmpty()) {
-				Object element = selected.getFirstElement();
-				if(element instanceof GeneralName) {
-					GeneralName name = (GeneralName)element;
-					GeneralNameModel gmodel = new GeneralNameModel(name);
-					GeneralNameDialog d = new GeneralNameDialog(getShell(), gmodel);
-					if (d.open() == IDialogConstants.OK_ID) {
-						// update collection...
-						GeneralName[] names = (GeneralName[]) listSubjectAltNames.getInput();
-						for(int i = 0; i < names.length; i++) {
-							if(names[i].equals(name)) {
-								names[i] = gmodel.createGeneralNameFromModel();
-								break;
-							}
-						}
-						listSubjectAltNames.setInput(names);
-						listSubjectAltNames.refresh();
-						// don't use databinding due to complexity...
-						model.setSubjectAlternativeName(new GeneralNames(names));
-					}
-				}
-			}
-		});
+		ToolBar toolbar = new ToolBar(sanTable, SWT.FLAT | SWT.HORIZONTAL);
+		toolbar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		
+		addSubjectAltName = new ToolItem(toolbar, SWT.FLAT);
+		final boolean isDark = SWTColorUtils.isDarkColour(grpSubAltNames.getBackground());
+		addSubjectAltName.setImage(PluginDefaults.createImageDescriptor(isDark //
+				? PluginDefaults.IMG_LIST_ADD_DARK
+				: PluginDefaults.IMG_LIST_ADD).createImage());
+		addSubjectAltName.addListener(SWT.Selection, (l) -> addSANItem(model));
 
-		Button addSubjectAltName = new Button(grpSubAltNames, SWT.FLAT);
-		addSubjectAltName.setLayoutData(new GridData(SWT.CENTER, SWT.BOTTOM, false, true, 1, 1));
-		addSubjectAltName.setImage(PluginDefaults.createImageDescriptor(PluginDefaults.IMG_LIST_ADD).createImage());
-		addSubjectAltName.addListener(SWT.Selection, (l) -> {
-			GeneralNameModel gmodel = new GeneralNameModel();
-			GeneralNameDialog d = new GeneralNameDialog(getShell(), gmodel);
-			if (d.open() == IDialogConstants.OK_ID) {
-				// update collection...
-				GeneralName[] names = (GeneralName[]) listSubjectAltNames.getInput();
-				names = appendArray(names, gmodel.createGeneralNameFromModel());
-				listSubjectAltNames.setInput(names);
-				listSubjectAltNames.refresh();
-				// don't use databinding due to complexity...
-				model.setSubjectAlternativeName(new GeneralNames(names));
-			}
-		});
-
-		Button remSubjectAltName = new Button(grpSubAltNames, SWT.FLAT);
-		remSubjectAltName.setLayoutData(new GridData(SWT.CENTER, SWT.TOP, false, true, 1, 1));
-		remSubjectAltName.setImage(PluginDefaults.createImageDescriptor(PluginDefaults.IMG_LIST_REMOVE).createImage());
-		remSubjectAltName.addListener(SWT.Selection, (l) -> {
-			IStructuredSelection selection = listSubjectAltNames.getStructuredSelection();
-			if (selection != null & !selection.isEmpty()) {
-				Object name = selection.getFirstElement();
-				if (name instanceof GeneralName) {
-					GeneralName gname = (GeneralName) name;
-					GeneralName[] names = (GeneralName[]) listSubjectAltNames.getInput();
-					listSubjectAltNames.setInput(removeArray(names, gname));
-					listSubjectAltNames.refresh();
-					// don't use databinding due to complexity...
-					model.setSubjectAlternativeName(new GeneralNames(names));
-				}
-			}
-		});
+		editSubjectAltName = new ToolItem(toolbar, SWT.FLAT);
+		editSubjectAltName.setImage(PluginDefaults.createImageDescriptor(isDark //
+				? PluginDefaults.IMG_LIST_EDIT_DARK
+				: PluginDefaults.IMG_LIST_EDIT).createImage());
+		editSubjectAltName.addListener(SWT.Selection, (l) -> editSANItem(model));
+		
+		remSubjectAltName = new ToolItem(toolbar, SWT.FLAT);
+		remSubjectAltName.setImage(PluginDefaults.createImageDescriptor(isDark //
+				? PluginDefaults.IMG_LIST_REMOVE_DARK
+				: PluginDefaults.IMG_LIST_REMOVE).createImage());
+		remSubjectAltName.addListener(SWT.Selection, (l) -> removeSANItem(model));
+		
+		editSubjectAltName.setEnabled(false);
+		remSubjectAltName.setEnabled(false);
 
 		Group grpExtKeyUsage = new Group(grpCertificateProperties, SWT.NONE);
 		grpExtKeyUsage.setText("Extended Key Usage");
@@ -542,6 +525,89 @@ public class CertificateTemplateComposite extends Composite {
 	}
 
 	/**
+	 * Update the SAN toolbar buttons.
+	 */
+	private void updateSANToolbar() {
+		IStructuredSelection selection = listSubjectAltNames.getStructuredSelection();
+		boolean hasSelection = (selection != null & !selection.isEmpty());
+		editSubjectAltName.setEnabled(hasSelection);
+		remSubjectAltName.setEnabled(hasSelection);
+	}
+
+	/**
+	 * Add a new Subject Alt Name item
+	 * 
+	 * @param model The model.
+	 */
+	private void addSANItem(NewCertificateModel model) {
+		GeneralNameModel gmodel = new GeneralNameModel();
+		GeneralNameDialog d = new GeneralNameDialog(getShell(), gmodel);
+		if (d.open() == IDialogConstants.OK_ID) {
+			// update collection...
+			GeneralName[] names = (GeneralName[]) listSubjectAltNames.getInput();
+			names = appendArray(names, gmodel.createGeneralNameFromModel());
+			listSubjectAltNames.setInput(names);
+			listSubjectAltNames.refresh();
+			// don't use databinding due to complexity...
+			model.setSubjectAlternativeName(new GeneralNames(names));
+		}
+		updateSANToolbar();
+	}
+
+	/**
+	 * Remove the selected Subject Alt Name item
+	 * 
+	 * @param model The model.
+	 */
+	private void removeSANItem(NewCertificateModel model) {
+		IStructuredSelection selection = listSubjectAltNames.getStructuredSelection();
+		if (selection != null & !selection.isEmpty()) {
+			Object name = selection.getFirstElement();
+			if (name instanceof GeneralName) {
+				GeneralName gname = (GeneralName) name;
+				GeneralName[] names = (GeneralName[]) listSubjectAltNames.getInput();
+				listSubjectAltNames.setInput(removeArray(names, gname));
+				listSubjectAltNames.refresh();
+				// don't use databinding due to complexity...
+				model.setSubjectAlternativeName(new GeneralNames(names));
+			}
+		}
+		updateSANToolbar();
+	}
+
+	/**
+	 * Edit the selected Subject Alt Name item
+	 * 
+	 * @param model The model.
+	 */
+	private void editSANItem(NewCertificateModel model) {
+		IStructuredSelection selected = listSubjectAltNames.getStructuredSelection();
+		if (selected != null && !selected.isEmpty()) {
+			Object element = selected.getFirstElement();
+			if (element instanceof GeneralName) {
+				GeneralName name = (GeneralName) element;
+				GeneralNameModel gmodel = new GeneralNameModel(name);
+				GeneralNameDialog d = new GeneralNameDialog(getShell(), gmodel);
+				if (d.open() == IDialogConstants.OK_ID) {
+					// update collection...
+					GeneralName[] names = (GeneralName[]) listSubjectAltNames.getInput();
+					for (int i = 0; i < names.length; i++) {
+						if (names[i].equals(name)) {
+							names[i] = gmodel.createGeneralNameFromModel();
+							break;
+						}
+					}
+					listSubjectAltNames.setInput(names);
+					listSubjectAltNames.refresh();
+					// don't use databinding due to complexity...
+					model.setSubjectAlternativeName(new GeneralNames(names));
+				}
+			}
+		}
+		updateSANToolbar();
+	}
+
+	/**
 	 * Append the item to the general name array
 	 * 
 	 * @param names The existing array
@@ -563,7 +629,7 @@ public class CertificateTemplateComposite extends Composite {
 	 * @return The resulting array with the element removed.
 	 */
 	private GeneralName[] removeArray(GeneralName[] names, GeneralName removeName) {
-		return Arrays.stream(names).filter(o -> !o.equals(removeName)).toArray(GeneralName[]::new);
+		return Arrays.stream(names).filter(o -> o != removeName).toArray(GeneralName[]::new);
 	}
 
 	@Override

@@ -85,11 +85,27 @@ public class PluginDefaults {
 	 * Default image for List add at size 16px
 	 */
 	public static final String IMG_LIST_ADD = "icons/list-add.png";
+	/**
+	 * Default image for List add at size 16px
+	 */
+	public static final String IMG_LIST_ADD_DARK = "icons/list-add-dark.png";
 	
 	/**
 	 * Default image for List remove at size 16px
 	 */
 	public static final String IMG_LIST_REMOVE = "icons/list-remove.png";
+	/**
+	 * Default image for List remove at size 16px
+	 */
+	public static final String IMG_LIST_REMOVE_DARK = "icons/list-remove-dark.png";
+	/**
+	 * Default image for List edit at size 16px
+	 */
+	public static final String IMG_LIST_EDIT = "icons/list-edit.png";
+	/**
+	 * Default image for List edit at size 16px
+	 */
+	public static final String IMG_LIST_EDIT_DARK = "icons/list-edit-dark.png";
 	/**
 	 * Default image for System Information at size 16px
 	 */

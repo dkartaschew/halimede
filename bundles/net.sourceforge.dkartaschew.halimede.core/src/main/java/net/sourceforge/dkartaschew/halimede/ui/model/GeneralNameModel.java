@@ -22,6 +22,7 @@ import java.util.Objects;
 import org.bouncycastle.asn1.x509.GeneralName;
 
 import net.sourceforge.dkartaschew.halimede.enumeration.GeneralNameTag;
+import net.sourceforge.dkartaschew.halimede.ui.labelproviders.GeneralNameLabelProvider;
 
 /**
  * Model for creation of General Name Dialog
@@ -54,7 +55,7 @@ public class GeneralNameModel {
 	public GeneralNameModel(GeneralName name) {
 		Objects.requireNonNull(name, "GeneralName cannot be null for model");
 		tag = GeneralNameTag.forTag(name.getTagNo());
-		value = name.getName().toString();
+		value = new GeneralNameLabelProvider().getValue(name);
 	}
 
 	/**

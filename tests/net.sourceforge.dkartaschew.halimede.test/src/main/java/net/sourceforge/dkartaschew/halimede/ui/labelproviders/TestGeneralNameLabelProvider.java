@@ -75,4 +75,31 @@ public class TestGeneralNameLabelProvider {
 		assertEquals("Other: Other", provider.getText(name));
 		assertEquals("Other", provider.getValue(name));
 	}
+	
+	@Test
+	public void testIPAddressv4() {
+		GeneralNameLabelProvider provider = new GeneralNameLabelProvider();
+		GeneralName name = GeneralNameTag.iPAddress.asGeneralName("127.0.0.1");
+		assertNull(provider.getImage(name));
+		assertEquals("IP Address: 127.0.0.1", provider.getText(name));
+		assertEquals("127.0.0.1", provider.getValue(name));
+	}
+	
+	@Test
+	public void testIPAddressv6() {
+		GeneralNameLabelProvider provider = new GeneralNameLabelProvider();
+		GeneralName name = GeneralNameTag.iPAddress.asGeneralName("2001:8003:74c6:3600:fa8b:bb8e:fdfc:2e19");
+		assertNull(provider.getImage(name));
+		assertEquals("IP Address: 2001:8003:74c6:3600:fa8b:bb8e:fdfc:2e19", provider.getText(name));
+		assertEquals("2001:8003:74c6:3600:fa8b:bb8e:fdfc:2e19", provider.getValue(name));
+	}
+	
+	@Test
+	public void testIPAddressv6_2() {
+		GeneralNameLabelProvider provider = new GeneralNameLabelProvider();
+		GeneralName name = GeneralNameTag.iPAddress.asGeneralName("2::1");
+		assertNull(provider.getImage(name));
+		assertEquals("IP Address: 2:0:0:0:0:0:0:1", provider.getText(name));
+		assertEquals("2:0:0:0:0:0:0:1", provider.getValue(name));
+	}
 }

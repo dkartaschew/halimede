@@ -17,6 +17,10 @@
 
 package net.sourceforge.dkartaschew.halimede.ui.labelproviders;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
+import org.bouncycastle.asn1.ASN1OctetString;
 import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x509.GeneralName;
@@ -46,12 +50,15 @@ public class GeneralNameLabelProvider extends LabelProvider {
 		case directoryName:
 			buf.append(X500Name.getInstance(name.getName()).toString());
 			break;
+		case iPAddress:
+			buf.append(getIPAddress(name));
+			break;
 		default:
 			buf.append(name.getName().toString());
 		}
 		return buf.toString();
 	}
-	
+
 	public String getValue(Object element) {
 		if (element == null || !(element instanceof GeneralName))
 			return "";
@@ -69,10 +76,29 @@ public class GeneralNameLabelProvider extends LabelProvider {
 		case directoryName:
 			buf.append(X500Name.getInstance(name.getName()).toString());
 			break;
+		case iPAddress:
+			buf.append(getIPAddress(name));
+			break;
 		default:
 			buf.append(name.getName().toString());
 		}
 		return buf.toString();
 	}
 
+	/**
+	 * Object the IP Address from the General Name.
+	 * 
+	 * @param name The general name to get the IP address from
+	 * @return The IP address in string form
+	 */
+	private String getIPAddress(GeneralName name) {
+		byte[] addr = ASN1OctetString.getInstance(name.getName()).getOctets();
+		try {
+			InetAddress inet = InetAddress.getByAddress(addr);
+			return inet.getHostAddress();
+		} catch (UnknownHostException e) {
+			// Should never happen
+			return ASN1OctetString.getInstance(name.getName()).toString();
+		}
+	}
 }
