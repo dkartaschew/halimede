@@ -46,6 +46,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotList;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotStyledText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarDropDownButton;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -123,7 +124,7 @@ public class TestSelfSignedCertificate {
 			extkeyusage.getTableItem("Code Signing").check();
 			extkeyusage.getTableItem("Email Protection").check();
 
-			SWTBotButton addBtn = bot.buttonInGroup("Subject Alternate Names", 0);
+			SWTBotToolbarButton addBtn = bot.toolbarButtonInGroup("Subject Alternate Names", 0);
 			SWTBotList sanTable = bot.listInGroup("Subject Alternate Names");
 			assertEquals(0, sanTable.itemCount());
 

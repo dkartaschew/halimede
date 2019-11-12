@@ -40,6 +40,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotList;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotStyledText;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTable;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotToolbarButton;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTree;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -350,8 +351,8 @@ public class TestCreateCertificate {
 			bot.textWithLabel("Description:").setText(certDescription);
 			bot.textWithLabel("Subject:").setText("CN=CAUser");
 			bot.comboBox(0).setSelection("RSA 512");
-			SWTBotButton addBtn = bot.buttonInGroup("Subject Alternate Names", 0);
-			SWTBotButton removeBtn = bot.buttonInGroup("Subject Alternate Names", 1);
+			SWTBotToolbarButton addBtn = bot.toolbarButtonInGroup("Subject Alternate Names", 0);
+			SWTBotToolbarButton removeBtn = bot.toolbarButtonInGroup("Subject Alternate Names", 2);
 			SWTBotList sanTable = bot.listInGroup("Subject Alternate Names");
 			assertEquals(0, sanTable.itemCount());
 
