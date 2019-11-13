@@ -26,7 +26,9 @@ Halimede includes the following 3rd-party art assets.
 | Certificate Icon | [Adwaita Icon Theme](https://github.com/GNOME/adwaita-icon-theme)                          | CC-BY-SA / GNU LGPL v3 |
 | List Add Icon    | [Adwaita Icon Theme](https://github.com/GNOME/adwaita-icon-theme)                          | CC-BY-SA / GNU LGPL v3 |
 | List Remove Icon | [Adwaita Icon Theme](https://github.com/GNOME/adwaita-icon-theme)                          | CC-BY-SA / GNU LGPL v3 |
+| List Edit Icon   | [Adwaita Icon Theme](https://github.com/GNOME/adwaita-icon-theme)                          | CC-BY-SA / GNU LGPL v3 |
 | Folder Icon      | [Adwaita Icon Theme](https://github.com/GNOME/adwaita-icon-theme)                          | CC-BY-SA / GNU LGPL v3 |
+| Info Icon        | [Adwaita Icon Theme](https://github.com/GNOME/adwaita-icon-theme)                          | CC-BY-SA / GNU LGPL v3 |
 
 ### GNOME Adwaita Icon Theme
 

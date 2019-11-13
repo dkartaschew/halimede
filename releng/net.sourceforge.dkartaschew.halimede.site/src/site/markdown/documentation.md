@@ -71,7 +71,7 @@ start menu. The MSI based installer includes OpenJDK 11 (from Azul).
 ### Apple OS X / macOS
 
 Download and run the PKG installer. Halimede will be available from 
-Applications. The PKG installer includes OpenJDK 11 (from Azul).
+Applications. The PKG installer includes OpenJDK 11 (from AdoptOpenJDK).
 
 ### GNU/Linux
 
