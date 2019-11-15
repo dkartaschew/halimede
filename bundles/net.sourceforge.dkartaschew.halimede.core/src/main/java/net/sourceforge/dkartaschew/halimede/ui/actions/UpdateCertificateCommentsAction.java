@@ -31,7 +31,6 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
@@ -63,12 +62,13 @@ public class UpdateCertificateCommentsAction extends Action {
 
 	@Inject
 	private Logger logger;
-	
-	@Inject 
+
+	@Inject
 	private UISynchronize sync;
 
 	/**
 	 * Create a new Comment update action
+	 * 
 	 * @param certificate The certificate to update
 	 * @param ca The holding CA
 	 * @param caDetailsPane The pane to request a refresh.
@@ -85,7 +85,8 @@ public class UpdateCertificateCommentsAction extends Action {
 	@Override
 	public void run() {
 		ca.getActivityLogger().log(Level.INFO, "Certificate Comment {0}", certificate.getProperty(Key.subject));
-		UpdateCommentDialog dialog = new UpdateCommentDialog(shell, "Comment", "Issued Certificate Comments:", certificate.getProperty(Key.comments));
+		UpdateCommentDialog dialog = new UpdateCommentDialog(shell, "Comment", "Issued Certificate Comments:",
+				certificate.getProperty(Key.comments));
 		if (dialog.open() == IDialogConstants.OK_ID) {
 
 			String desc = certificate.getProperty(Key.description);
@@ -98,7 +99,8 @@ public class UpdateCertificateCommentsAction extends Action {
 				try {
 					SubMonitor subMonitor = SubMonitor.convert(monitor, d, 1);
 					certificate.setProperty(Key.comments, dialog.getValue());
-					ca.getActivityLogger().log(Level.INFO, "Updated Certificate Comment {0}", certificate.getProperty(Key.subject));
+					ca.getActivityLogger().log(Level.INFO, "Updated Certificate Comment {0}",
+							certificate.getProperty(Key.subject));
 					// Get the CA to update the backing store.
 					ca.updateIssuedCertificateProperties(certificate);
 					// And get the Pane to do a refresh. (simple property updates won't propagated through).
@@ -106,16 +108,16 @@ public class UpdateCertificateCommentsAction extends Action {
 					subMonitor.done();
 
 					sync.asyncExec(() -> {
-						MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Comment Updated",
+						MessageDialog.openInformation(shell, "Comment Updated",
 								"The comments for this certificate has been updated.");
 					});
 
 				} catch (Throwable ex) {
 					logger.error(ex, ExceptionUtil.getMessage(ex));
 					sync.asyncExec(() -> {
-						MessageDialog.openError(Display.getDefault().getActiveShell(),
-								"Updating the Certificate Failed",
-								"Updating the Certificte failed with the following error: " + ExceptionUtil.getMessage(ex));
+						MessageDialog.openError(shell, "Updating the Certificate Failed",
+								"Updating the Certificte failed with the following error: "
+										+ ExceptionUtil.getMessage(ex));
 					});
 				}
 				if (monitor != null) {

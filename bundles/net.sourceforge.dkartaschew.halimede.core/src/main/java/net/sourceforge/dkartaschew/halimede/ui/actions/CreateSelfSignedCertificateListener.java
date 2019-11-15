@@ -20,6 +20,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 import java.security.cert.X509Certificate;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -33,10 +34,13 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Shell;
+
 import net.sourceforge.dkartaschew.halimede.data.CertificateFactory;
 import net.sourceforge.dkartaschew.halimede.data.ICertificateRequest;
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
@@ -66,9 +70,14 @@ public class CreateSelfSignedCertificateListener implements SelectionListener {
 
 	@Inject
 	private IEclipseContext context;
-		
-	@Inject 
+
+	@Inject
 	private UISynchronize sync;
+
+	@Inject
+	@Named(IServiceConstants.ACTIVE_SHELL)
+	protected Shell shell;
+
 	/**
 	 * Binding context...
 	 */
@@ -127,8 +136,9 @@ public class CreateSelfSignedCertificateListener implements SelectionListener {
 					p.setProperty(Key.subject, model.getSubject().toString());
 					p.setProperty(Key.creationDate, DateTimeUtil.toString(model.getCreationDate()));
 					p.setProperty(Key.certificateSerialNumber, cert.getSerialNumber().toString());
-					
-					ViewCertificateInformationAction action = new ViewCertificateInformationAction(p, null, editor, true);
+
+					ViewCertificateInformationAction action = new ViewCertificateInformationAction(p, null, editor,
+							true);
 					ContextInjectionFactory.inject(action, context);
 					sync.asyncExec(action);
 
@@ -137,8 +147,9 @@ public class CreateSelfSignedCertificateListener implements SelectionListener {
 				} catch (Throwable ex) {
 					part.setClosable(true);
 					sync.asyncExec(() -> {
-						MessageDialog.openError(e.display.getActiveShell(), "Creating the Certificate Failed",
-								"Creating the Certificate failed with the following error: " + ExceptionUtil.getMessage(ex));
+						MessageDialog.openError(shell, "Creating the Certificate Failed",
+								"Creating the Certificate failed with the following error: "
+										+ ExceptionUtil.getMessage(ex));
 					});
 				}
 				if (monitor != null) {
@@ -151,7 +162,7 @@ public class CreateSelfSignedCertificateListener implements SelectionListener {
 			job.schedule();
 
 		} else {
-			MessageDialog.openError(e.display.getActiveShell(), "Missing details",
+			MessageDialog.openError(shell, "Missing details",
 					"Please check certificate request information: " + s.getMessage());
 		}
 	}

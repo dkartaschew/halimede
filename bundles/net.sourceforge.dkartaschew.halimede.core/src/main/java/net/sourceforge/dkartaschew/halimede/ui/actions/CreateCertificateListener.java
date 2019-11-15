@@ -20,6 +20,7 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 import java.util.logging.Level;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -31,10 +32,13 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Shell;
+
 import net.sourceforge.dkartaschew.halimede.data.ICertificateRequest;
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
 import net.sourceforge.dkartaschew.halimede.ui.NewCertificateDetailsPart;
@@ -58,9 +62,12 @@ public class CreateCertificateListener implements SelectionListener {
 	 * Binding context...
 	 */
 	private IObservableValue<IStatus> validationStatus;
-	
-	
-	@Inject 
+
+	@Inject
+	@Named(IServiceConstants.ACTIVE_SHELL)
+	protected Shell shell;
+
+	@Inject
 	private UISynchronize sync;
 
 	public CreateCertificateListener(NewCertificateModel model, NewCertificateDetailsPart part) {
@@ -80,7 +87,7 @@ public class CreateCertificateListener implements SelectionListener {
 
 	@Override
 	public void widgetSelected(SelectionEvent e) {
-		if(e.detail == SWT.ARROW || validationStatus == null) {
+		if (e.detail == SWT.ARROW || validationStatus == null) {
 			return;
 		}
 		IStatus s = validationStatus.getValue();
@@ -92,7 +99,8 @@ public class CreateCertificateListener implements SelectionListener {
 				try {
 					model.getCa().getActivityLogger().log(Level.INFO, "Start create Certificate");
 					part.setClosable(false);
-					SubMonitor subMonitor = SubMonitor.convert(monitor, "Create Certificate - " + model.getDescription(), 2);
+					SubMonitor subMonitor = SubMonitor.convert(monitor,
+							"Create Certificate - " + model.getDescription(), 2);
 					ICertificateRequest r = model.asCertificateRequest();
 					// This will generate the keying material.
 					r.getSubjectPublicKeyInfo();
@@ -104,7 +112,7 @@ public class CreateCertificateListener implements SelectionListener {
 							model.getExpiryDate(), //
 							model.isUseCAPassword() ? model.getCa().getPassword() : model.getPassword());
 					subMonitor.worked(1);
-					
+
 					// Close the part.
 					part.close();
 
@@ -117,11 +125,12 @@ public class CreateCertificateListener implements SelectionListener {
 				} catch (Throwable ex) {
 					part.setClosable(true);
 					sync.asyncExec(() -> {
-						MessageDialog.openError(e.display.getActiveShell(), "Creating the Certificate Failed",
-								"Creating the Certificate failed with the following error: " + ExceptionUtil.getMessage(ex));
+						MessageDialog.openError(shell, "Creating the Certificate Failed",
+								"Creating the Certificate failed with the following error: "
+										+ ExceptionUtil.getMessage(ex));
 					});
 				}
-				if(monitor != null) {
+				if (monitor != null) {
 					monitor.done();
 				}
 				return Status.OK_STATUS;
@@ -131,7 +140,7 @@ public class CreateCertificateListener implements SelectionListener {
 			job.schedule();
 
 		} else {
-			MessageDialog.openError(e.display.getActiveShell(), "Missing details", 
+			MessageDialog.openError(shell, "Missing details",
 					"Please check certificate request information: " + s.getMessage());
 		}
 	}

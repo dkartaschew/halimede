@@ -31,7 +31,6 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
@@ -63,8 +62,8 @@ public class UpdateCertificateRequestsCommentsAction extends Action {
 
 	@Inject
 	private Logger logger;
-	
-	@Inject 
+
+	@Inject
 	private UISynchronize sync;
 
 	/**
@@ -96,7 +95,8 @@ public class UpdateCertificateRequestsCommentsAction extends Action {
 				try {
 					SubMonitor subMonitor = SubMonitor.convert(monitor, "Update Comments - " + desc, 1);
 					request.setProperty(Key.comments, dialog.getValue());
-					ca.getActivityLogger().log(Level.INFO, "Updated Certificate Request Comment {0}", request.getProperty(Key.subject));
+					ca.getActivityLogger().log(Level.INFO, "Updated Certificate Request Comment {0}",
+							request.getProperty(Key.subject));
 					// Get the CA to update the backing store.
 					ca.updateCertificateRequestProperties(request);
 					// And get the Pane to do a refresh. (simple property updates won't propagated through).
@@ -104,16 +104,16 @@ public class UpdateCertificateRequestsCommentsAction extends Action {
 					subMonitor.done();
 
 					sync.asyncExec(() -> {
-						MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Comment Updated",
+						MessageDialog.openInformation(shell, "Comment Updated",
 								"The comments for this certificate request has been updated.");
 					});
 
 				} catch (Throwable ex) {
 					logger.error(ex, ExceptionUtil.getMessage(ex));
 					sync.asyncExec(() -> {
-						MessageDialog.openError(Display.getDefault().getActiveShell(),
-								"Updating the Certificate Request Failed",
-								"Updating the Certificte Request failed with the following error: " + ExceptionUtil.getMessage(ex));
+						MessageDialog.openError(shell, "Updating the Certificate Request Failed",
+								"Updating the Certificte Request failed with the following error: "
+										+ ExceptionUtil.getMessage(ex));
 					});
 				}
 				if (monitor != null) {

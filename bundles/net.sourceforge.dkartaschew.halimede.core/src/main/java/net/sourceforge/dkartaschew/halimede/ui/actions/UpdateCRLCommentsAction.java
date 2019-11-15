@@ -31,7 +31,6 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CRLProperties;
@@ -63,8 +62,8 @@ public class UpdateCRLCommentsAction extends Action {
 
 	@Inject
 	private Logger logger;
-	
-	@Inject 
+
+	@Inject
 	private UISynchronize sync;
 
 	/**
@@ -95,7 +94,8 @@ public class UpdateCRLCommentsAction extends Action {
 				try {
 					SubMonitor subMonitor = SubMonitor.convert(monitor, "Update Comments - " + desc, 1);
 					crl.setProperty(Key.comments, dialog.getValue());
-					ca.getActivityLogger().log(Level.INFO, "Updated CRL Comment {0}", crl.getProperty(Key.crlSerialNumber));
+					ca.getActivityLogger().log(Level.INFO, "Updated CRL Comment {0}",
+							crl.getProperty(Key.crlSerialNumber));
 					// Get the CA to update the backing store.
 					ca.updateCRLProperties(crl);
 					// And get the Pane to do a refresh. (simple property updates won't propagated through).
@@ -103,14 +103,14 @@ public class UpdateCRLCommentsAction extends Action {
 					subMonitor.done();
 
 					sync.asyncExec(() -> {
-						MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Comment Updated",
+						MessageDialog.openInformation(shell, "Comment Updated",
 								"The comments for this CRL has been updated.");
 					});
 
 				} catch (Throwable ex) {
 					logger.error(ex, ExceptionUtil.getMessage(ex));
 					sync.asyncExec(() -> {
-						MessageDialog.openError(Display.getDefault().getActiveShell(), "Updating the CRL Failed",
+						MessageDialog.openError(shell, "Updating the CRL Failed",
 								"Updating the CRL failed with the following error: " + ExceptionUtil.getMessage(ex));
 					});
 				}

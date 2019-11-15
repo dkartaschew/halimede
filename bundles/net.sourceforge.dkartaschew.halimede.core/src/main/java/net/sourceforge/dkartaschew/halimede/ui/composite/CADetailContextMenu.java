@@ -40,6 +40,7 @@ import net.sourceforge.dkartaschew.halimede.ui.actions.CreateCertificateFromCSRA
 import net.sourceforge.dkartaschew.halimede.ui.actions.CreateCertificateFromTemplateAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.DeleteCertificateRequestAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.DeleteTemplateAction;
+import net.sourceforge.dkartaschew.halimede.ui.actions.DuplicateTemplateAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.EditTemplateAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.RevokeCertificateAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.UpdateCRLCommentsAction;
@@ -115,6 +116,7 @@ public class CADetailContextMenu implements IMenuListener {
 					manager.add(toACI(new CreateCertificateFromTemplateAction(ca, e, editor)));
 				}
 				manager.add(toACI(new EditTemplateAction(ca, e, editor)));
+				manager.add(toACI(new DuplicateTemplateAction(ca, e)));
 				manager.add(toACI(new DeleteTemplateAction(e, ca)));
 			}
 			if (element instanceof CertificateRequestProperties) {

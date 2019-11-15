@@ -60,11 +60,7 @@ public class CreateNewTemplateAction extends Action {
 
 	@Inject
 	private EModelService modelService;
-//
-//	@Inject
-//	@Named(IServiceConstants.ACTIVE_SHELL)
-//	private Shell parent;
-	
+
 	/**
 	 * Create an action that will create a new template.
 	 * 
@@ -87,7 +83,7 @@ public class CreateNewTemplateAction extends Action {
 		}
 
 		ca.getActivityLogger().log(Level.INFO, "Start create Template");
-		
+
 		// Create a new one.
 		MPart part = MBasicFactory.INSTANCE.createPart();
 		part.setLabel(TemplateDetailsPart.LABEL);

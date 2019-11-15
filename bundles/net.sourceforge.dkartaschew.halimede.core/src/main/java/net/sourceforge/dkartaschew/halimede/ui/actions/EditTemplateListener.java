@@ -20,16 +20,18 @@ package net.sourceforge.dkartaschew.halimede.ui.actions;
 import java.util.logging.Level;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.ui.TemplateDetailsPart;
 import net.sourceforge.dkartaschew.halimede.ui.model.NewCertificateModel;
@@ -42,12 +44,17 @@ public class EditTemplateListener implements SelectionListener {
 	 * The part to close if successful
 	 */
 	private final TemplateDetailsPart part;
-		
-	@Inject 
+
+	@Inject
+	@Named(IServiceConstants.ACTIVE_SHELL)
+	protected Shell shell;
+
+	@Inject
 	private UISynchronize sync;
-	
+
 	/**
 	 * Edit a certificate template instance.
+	 * 
 	 * @param model The certificate model.
 	 * @param part The part to close.
 	 */
@@ -58,7 +65,7 @@ public class EditTemplateListener implements SelectionListener {
 
 	@Override
 	public void widgetSelected(SelectionEvent e) {
-		if(e != null && e.detail == SWT.ARROW) {
+		if (e != null && e.detail == SWT.ARROW) {
 			return;
 		}
 		Job job = Job.create("Update Template - " + model.getDescription(), monitor -> {
@@ -68,21 +75,20 @@ public class EditTemplateListener implements SelectionListener {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Update Template - " + model.getDescription(), 1);
 				model.getCa().addTemplate(model.asTemplate());
 				subMonitor.done();
-				
+
 				sync.asyncExec(() -> {
-					MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Template Updated",
-							"The template has been updated.");
+					MessageDialog.openInformation(shell, "Template Updated", "The template has been updated.");
 				});
 				// Close the part.
 				part.close();
 
 			} catch (Throwable ex) {
 				sync.asyncExec(() -> {
-					MessageDialog.openError(Display.getDefault().getActiveShell(), "Creating the Template Failed",
+					MessageDialog.openError(shell, "Creating the Template Failed",
 							"Creating the Template failed with the following error: " + ExceptionUtil.getMessage(ex));
 				});
 			}
-			if(monitor != null) {
+			if (monitor != null) {
 				monitor.done();
 			}
 			return Status.OK_STATUS;

@@ -43,7 +43,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.PluginDefaults;
@@ -125,9 +124,6 @@ public class ViewCertificateInformationAction extends Action implements Selectio
 
 	@Override
 	public void run() {
-		if (shell == null || shell.isDisposed()) {
-			shell = Display.getDefault().getActiveShell();
-		}
 		try {
 			if (certificate == null) {
 				if (logger != null) {
@@ -205,7 +201,7 @@ public class ViewCertificateInformationAction extends Action implements Selectio
 			this.certificate.getCertificateAuthority().getActivityLogger().log(Level.INFO,
 					"View Certificate Details {0}", this.certificate.getProperty(Key.subject));
 		}
-		
+
 		// Create a new one.
 		MPart part = MBasicFactory.INSTANCE.createPart();
 		part.setLabel("Certificate '" + desc + "' Details");
