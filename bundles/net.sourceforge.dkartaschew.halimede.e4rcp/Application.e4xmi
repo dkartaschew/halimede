@@ -41,6 +41,11 @@
     <trimBars xmi:id="_AyOf0BntEeiyk-m9meRZbg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.trimbar.status" side="Bottom">
       <children xsi:type="menu:ToolControl" xmi:id="_B_bSwBntEeiyk-m9meRZbg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.toolcontrol.progress" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.e4rcp.ui.ProgressMonitorControl"/>
     </trimBars>
+    <trimBars xmi:id="_x92CcAf7EeqtlqKp-j51wQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.trimbar.application">
+      <children xsi:type="menu:ToolBar" xmi:id="_ztD9UAf7EeqtlqKp-j51wQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.toolbar.application">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_20CVUAf7EeqtlqKp-j51wQ" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledtoolitem.new" iconURI="platform:/plugin/net.sourceforge.dkartaschew.halimede.core/icons/application-certificate.png" command="_iyQ_UOFyEeiEkIwtzvWRLQ"/>
+      </children>
+    </trimBars>
   </children>
   <handlers xmi:id="_LScJkBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.createcert" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.e4rcp.command.CreateCertifcate" command="_0TF48BkYEeiXffmC_tm0rw"/>
   <handlers xmi:id="_SPjFoBkZEeiXffmC_tm0rw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handler.viewcert" contributionURI="bundleclass://net.sourceforge.dkartaschew.halimede.e4rcp/net.sourceforge.dkartaschew.halimede.e4rcp.command.ShowCertificate" command="_5Ov6oBkYEeiXffmC_tm0rw"/>
