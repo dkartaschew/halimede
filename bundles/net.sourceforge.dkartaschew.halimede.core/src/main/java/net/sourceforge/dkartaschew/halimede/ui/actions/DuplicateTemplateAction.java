@@ -24,8 +24,8 @@ import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.InputDialog;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
@@ -42,11 +42,11 @@ public class DuplicateTemplateAction extends Action {
 	 * The node that contains the reference to the CA
 	 */
 	private CertificateAuthority ca;
-	
+
 	@Inject
 	@Named(IServiceConstants.ACTIVE_SHELL)
 	protected Shell shell;
-	
+
 	@Inject
 	private IEclipseContext context;
 
@@ -69,9 +69,11 @@ public class DuplicateTemplateAction extends Action {
 		NewCertificateModel model = new NewCertificateModel(ca, element);
 		model.setRepresentsTemplateOnly(true);
 
-		InputDialog dialog = new InputDialog(shell, "Description", "Enter Template Description", model.getDescription(),
-				null);
-		if (dialog.open() == SWT.CANCEL) {
+		InputDialog dialog = new InputDialog(shell, "Description", "Enter Description for Duplicated Template",
+				model.getDescription(), null);
+
+		if (dialog.open() == IDialogConstants.CANCEL_ID) {
+			// Abort
 			return;
 		}
 		model.setDescription(dialog.getValue());
