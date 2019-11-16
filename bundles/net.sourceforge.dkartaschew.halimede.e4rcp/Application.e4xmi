@@ -64,7 +64,7 @@
           <parameters xmi:id="_AM_5EAhaEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.9" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
         </children>
         <children xsi:type="menu:ToolBarSeparator" xmi:id="_2WNA0AheEeqrJr34N2Datg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.toolbarseparator.1"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_5MPZ0AheEeqrJr34N2Datg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledtoolitem.lockall" label="Lock" tooltip="Lock All Certificate Authorities" command="_j5AFsAheEeqrJr34N2Datg"/>
+        <children xsi:type="menu:HandledToolItem" xmi:id="_5MPZ0AheEeqrJr34N2Datg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledtoolitem.lockall" label="" iconURI="platform:/plugin/net.sourceforge.dkartaschew.halimede.e4rcp/icons/lockall.png" tooltip="Lock All Certificate Authorities" command="_j5AFsAheEeqrJr34N2Datg"/>
       </children>
     </trimBars>
     <trimBars xmi:id="_AyOf0BntEeiyk-m9meRZbg" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.trimbar.status" side="Bottom">
