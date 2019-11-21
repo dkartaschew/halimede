@@ -48,7 +48,7 @@
         </children>
         <children xsi:type="menu:HandledToolItem" xmi:id="_jlHIEAhYEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledtoolitem.open" label="" iconURI="platform:/plugin/net.sourceforge.dkartaschew.halimede.core/icons/folder.png" tooltip="Open an existing Certificate Authority" command="_7OPQ4OFwEeiEkIwtzvWRLQ"/>
         <children xsi:type="menu:ToolBarSeparator" xmi:id="_8P1VYAhYEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.toolbarseparator.0"/>
-        <children xsi:type="menu:HandledToolItem" xmi:id="__CH20AhYEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledtoolitem.createSSC" label="SSC" tooltip="Create a new Self Signed Certificate" command="_0TF48BkYEeiXffmC_tm0rw">
+        <children xsi:type="menu:HandledToolItem" xmi:id="__CH20AhYEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledtoolitem.createSSC" label="" iconURI="platform:/plugin/net.sourceforge.dkartaschew.halimede.e4rcp/icons/certificate_self.png" tooltip="Create a new Self Signed Certificate" command="_0TF48BkYEeiXffmC_tm0rw">
           <parameters xmi:id="_zFTqEAhZEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.5" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
         </children>
         <children xsi:type="menu:HandledToolItem" xmi:id="_JDnJ4AhZEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledtoolitem.opencert" label="Cert" tooltip="View a Certificate" command="_5Ov6oBkYEeiXffmC_tm0rw">
