@@ -26,3 +26,7 @@ inkscape -z -e certificate_req@1.5x.png -w 24 -h 24 certificate_req.svg;
 inkscape -z -e certificate_req@2x.png -w 32 -h 32 certificate_req.svg; 
 inkscape -z -e certificate_req@3x.png -w 48 -h 48 certificate_req.svg; 
 
+inkscape -z -e crl_view.png -w 16 -h 16 crl_view.svg; 
+inkscape -z -e crl_view@1.5x.png -w 24 -h 24 crl_view.svg; 
+inkscape -z -e crl_view@2x.png -w 32 -h 32 crl_view.svg; 
+inkscape -z -e crl_view@3x.png -w 48 -h 48 crl_view.svg; 
