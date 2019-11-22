@@ -57,7 +57,7 @@
         <children xsi:type="menu:HandledToolItem" xmi:id="_Q67rcAhZEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledtoolitem.openp12" label="" iconURI="platform:/plugin/net.sourceforge.dkartaschew.halimede.e4rcp/icons/pkcs12_view.png" tooltip="View Contents of a PKCS#12 File" command="_HwcCcBkZEeiXffmC_tm0rw">
           <parameters xmi:id="_8JMscAhZEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.7" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
         </children>
-        <children xsi:type="menu:HandledToolItem" xmi:id="_X_KjMAhZEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledtoolitem.opencsr" label="CSR" tooltip="View a Certificate Signing Request" command="_CG8DUBkZEeiXffmC_tm0rw">
+        <children xsi:type="menu:HandledToolItem" xmi:id="_X_KjMAhZEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledtoolitem.opencsr" label="" iconURI="platform:/plugin/net.sourceforge.dkartaschew.halimede.e4rcp/icons/certificate_req.png" tooltip="View a Certificate Signing Request" command="_CG8DUBkZEeiXffmC_tm0rw">
           <parameters xmi:id="_-PGpAAhZEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.parameter.8" name="net.sourceforge.dkartaschew.halimede.handler.show.commandparameter.editorid" value="net.sourceforge.dkartaschew.halimede.e4rcp.primary"/>
         </children>
         <children xsi:type="menu:HandledToolItem" xmi:id="_gDlFkAhZEeqmwblXsCXCIw" elementId="net.sourceforge.dkartaschew.halimede.e4rcp.handledtoolitem.opencrl" label="CRL" tooltip="View a Certificate Revocation List" command="_-9BsEBkYEeiXffmC_tm0rw">

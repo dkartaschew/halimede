@@ -71,16 +71,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="6.7815549"
-     inkscape:cy="10.613125"
+     inkscape:zoom="45.254834"
+     inkscape:cx="4.745357"
+     inkscape:cy="7.9614746"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
      inkscape:pagecheckerboard="false"
-     inkscape:window-width="1024"
-     inkscape:window-height="550"
+     inkscape:window-width="1680"
+     inkscape:window-height="1002"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1" />
@@ -92,7 +92,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -102,30 +102,17 @@
      id="layer1"
      transform="translate(0,-292.76665)">
     <path
-       style="opacity:1;fill:url(#linearGradient867);fill-opacity:1;fill-rule:nonzero;stroke:url(#linearGradient832);stroke-width:0.33023813;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:3.20000005;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
-       d="m 0.44623889,293.77509 0.72784971,-0.84336 h 2.6295421 v 3.9031 H 0.42970243 Z"
+       style="opacity:1;fill:url(#linearGradient867);fill-opacity:1;fill-rule:nonzero;stroke:url(#linearGradient832);stroke-width:0.33020001;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3.20000005;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+       d="m 0.48515833,292.92972 2.67330527,0.002 0.6451671,0.76068 v 3.14242 H 0.42970243 Z"
        id="rect834"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccccc" />
-    <ellipse
-       style="opacity:1;fill:#ff6600;fill-opacity:1;stroke:#552200;stroke-width:0.26458335;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4640"
-       cx="2.2406902"
-       cy="294.23013"
-       rx="0.60358077"
-       ry="0.65319014" />
     <path
-       style="opacity:1;fill:#ff6600;fill-opacity:1;stroke:#552200;stroke-width:0.28497237;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       d="m 1.9182292,294.85281 h 0.6614583 l -0.1488281,0.31989 0.1570964,0.29766 -0.1570964,0.24805 0.1334828,0.24604 -0.2161651,0.30793 H 1.9182292 Z"
-       id="rect4642"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccccccc" />
-    <ellipse
-       style="opacity:0.95;fill:#803300;fill-opacity:1;stroke:#aa4400;stroke-width:0.26458335;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       id="path4645"
-       cx="2.2406902"
-       cy="294.20947"
-       rx="0.10748698"
-       ry="0.12815756" />
+       d="m 1.2019283,294.18161 a 0.77614107,0.77614107 0 0 1 0.7761393,-0.77614 0.77614107,0.77614107 0 0 1 0.7761508,0.77614 0.77614107,0.77614107 0 0 1 -0.5821045,0.75092 v 0.80137 h 0.3880697 v 0.5821 H 1.7840443 v -1.38405 a 0.77614107,0.77614107 0 0 1 -0.582116,-0.75034 z m 0.3880812,0 a 0.38807055,0.38807055 0 0 0 0.3880581,0.38807 0.38807055,0.38807055 0 0 0 0.3880811,-0.38807 0.38807055,0.38807055 0 0 0 -0.3880811,-0.38807 0.38807055,0.38807055 0 0 0 -0.3880581,0.38807 z"
+       style="color:#000000;font-weight:400;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;text-transform:none;text-orientation:mixed;white-space:normal;shape-padding:0;overflow:visible;isolation:auto;mix-blend-mode:normal;fill:#4d4d4d;stroke-width:0.19403528;marker:none"
+       font-weight="400"
+       overflow="visible"
+       id="path2" />
   </g>
 </svg>
