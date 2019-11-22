@@ -16,14 +16,14 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 5da689c313, 2019-01-14"
-   sodipodi:docname="certificate_self.svg">
+   sodipodi:docname="certificate_view.svg">
   <defs
      id="defs2">
     <linearGradient
        inkscape:collect="always"
        id="linearGradient830">
       <stop
-         style="stop-color:#6f6f6f;stop-opacity:1"
+         style="stop-color:#999999;stop-opacity:1"
          offset="0"
          id="stop826" />
       <stop
@@ -92,7 +92,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -117,7 +117,7 @@
        inkscape:connector-curvature="0"
        id="path838"
        d="M 0.89617597,293.59519 H 3.2590364 v 0"
-       style="fill:none;fill-opacity:1;stroke:#666666;stroke-width:0.50932068;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="fill:none;fill-opacity:1;stroke:#999999;stroke-width:0.50932068;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <path
        inkscape:connector-curvature="0"
        id="path838-3"
@@ -134,8 +134,7 @@
        d="M 0.79375003,295.80453 H 3.4395834 v 0"
        style="fill:#333333;stroke:#808080;stroke-width:0.27424169px;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1" />
     <g
-       id="g876"
-       style="">
+       id="g876">
       <path
          inkscape:connector-curvature="0"
          id="path872"
@@ -154,5 +153,17 @@
          id="path870-6"
          style="opacity:1;fill:#ffe680;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.01709965;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:3.20000005;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke" />
     </g>
+    <ellipse
+       style="opacity:0.95;fill:none;fill-opacity:1;stroke:#333333;stroke-width:0.53075421;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="path4616"
+       cx="1.9319954"
+       cy="294.58844"
+       rx="0.95173252"
+       ry="0.95173258" />
+    <path
+       style="opacity:0.95;fill:none;fill-rule:evenodd;stroke:#333333;stroke-width:0.5291667;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 0.26699551,296.73249 0.79374999,-0.95911 v 0"
+       id="path4618"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>
