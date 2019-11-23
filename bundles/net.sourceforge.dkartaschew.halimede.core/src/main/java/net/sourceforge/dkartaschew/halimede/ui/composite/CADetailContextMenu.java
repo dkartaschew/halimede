@@ -26,6 +26,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 
@@ -36,12 +37,16 @@ import net.sourceforge.dkartaschew.halimede.data.ICertificateKeyPairTemplate;
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties;
 import net.sourceforge.dkartaschew.halimede.data.IssuedCertificateProperties.Key;
 import net.sourceforge.dkartaschew.halimede.exceptions.DatastoreLockedException;
+import net.sourceforge.dkartaschew.halimede.ui.actions.CreateCRLAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.CreateCertificateFromCSRAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.CreateCertificateFromTemplateAction;
+import net.sourceforge.dkartaschew.halimede.ui.actions.CreateIssuedCertificateAction;
+import net.sourceforge.dkartaschew.halimede.ui.actions.CreateNewTemplateAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.DeleteCertificateRequestAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.DeleteTemplateAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.DuplicateTemplateAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.EditTemplateAction;
+import net.sourceforge.dkartaschew.halimede.ui.actions.ImportCSRAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.RevokeCertificateAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.UpdateCRLCommentsAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.UpdateCertificateCommentsAction;
@@ -109,6 +114,14 @@ public class CADetailContextMenu implements IMenuListener {
 				if (e.getProperty(Key.csrStore) != null) {
 					manager.add(toACI(new ViewCertificateRequestInformationAction(e, editor)));
 				}
+				if (e.getProperty(Key.revokeDate) == null && !ca.isLocked()) {
+					manager.add(new Separator());
+					manager.add(toACI(new CreateIssuedCertificateAction(ca, editor)));
+				}
+				if (e.getProperty(Key.revokeDate) != null && !ca.isLocked()) {
+					manager.add(new Separator());
+					manager.add(toACI(new CreateCRLAction(ca, editor)));
+				}
 			}
 			if (element instanceof ICertificateKeyPairTemplate) {
 				final ICertificateKeyPairTemplate e = (ICertificateKeyPairTemplate) element;
@@ -118,6 +131,8 @@ public class CADetailContextMenu implements IMenuListener {
 				manager.add(toACI(new EditTemplateAction(ca, e, editor)));
 				manager.add(toACI(new DuplicateTemplateAction(ca, e)));
 				manager.add(toACI(new DeleteTemplateAction(e, ca)));
+				manager.add(new Separator());
+				manager.add(toACI(new CreateNewTemplateAction(ca, editor)));
 			}
 			if (element instanceof CertificateRequestProperties) {
 				CertificateRequestProperties e = (CertificateRequestProperties) element;
@@ -127,10 +142,16 @@ public class CADetailContextMenu implements IMenuListener {
 				}
 				manager.add(toACI(new UpdateCertificateRequestsCommentsAction(e, ca, caDetailsPane)));
 				manager.add(toACI(new DeleteCertificateRequestAction(e, ca, null)));
+				manager.add(new Separator());
+				manager.add(toACI(new ImportCSRAction(ca)));
 			}
 			if (element instanceof CRLProperties) {
 				manager.add(toACI(new ViewCRLAction((CRLProperties) element, editor)));
 				manager.add(toACI(new UpdateCRLCommentsAction((CRLProperties) element, ca, caDetailsPane)));
+				if (!ca.isLocked()) {
+					manager.add(new Separator());
+					manager.add(toACI(new CreateCRLAction(ca, editor)));
+				}
 			}
 			injectMenuItems(manager);
 		}
@@ -145,7 +166,7 @@ public class CADetailContextMenu implements IMenuListener {
 	private ActionContributionItem toACI(IAction action) {
 		return new ActionContributionItemEx(action);
 	}
-	
+
 	/**
 	 * Force injection of all menu items.
 	 * 

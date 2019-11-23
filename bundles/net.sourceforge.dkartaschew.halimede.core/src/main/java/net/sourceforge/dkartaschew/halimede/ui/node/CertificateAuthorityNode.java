@@ -120,7 +120,7 @@ public class CertificateAuthorityNode implements ICertificateTreeNode {
 
 	@Override
 	public Object[] getItems() {
-		return new Object[0];
+		return null; //new Object[0]; // Note; CADetails Pane assumes null is this node
 	}
 
 	@Override

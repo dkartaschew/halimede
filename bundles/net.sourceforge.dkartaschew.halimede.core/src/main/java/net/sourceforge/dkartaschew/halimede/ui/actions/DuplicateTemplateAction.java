@@ -25,11 +25,11 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.widgets.Shell;
 
 import net.sourceforge.dkartaschew.halimede.data.CertificateAuthority;
 import net.sourceforge.dkartaschew.halimede.data.ICertificateKeyPairTemplate;
+import net.sourceforge.dkartaschew.halimede.ui.dialogs.InputDialogEx;
 import net.sourceforge.dkartaschew.halimede.ui.model.NewCertificateModel;
 
 public class DuplicateTemplateAction extends Action {
@@ -69,8 +69,8 @@ public class DuplicateTemplateAction extends Action {
 		NewCertificateModel model = new NewCertificateModel(ca, element);
 		model.setRepresentsTemplateOnly(true);
 
-		InputDialog dialog = new InputDialog(shell, "Description", "Enter Description for Duplicated Template",
-				model.getDescription(), null);
+		InputDialogEx dialog = new InputDialogEx(shell, "Description", "Enter Description for New Template",
+				model.getDescription(), null, "Duplicate", "Cancel", "Description for the New Duplicated Template.");
 
 		if (dialog.open() == IDialogConstants.CANCEL_ID) {
 			// Abort

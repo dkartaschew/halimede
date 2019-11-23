@@ -58,7 +58,6 @@ public class CRLPane extends AbstractDetailsPane {
 		this.comparator = new CADetailsComparator<CRLProperties>(new CRLColumnComparator());
 		tableViewer = new TableViewer(parent,
 				SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION | SWT.DOUBLE_BUFFERED);
-
 		Table table = tableViewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(false);
