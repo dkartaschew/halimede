@@ -184,6 +184,10 @@ public class CADetailPane extends Composite implements ISelectionChangedListener
 		});
 	}
 
+	/**
+	 * Get the current focused Certificate Authority
+	 * @return The current focused Certificate Authority or NULL if none are focused.
+	 */
 	public CertificateAuthority getCertificateAuthority() {
 		if (lastNode != null && lastNode instanceof CertificateAuthorityElement) {
 			CertificateAuthorityElement element = (CertificateAuthorityElement) lastNode;
@@ -194,6 +198,14 @@ public class CADetailPane extends Composite implements ISelectionChangedListener
 			return element.getCertificateAuthority();
 		}
 		return null;
+	}
+	
+	/**
+	 * Get the last element type.
+	 * @return The last element type displayed.
+	 */
+	public ElementType getElementType() {
+		return type;
 	}
 
 	/**

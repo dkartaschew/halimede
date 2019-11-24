@@ -44,6 +44,7 @@ import net.sourceforge.dkartaschew.halimede.ui.actions.CreateIssuedCertificateAc
 import net.sourceforge.dkartaschew.halimede.ui.actions.CreateNewTemplateAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.DeleteCertificateRequestAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.DeleteTemplateAction;
+import net.sourceforge.dkartaschew.halimede.ui.actions.DisabledAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.DuplicateTemplateAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.EditTemplateAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.ImportCSRAction;
@@ -54,6 +55,7 @@ import net.sourceforge.dkartaschew.halimede.ui.actions.UpdateCertificateRequests
 import net.sourceforge.dkartaschew.halimede.ui.actions.ViewCRLAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.ViewCertificateInformationAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.ViewCertificateRequestInformationAction;
+import net.sourceforge.dkartaschew.halimede.ui.node.ElementType;
 import net.sourceforge.dkartaschew.halimede.ui.util.ActionContributionItemEx;
 
 public class CADetailContextMenu implements IMenuListener {
@@ -91,6 +93,37 @@ public class CADetailContextMenu implements IMenuListener {
 	public void menuAboutToShow(IMenuManager manager) {
 
 		if (viewer.getSelection().isEmpty()) {
+			CertificateAuthority ca = caDetailsPane.getCertificateAuthority();
+			ElementType type = caDetailsPane.getElementType();
+			if (ca == null || type == null) {
+				return;
+			}
+			switch (type) {
+			case Pending:
+				manager.add(toACI(new ImportCSRAction(ca)));
+				break;
+			case CRLs:
+			case Revoked:
+				if (!ca.isLocked()) {
+					manager.add(toACI(new CreateCRLAction(ca, editor)));
+				} else {
+					manager.add(toACI(new DisabledAction("Create CRL", //
+							"Unlock the authority to enable creation of a CRL.")));
+				}
+				break;
+			case Template:
+				manager.add(toACI(new CreateNewTemplateAction(ca, editor)));
+				break;
+			case Issued:
+			default:
+				if (!ca.isLocked()) {
+					manager.add(toACI(new CreateIssuedCertificateAction(ca, editor)));
+				} else if (ca.isLocked()) {
+					manager.add(toACI(new DisabledAction("Create New Client Key/Certificate Pair", //
+							"Unlock the authority to enable creation of a new Client Key/Certificate Pair.")));
+				}
+				break;
+			}
 			return;
 		}
 		if (viewer.getSelection() instanceof IStructuredSelection) {
@@ -117,16 +150,27 @@ public class CADetailContextMenu implements IMenuListener {
 				if (e.getProperty(Key.revokeDate) == null && !ca.isLocked()) {
 					manager.add(new Separator());
 					manager.add(toACI(new CreateIssuedCertificateAction(ca, editor)));
+				} else if (e.getProperty(Key.revokeDate) == null && ca.isLocked()) {
+					manager.add(new Separator());
+					manager.add(toACI(new DisabledAction("Create New Client Key/Certificate Pair", //
+							"Unlock the authority to enable creation of a new Client Key/Certificate Pair.")));
 				}
 				if (e.getProperty(Key.revokeDate) != null && !ca.isLocked()) {
 					manager.add(new Separator());
 					manager.add(toACI(new CreateCRLAction(ca, editor)));
+				} else if (e.getProperty(Key.revokeDate) != null && ca.isLocked()) {
+					manager.add(new Separator());
+					manager.add(toACI(new DisabledAction("Create CRL", //
+							"Unlock the authority to enable creation of a CRL.")));
 				}
 			}
 			if (element instanceof ICertificateKeyPairTemplate) {
 				final ICertificateKeyPairTemplate e = (ICertificateKeyPairTemplate) element;
 				if (!caDetailsPane.getCertificateAuthority().isLocked()) {
 					manager.add(toACI(new CreateCertificateFromTemplateAction(ca, e, editor)));
+				} else {
+					manager.add(toACI(new DisabledAction("Create new Certificate", //
+							"Unlock the authority to enable creation of a new Client Key/Certificate Pair from the template.")));
 				}
 				manager.add(toACI(new EditTemplateAction(ca, e, editor)));
 				manager.add(toACI(new DuplicateTemplateAction(ca, e)));
@@ -139,6 +183,9 @@ public class CADetailContextMenu implements IMenuListener {
 				manager.add(toACI(new ViewCertificateRequestInformationAction(e, editor)));
 				if (!caDetailsPane.getCertificateAuthority().isLocked()) {
 					manager.add(toACI(new CreateCertificateFromCSRAction(ca, e, editor, null)));
+				} else {
+					manager.add(toACI(new DisabledAction("Create new Certificate", //
+							"Unlock the authority to enable creation of a new Client Key/Certificate Pair from the request.")));
 				}
 				manager.add(toACI(new UpdateCertificateRequestsCommentsAction(e, ca, caDetailsPane)));
 				manager.add(toACI(new DeleteCertificateRequestAction(e, ca, null)));
@@ -148,9 +195,12 @@ public class CADetailContextMenu implements IMenuListener {
 			if (element instanceof CRLProperties) {
 				manager.add(toACI(new ViewCRLAction((CRLProperties) element, editor)));
 				manager.add(toACI(new UpdateCRLCommentsAction((CRLProperties) element, ca, caDetailsPane)));
+				manager.add(new Separator());
 				if (!ca.isLocked()) {
-					manager.add(new Separator());
 					manager.add(toACI(new CreateCRLAction(ca, editor)));
+				} else {
+					manager.add(toACI(new DisabledAction("Create CRL", //
+							"Unlock the authority to enable creation of a CRL.")));
 				}
 			}
 			injectMenuItems(manager);

@@ -39,6 +39,7 @@ import net.sourceforge.dkartaschew.halimede.ui.actions.CreateNewCAAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.CreateNewCAExistingMaterialAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.CreateNewTemplateAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.DeleteCAAction;
+import net.sourceforge.dkartaschew.halimede.ui.actions.DisabledAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.ImportCSRAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.LockUnlockAction;
 import net.sourceforge.dkartaschew.halimede.ui.actions.OpenCAAction;
@@ -98,8 +99,14 @@ public class CAContextMenu implements IMenuListener {
 			if (object instanceof CertificateAuthorityNode) {
 				CertificateAuthorityNode element = (CertificateAuthorityNode) object;
 				if (!element.getCertificateAuthority().isLocked()) {
-					manager.add(toACI(new ViewCACertificateInformationAction(element.getCertificateAuthority(), editor)));
+					manager.add(toACI(new ViewCACertificateInformationAction(//
+							element.getCertificateAuthority(), editor)));
 					manager.add(toACI(new CASettingsAction(element)));
+				} else {
+					manager.add(toACI(new DisabledAction("View CA Certificate Details", //
+							"Unlock the authority to view the authorities certificate information.")));
+					manager.add(toACI(new DisabledAction("Certificate Authority Settings", //
+							"Unlock the authority to update the authorities settings.")));
 				}
 				manager.add(toACI(new LockUnlockAction(viewer, element)));
 				manager.add(toACI(new BackupCAAction(element)));
@@ -113,10 +120,16 @@ public class CAContextMenu implements IMenuListener {
 				manager.add(new Separator());
 				if (!element.getCertificateAuthority().isLocked()) {
 					manager.add(toACI(new CreateIssuedCertificateAction(element.getCertificateAuthority(), editor)));
+				} else {
+					manager.add(toACI(new DisabledAction("Create New Client Key/Certificate Pair", //
+							"Unlock the authority to enable creation of a new Client Key/Certificate Pair.")));
 				}
 				manager.add(toACI(new CreateNewTemplateAction(element.getCertificateAuthority(), editor)));
 				if (!element.getCertificateAuthority().isLocked()) {
 					manager.add(toACI(new CreateCRLAction(element.getCertificateAuthority(), editor)));
+				} else {
+					manager.add(toACI(new DisabledAction("Create CRL", //
+							"Unlock the authority to enable creation of a CRL.")));
 				}
 			}
 			if (object instanceof CertificateAuthorityElement) {
@@ -126,6 +139,9 @@ public class CAContextMenu implements IMenuListener {
 				case Issued:
 					if (!element.getParent().getCertificateAuthority().isLocked()) {
 						manager.add(toACI(new CreateIssuedCertificateAction(ca, editor)));
+					} else {
+						manager.add(toACI(new DisabledAction("Create New Client Key/Certificate Pair",
+								"Unlock the authority to enable creation of a new Client Key/Certificate Pair.")));
 					}
 					break;
 				case Pending:
@@ -138,6 +154,9 @@ public class CAContextMenu implements IMenuListener {
 				case CRLs:
 					if (!ca.isLocked()) {
 						manager.add(toACI(new CreateCRLAction(ca, editor)));
+					} else {
+						manager.add(toACI(new DisabledAction("Create CRL", //
+								"Unlock the authority to enable creation of a CRL.")));
 					}
 					break;
 				}
@@ -155,7 +174,7 @@ public class CAContextMenu implements IMenuListener {
 	private ActionContributionItem toACI(IAction action) {
 		return new ActionContributionItemEx(action);
 	}
-	
+
 	/**
 	 * Force injection of all menu items.
 	 * 
