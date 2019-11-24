@@ -93,10 +93,20 @@ public class CreateCertificateFromTemplateAction extends Action {
 	public CreateCertificateFromTemplateAction(CertificateAuthority ca, ICertificateKeyPairTemplate element,
 			String editor) {
 		super("Create new Certificate");
-		setToolTipText("Create a new Certificate based on this Template");
 		this.ca = ca;
 		this.element = element;
 		this.editor = editor;
+		setEnabled(!ca.isLocked());
+		if (!ca.isLocked()) {
+			setToolTipText("Create a new Certificate based on this Template");
+		} else {
+			setToolTipText("Unlock the authority to enable creation of a new Client Key/Certificate Pair from the template.");
+		}
+	}
+	
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(!ca.isLocked() ? enabled : false);
 	}
 
 	@Override

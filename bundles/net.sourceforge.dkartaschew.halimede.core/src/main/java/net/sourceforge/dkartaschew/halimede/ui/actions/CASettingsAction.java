@@ -63,8 +63,18 @@ public class CASettingsAction extends Action {
 	 */
 	public CASettingsAction(CertificateAuthorityNode node) {
 		super("Certificate Authority Settings");
-		setToolTipText("Settings for this Certificate Authority");
 		this.node = node;
+		setEnabled(!node.getCertificateAuthority().isLocked());
+		if (!node.getCertificateAuthority().isLocked()) {
+			setToolTipText("Settings for this Certificate Authority");
+		} else {
+			setToolTipText("Unlock the authority to update the authorities settings");
+		}
+	}
+	
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(!node.getCertificateAuthority().isLocked() ? enabled : false);
 	}
 
 	@Override

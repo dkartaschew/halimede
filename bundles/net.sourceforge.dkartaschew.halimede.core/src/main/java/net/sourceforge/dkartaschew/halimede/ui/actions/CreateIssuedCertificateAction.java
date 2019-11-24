@@ -86,9 +86,19 @@ public class CreateIssuedCertificateAction extends Action {
 	 */
 	public CreateIssuedCertificateAction(CertificateAuthority ca, String editor) {
 		super("Create New Client Key/Certificate Pair");
-		setToolTipText("Create a new Certificate to be signed by this authority");
 		this.ca = ca;
 		this.editor = editor;
+		setEnabled(!ca.isLocked());
+		if (!ca.isLocked()) {
+			setToolTipText("Create a new Certificate to be signed by this authority");
+		} else {
+			setToolTipText("Unlock the authority to enable creation of a new Client Key/Certificate Pair.");
+		}
+	}
+	
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(!ca.isLocked() ? enabled : false);
 	}
 
 	@Override

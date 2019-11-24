@@ -82,15 +82,25 @@ public class ViewCACertificateInformationAction extends Action {
 	 */
 	public ViewCACertificateInformationAction(CertificateAuthority ca, String editor) {
 		super("View CA Certificate Details");
-		setToolTipText("View the Certificate as used by this authority");
 		this.ca = ca;
 		this.editor = editor;
+		setEnabled(!ca.isLocked());
+		if (!ca.isLocked()) {
+			setToolTipText("View the Certificate as used by this authority");
+		} else {
+			setToolTipText("Unlock the authority to view the authorities certificate information.");
+		}
+	}
+	
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(!ca.isLocked() ? enabled : false);
 	}
 
 	@Override
 	public void run() {
 		try {
-			if (ca == null || ca.isLocked()) {
+			if (ca.isLocked()) {
 				if (logger != null) {
 					logger.error("Unable to get CA certificate?");
 				}

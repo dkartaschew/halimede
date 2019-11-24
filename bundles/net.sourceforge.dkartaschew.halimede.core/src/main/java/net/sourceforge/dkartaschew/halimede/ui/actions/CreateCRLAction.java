@@ -60,8 +60,8 @@ public class CreateCRLAction extends Action {
 
 	@Inject
 	private IEclipseContext context;
-		
-	@Inject 
+
+	@Inject
 	private UISynchronize sync;
 
 	@Inject
@@ -78,7 +78,17 @@ public class CreateCRLAction extends Action {
 		super("Create CRL");
 		this.ca = ca;
 		this.editor = editor;
-		setToolTipText("Create a Certificate Revokation List (CRL) for this authority");
+		setEnabled(!ca.isLocked());
+		if (!ca.isLocked()) {
+			setToolTipText("Create a Certificate Revokation List (CRL) for this authority");
+		} else {
+			setToolTipText("Unlock the authority to enable creation of a CRL.");
+		}
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(!ca.isLocked() ? enabled : false);
 	}
 
 	@Override
@@ -93,7 +103,8 @@ public class CreateCRLAction extends Action {
 			Job job = Job.create("Create CRL - " + model.getSerial().toString(), monitor -> {
 
 				try {
-					SubMonitor subMonitor = SubMonitor.convert(monitor, "Create CRL - " + model.getSerial().toString(), 2);
+					SubMonitor subMonitor = SubMonitor.convert(monitor, "Create CRL - " + model.getSerial().toString(),
+							2);
 					// Create the CRL
 					CRLProperties crl = ca.createCRL(model.getNextDate());
 					subMonitor.worked(1);
@@ -111,7 +122,7 @@ public class CreateCRLAction extends Action {
 								"Creating the CRL failed with the following error: " + ExceptionUtil.getMessage(e));
 					});
 				}
-				if(monitor != null) {
+				if (monitor != null) {
 					monitor.done();
 				}
 				return Status.OK_STATUS;

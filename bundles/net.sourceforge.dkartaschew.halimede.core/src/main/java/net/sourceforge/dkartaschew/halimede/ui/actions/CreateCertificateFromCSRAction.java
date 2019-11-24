@@ -103,11 +103,21 @@ public class CreateCertificateFromCSRAction extends Action implements SelectionL
 	public CreateCertificateFromCSRAction(CertificateAuthority ca, CertificateRequestProperties element, String editor,
 			CertificateRequestDetailsPart part) {
 		super("Create new Certificate");
-		setToolTipText("Create a new Certificate based on this CSR");
 		this.ca = ca;
 		this.element = element;
 		this.editor = editor;
 		this.parentPart = part;
+		setEnabled(!ca.isLocked());
+		if (!ca.isLocked()) {
+			setToolTipText("Create a new Certificate based on this CSR");
+		} else {
+			setToolTipText("Unlock the authority to enable creation of a new Client Key/Certificate Pair from the request.");
+		}
+	}
+	
+	@Override
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(!ca.isLocked() ? enabled : false);
 	}
 
 	@Override
