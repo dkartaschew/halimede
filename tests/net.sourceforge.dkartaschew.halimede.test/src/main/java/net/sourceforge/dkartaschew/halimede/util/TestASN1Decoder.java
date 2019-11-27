@@ -20,10 +20,12 @@ package net.sourceforge.dkartaschew.halimede.util;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.cert.CRLException;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -113,6 +115,21 @@ public class TestASN1Decoder {
 	@Test
 	public void test_RSA_P8_DES_PEM() throws IOException {
 		test("rsa4096key_des_pem.p8");
+	}
+	
+	@Test
+	public void ICA_DER() throws IOException, CRLException {
+		test("CRLs" + File.separator +"ica.sz.5388.der.crl");
+	}
+
+	@Test
+	public void ICA_PEM() throws IOException, CRLException {
+		test("CRLs" + File.separator +"ica.sz.5388.pem.crl");
+	}
+
+	@Test
+	public void Telstra() throws IOException, CRLException {
+		test("CRLs" + File.separator +"Telstra RSS Issuing CA1.crl");
 	}
 
 	@Test(expected = NullPointerException.class)
