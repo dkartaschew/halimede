@@ -104,19 +104,17 @@ public class RestoreCADialog extends Dialog {
 
 		Button buttonFilename = new Button(container, SWT.NONE);
 		buttonFilename.setText("...");
-		buttonFilename.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
-				dlg.setText("Filename");
-				dlg.setFilterExtensions(new String[] { "*.zip", "*.*" });
-				dlg.setFilterNames(new String[] { "Zip File (*.zip)", "All Files (*.*)" });
-				if (model.getFilename() != null) {
-					dlg.setFileName(model.getFilename());
-				}
-				String file = dlg.open();
-				if (file != null) {
-					textFilename.setText(file);
-				}
+		buttonFilename.addListener(SWT.Selection, e -> {
+			FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
+			dlg.setText("Filename");
+			dlg.setFilterExtensions(new String[] { "*.zip", "*.*" });
+			dlg.setFilterNames(new String[] { "Zip File (*.zip)", "All Files (*.*)" });
+			if (model.getFilename() != null) {
+				dlg.setFileName(model.getFilename());
+			}
+			String file = dlg.open();
+			if (file != null) {
+				textFilename.setText(file);
 			}
 		});
 
@@ -134,19 +132,17 @@ public class RestoreCADialog extends Dialog {
 
 		Button buttonBaseLocation = new Button(container, SWT.NONE);
 		buttonBaseLocation.setText("...");
-		buttonBaseLocation.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				DirectoryDialog dlg = new DirectoryDialog(getShell());
+		buttonBaseLocation.addListener(SWT.Selection, e -> {
+			DirectoryDialog dlg = new DirectoryDialog(getShell());
 
-				dlg.setText("Restore Location");
-				dlg.setMessage("Select a directory");
-				if (model.getFilename() != null) {
-					dlg.setFilterPath(model.getBaseLocation());
-				}
-				String dir = dlg.open();
-				if (dir != null) {
-					textBaseLocation.setText(dir);
-				}
+			dlg.setText("Restore Location");
+			dlg.setMessage("Select a directory");
+			if (model.getFilename() != null) {
+				dlg.setFilterPath(model.getBaseLocation());
+			}
+			String dir = dlg.open();
+			if (dir != null) {
+				textBaseLocation.setText(dir);
 			}
 		});
 

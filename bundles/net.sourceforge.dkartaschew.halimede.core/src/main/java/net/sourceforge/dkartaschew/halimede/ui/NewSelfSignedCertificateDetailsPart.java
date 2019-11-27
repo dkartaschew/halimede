@@ -163,13 +163,11 @@ public class NewSelfSignedCertificateDetailsPart {
 
 	@Focus
 	public void setFocus() {
-		if (this.composite != null) {
-			sync.asyncExec(() -> {
-				if (!this.composite.isDisposed()) {
-					this.composite.setFocus();
-				}
-			});
-		}
+		sync.asyncExec(() -> {
+			if (this.composite != null && !this.composite.isDisposed()) {
+				this.composite.setFocus();
+			}
+		});
 	}
 
 	/**
@@ -185,20 +183,21 @@ public class NewSelfSignedCertificateDetailsPart {
 	}
 
 	/**
-	 * Sets the value of the
-	 * '{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#isCloseable
-	 * <em>Closeable</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.ui.basic.MPart#isCloseable <em>Closeable</em>}'
+	 * attribute.
 	 * <p>
-	 * This call also has the side effect of disabling the header buttons as well to
-	 * stop multiple calls to various actions.
+	 * This call also has the side effect of disabling the header buttons as well to stop multiple calls to various
+	 * actions.
 	 * 
 	 * @param value the new value of the '<em>Closeable</em>' attribute.
 	 * @see #isCloseable()
 	 */
 	public void setClosable(boolean value) {
 		sync.asyncExec(() -> {
-			this.part.setCloseable(value);
-			this.header.setEnabled(value);
+			if (this.part != null)
+				this.part.setCloseable(value);
+			if (this.header != null)
+				this.header.setEnabled(value);
 		});
 	}
 

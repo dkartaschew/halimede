@@ -135,16 +135,14 @@ public class NewCAExistingMaterialDialog extends Dialog {
 
 		Button buttonLocation = new Button(grpDescription, SWT.NONE);
 		buttonLocation.setText("...");
-		buttonLocation.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				DirectoryDialog dlg = new DirectoryDialog(getShell());
-				dlg.setFilterPath(textBaseLocation.getText());
-				dlg.setText("Set Base Location for CA Datastore");
-				dlg.setMessage("Select a directory");
-				String dir = dlg.open();
-				if (dir != null) {
-					textBaseLocation.setText(dir);
-				}
+		buttonLocation.addListener(SWT.Selection, e -> {
+			DirectoryDialog dlg = new DirectoryDialog(getShell());
+			dlg.setFilterPath(textBaseLocation.getText());
+			dlg.setText("Set Base Location for CA Datastore");
+			dlg.setMessage("Select a directory");
+			String dir = dlg.open();
+			if (dir != null) {
+				textBaseLocation.setText(dir);
 			}
 		});
 
@@ -172,17 +170,15 @@ public class NewCAExistingMaterialDialog extends Dialog {
 
 		btnPKCS12File = new Button(grpCertificateAndKeying, SWT.NONE);
 		btnPKCS12File.setText("...");
-		btnPKCS12File.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
-				dlg.setText("Open PKCS#12 File");
-				dlg.setOverwrite(true);
-				dlg.setFilterExtensions(new String[] { "*.p12", "*.*" });
-				dlg.setFilterNames(new String[] { "PKCS#12 (*.p12)", "All Files (*.*)" });
-				String dir = dlg.open();
-				if (dir != null) {
-					textPKCS12Filename.setText(dir);
-				}
+		btnPKCS12File.addListener(SWT.Selection, e -> {
+			FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
+			dlg.setText("Open PKCS#12 File");
+			dlg.setOverwrite(true);
+			dlg.setFilterExtensions(new String[] { "*.p12", "*.*" });
+			dlg.setFilterNames(new String[] { "PKCS#12 (*.p12)", "All Files (*.*)" });
+			String dir = dlg.open();
+			if (dir != null) {
+				textPKCS12Filename.setText(dir);
 			}
 		});
 
@@ -204,17 +200,15 @@ public class NewCAExistingMaterialDialog extends Dialog {
 
 		btnCertificateFile = new Button(grpCertificateAndKeying, SWT.NONE);
 		btnCertificateFile.setText("...");
-		btnCertificateFile.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
-				dlg.setText("Open Certificate File");
-				dlg.setOverwrite(true);
-				dlg.setFilterExtensions(new String[] { "*.cer", "*.*" });
-				dlg.setFilterNames(new String[] { "Certificate (*.cer)", "All Files (*.*)" });
-				String dir = dlg.open();
-				if (dir != null) {
-					textCertificateFilename.setText(dir);
-				}
+		btnCertificateFile.addListener(SWT.Selection, e -> {
+			FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
+			dlg.setText("Open Certificate File");
+			dlg.setOverwrite(true);
+			dlg.setFilterExtensions(new String[] { "*.cer", "*.*" });
+			dlg.setFilterNames(new String[] { "Certificate (*.cer)", "All Files (*.*)" });
+			String dir = dlg.open();
+			if (dir != null) {
+				textCertificateFilename.setText(dir);
 			}
 		});
 
@@ -227,17 +221,15 @@ public class NewCAExistingMaterialDialog extends Dialog {
 
 		btnKeyFile = new Button(grpCertificateAndKeying, SWT.NONE);
 		btnKeyFile.setText("...");
-		btnKeyFile.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
-				dlg.setText("Open Private Key File");
-				dlg.setOverwrite(true);
-				dlg.setFilterExtensions(new String[] { "*.key", "*.*" });
-				dlg.setFilterNames(new String[] { "Private Key (*.key)", "All Files (*.*)" });
-				String dir = dlg.open();
-				if (dir != null) {
-					textPrivateKeyFilename.setText(dir);
-				}
+		btnKeyFile.addListener(SWT.Selection, e -> {
+			FileDialog dlg = new FileDialog(getShell(), SWT.OPEN);
+			dlg.setText("Open Private Key File");
+			dlg.setOverwrite(true);
+			dlg.setFilterExtensions(new String[] { "*.key", "*.*" });
+			dlg.setFilterNames(new String[] { "Private Key (*.key)", "All Files (*.*)" });
+			String dir = dlg.open();
+			if (dir != null) {
+				textPrivateKeyFilename.setText(dir);
 			}
 		});
 
@@ -349,7 +341,7 @@ public class NewCAExistingMaterialDialog extends Dialog {
 		bindingContext.addValidationStatusProvider(locCAValidator);
 		ControlDecorationSupport.create(locCAValidator.getValidationStatus(), SWT.TOP | SWT.LEFT, caDescriptionWidget);
 		ControlDecorationSupport.create(locCAValidator.getValidationStatus(), SWT.TOP | SWT.LEFT, locationWidget);
-		
+
 		/*
 		 * PKCS12 Enable
 		 */

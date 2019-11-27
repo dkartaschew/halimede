@@ -30,27 +30,53 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.core.runtime.jobs.ProgressProvider;
-import org.eclipse.e4.ui.di.UISynchronize;
+import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
 public class ProgressMonitorControl {
-	private final UISynchronize sync;
 
-	private JobStatusComposite progressBar;
-	private GobalProgressMonitor monitor;
+	/**
+	 * Progress provider.
+	 */
+	private static class HalimedeProgressProvider extends ProgressProvider {
+		/**
+		 * Progress monitor
+		 */
+		private final GobalProgressMonitor monitor;
+
+		/**
+		 * Create a progress provider tied to the given monitor
+		 * 
+		 * @param monitor The monitor to tie to
+		 */
+		private HalimedeProgressProvider(GobalProgressMonitor monitor) {
+			Objects.requireNonNull(monitor, "Monitor is null");
+			this.monitor = monitor;
+		}
+
+		@Override
+		public IProgressMonitor createMonitor(Job job) {
+			return monitor.addJob(job);
+		}
+	}
 
 	@Inject
-	public ProgressMonitorControl(UISynchronize sync) {
-		this.sync = Objects.requireNonNull(sync);
-	}
+	private IEclipseContext context;
+
+	/**
+	 * Progress bar composite.
+	 */
+	private JobStatusComposite progressBar;
+	/**
+	 * Progress monitor
+	 */
+	private GobalProgressMonitor monitor;
 
 	@PostConstruct
 	public void createControls(Composite parent) {
@@ -64,90 +90,9 @@ public class ProgressMonitorControl {
 		progressBar = new JobStatusComposite(parent, SWT.BORDER);
 		progressBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		progressBar.getLblStatus().setText("Ready...");
-		monitor = new GobalProgressMonitor();
+		monitor = new GobalProgressMonitor(progressBar);
+		ContextInjectionFactory.inject(monitor, context);
 
-		Job.getJobManager().setProgressProvider(new ProgressProvider() {
-			@Override
-			public IProgressMonitor createMonitor(Job job) {
-				return monitor.addJob(job);
-			}
-		});
-	}
-
-	private final class GobalProgressMonitor extends NullProgressMonitor {
-
-		// thread-Safe via thread confinement of the UI-Thread
-		// (means access only via UI-Thread)
-		private long runningTasks = 0L;
-
-		@Override
-		public void beginTask(final String name, final int totalWork) {
-			sync.syncExec(() -> {
-				if (runningTasks <= 0) {
-					// --- no task is running at the moment ---
-					progressBar.getProgressBar().setSelection(0);
-					progressBar.getProgressBar().setMaximum(totalWork);
-					progressBar.getLblStatus().setText(name != null && !name.isEmpty()? name : "Task");
-				} else {
-					// --- other tasks are running ---
-					progressBar.getProgressBar().setMaximum(progressBar.getProgressBar().getMaximum() + totalWork);
-				}
-
-				runningTasks++;
-				progressBar.getProgressBar().setToolTipText("Currently running " + runningTasks + "\nLast task: " + name);
-				progressBar.getLblStatus().setText("Currently running " + runningTasks + " Tasks");
-
-			});
-		}
-
-		@Override
-		public void setTaskName(String name) {
-			sync.syncExec(() -> {
-				progressBar.getLblStatus().setText(name);
-
-			});
-		}
-
-		@Override
-		public void worked(final int work) {
-			sync.syncExec(() -> {
-				progressBar.getProgressBar().setSelection(progressBar.getProgressBar().getSelection() + work);
-
-			});
-		}
-
-		public IProgressMonitor addJob(Job job) {
-			if (job != null) {
-				job.addJobChangeListener(new JobChangeAdapter() {
-					@Override
-					public void done(IJobChangeEvent event) {
-						sync.syncExec(() -> {
-							if (runningTasks > 0)
-								runningTasks--;
-							if (runningTasks > 0) {
-								// --- some tasks are still running ---
-								if (!progressBar.isDisposed()) {
-									progressBar.setToolTipText("Currently running " + runningTasks + " Tasks");
-									progressBar.getLblStatus().setText("Currently running " + runningTasks + " Tasks");
-								}
-
-							} else {
-								// --- all tasks are done (a reset of selection could also be done) ---
-								if (!progressBar.isDisposed()) {
-									progressBar.getProgressBar().setToolTipText("No background progress running.");
-									progressBar.getProgressBar().setSelection(0);
-									progressBar.getLblStatus().setText("Ready...");
-								}
-							}
-
-						});
-
-						// clean-up
-						event.getJob().removeJobChangeListener(this);
-					}
-				});
-			}
-			return this;
-		}
+		Job.getJobManager().setProgressProvider(new HalimedeProgressProvider(monitor));
 	}
 }

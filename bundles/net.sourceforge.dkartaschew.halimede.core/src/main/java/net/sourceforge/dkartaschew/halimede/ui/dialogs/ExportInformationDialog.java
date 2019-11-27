@@ -104,17 +104,15 @@ public class ExportInformationDialog extends Dialog {
 
 		Button buttonLocation = new Button(container, SWT.NONE);
 		buttonLocation.setText("...");
-		buttonLocation.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				FileDialog dlg = new FileDialog(getShell(), SWT.SAVE);
-				dlg.setText(model.getSaveDialogTitle());
-				dlg.setOverwrite(true);
-				dlg.setFilterExtensions(model.getSaveDialogFilterExtensions());
-				dlg.setFilterNames(model.getSaveDialogFilterNames());
-				String dir = dlg.open();
-				if (dir != null) {
-					textBaseLocation.setText(dir);
-				}
+		buttonLocation.addListener(SWT.Selection, e -> {
+			FileDialog dlg = new FileDialog(getShell(), SWT.SAVE);
+			dlg.setText(model.getSaveDialogTitle());
+			dlg.setOverwrite(true);
+			dlg.setFilterExtensions(model.getSaveDialogFilterExtensions());
+			dlg.setFilterNames(model.getSaveDialogFilterNames());
+			String dir = dlg.open();
+			if (dir != null) {
+				textBaseLocation.setText(dir);
 			}
 		});
 

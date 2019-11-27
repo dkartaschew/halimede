@@ -114,17 +114,15 @@ public class ExportPrivateKeyDialog extends Dialog {
 
 		Button buttonLocation = new Button(container, SWT.NONE);
 		buttonLocation.setText("...");
-		buttonLocation.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				FileDialog dlg = new FileDialog(getShell(), SWT.SAVE);
-				dlg.setText("File to save Certificate information");
-				dlg.setOverwrite(true);
-				dlg.setFilterExtensions(new String[] { "*.key", "*.*" });
-				dlg.setFilterNames(new String[] { "Private Key (*.key)", "All Files (*.*)" });
-				String dir = dlg.open();
-				if (dir != null) {
-					textBaseLocation.setText(dir);
-				}
+		buttonLocation.addListener(SWT.Selection, e -> {
+			FileDialog dlg = new FileDialog(getShell(), SWT.SAVE);
+			dlg.setText("File to save Certificate information");
+			dlg.setOverwrite(true);
+			dlg.setFilterExtensions(new String[] { "*.key", "*.*" });
+			dlg.setFilterNames(new String[] { "Private Key (*.key)", "All Files (*.*)" });
+			String dir = dlg.open();
+			if (dir != null) {
+				textBaseLocation.setText(dir);
 			}
 		});
 

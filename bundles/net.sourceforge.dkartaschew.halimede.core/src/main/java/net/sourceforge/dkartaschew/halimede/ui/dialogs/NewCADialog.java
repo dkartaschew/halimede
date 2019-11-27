@@ -149,16 +149,14 @@ public class NewCADialog extends Dialog {
 
 		Button buttonLocation = new Button(grpDescription, SWT.NONE);
 		buttonLocation.setText("...");
-		buttonLocation.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				DirectoryDialog dlg = new DirectoryDialog(getShell());
-				dlg.setFilterPath(textBaseLocation.getText());
-				dlg.setText("Set Base Location for CA Datastore");
-				dlg.setMessage("Select a directory");
-				String dir = dlg.open();
-				if (dir != null) {
-					textBaseLocation.setText(dir);
-				}
+		buttonLocation.addListener(SWT.Selection, e -> {
+			DirectoryDialog dlg = new DirectoryDialog(getShell());
+			dlg.setFilterPath(textBaseLocation.getText());
+			dlg.setText("Set Base Location for CA Datastore");
+			dlg.setMessage("Select a directory");
+			String dir = dlg.open();
+			if (dir != null) {
+				textBaseLocation.setText(dir);
 			}
 		});
 

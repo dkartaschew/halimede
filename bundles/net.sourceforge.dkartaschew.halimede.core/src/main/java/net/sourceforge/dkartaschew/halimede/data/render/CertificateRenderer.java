@@ -18,7 +18,6 @@
 package net.sourceforge.dkartaschew.halimede.data.render;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.KeyPair;
 import java.security.KeyStoreException;
@@ -222,19 +221,14 @@ public class CertificateRenderer {
 			if(pkey instanceof BCSphincs256PrivateKey) {
 				BCSphincs256PrivateKey sphincs = (BCSphincs256PrivateKey) pkey;
 				try {
-					/*
-					 * NASTY, but to determine the key, when need the digest.
-					 */
-					Field f = sphincs.getClass().getDeclaredField("treeDigest");
-					f.setAccessible(true);
-					ASN1ObjectIdentifier digest = (ASN1ObjectIdentifier) f.get(sphincs);
+					ASN1ObjectIdentifier digest = KeyType.readDigest(sphincs);
 					if (digest.equals(NISTObjectIdentifiers.id_sha512_256)) {
 						r.addContentLine("Tree Digest:", "SHA512-256");
 					}
 					if (digest.equals(NISTObjectIdentifiers.id_sha3_256)) {
 						r.addContentLine("Tree Digest:", "SHA3-256");
 					}
-				} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+				} catch (IllegalArgumentException e) {
 					throw new RuntimeException("BC SPHINCS-256 modified", e);
 				}
 			}
@@ -349,19 +343,14 @@ public class CertificateRenderer {
 		if(pkey instanceof BCSphincs256PublicKey) {
 			BCSphincs256PublicKey sphincs = (BCSphincs256PublicKey) pkey;
 			try {
-				/*
-				 * NASTY, but to determine the key, when need the digest.
-				 */
-				Field f = sphincs.getClass().getDeclaredField("treeDigest");
-				f.setAccessible(true);
-				ASN1ObjectIdentifier digest = (ASN1ObjectIdentifier) f.get(sphincs);
+				ASN1ObjectIdentifier digest = KeyType.readDigest(sphincs);
 				if (digest.equals(NISTObjectIdentifiers.id_sha512_256)) {
 					r.addContentLine("Tree Digest:", "SHA512-256");
 				}
 				if (digest.equals(NISTObjectIdentifiers.id_sha3_256)) {
 					r.addContentLine("Tree Digest:", "SHA3-256");
 				}
-			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			} catch (IllegalArgumentException e) {
 				throw new RuntimeException("BC SPHINCS-256 modified", e);
 			}
 		}

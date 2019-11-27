@@ -18,6 +18,8 @@
 package net.sourceforge.dkartaschew.halimede.enumeration;
 
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECParameterSpec;
@@ -35,7 +37,12 @@ import org.bouncycastle.jcajce.provider.asymmetric.dstu.BCDSTU4145PublicKey;
 import org.bouncycastle.jce.interfaces.GOST3410PublicKey;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.jce.spec.ECNamedCurveSpec;
+import org.bouncycastle.pqc.crypto.qtesla.QTESLAPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSMTPublicKeyParameters;
+import org.bouncycastle.pqc.crypto.xmss.XMSSPublicKeyParameters;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
+import org.bouncycastle.pqc.jcajce.provider.qtesla.BCqTESLAPublicKey;
+import org.bouncycastle.pqc.jcajce.provider.sphincs.BCSphincs256PrivateKey;
 import org.bouncycastle.pqc.jcajce.provider.sphincs.BCSphincs256PublicKey;
 import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSMTPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSPublicKey;
@@ -1127,22 +1134,16 @@ public enum KeyType {
 			if (publicKey instanceof BCSphincs256PublicKey) {
 				BCSphincs256PublicKey pkey = (BCSphincs256PublicKey) publicKey;
 				try {
-					/*
-					 * NASTY, but to determine the key, when need the digest.
-					 */
-					Field f = pkey.getClass().getDeclaredField("treeDigest");
-					f.setAccessible(true);
-					ASN1ObjectIdentifier digest = (ASN1ObjectIdentifier) f.get(pkey);
+					ASN1ObjectIdentifier digest = readDigest(pkey);
 					if (digest.equals(NISTObjectIdentifiers.id_sha512_256)) {
 						return KeyType.SPHINCS_SHA512_256;
 					}
 					if (digest.equals(NISTObjectIdentifiers.id_sha3_256)) {
 						return KeyType.SPHINCS_SHA3_256;
 					}
-				} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+				} catch (IllegalArgumentException e) {
 					throw new RuntimeException("BC SPHINCS-256 modified", e);
 				}
-
 			}
 			break;
 		case "XMSS":
@@ -1206,6 +1207,126 @@ public enum KeyType {
 		}
 		rc = Integer.compare(layers, element.layers);
 		return rc;
+	}
+	
+	/**
+	 * Get the digest from the BCSphincs256PublicKey
+	 * 
+	 * @param sphincs The BCSphincs256PublicKey
+	 * @return The digest ASN1 object id.
+	 */
+	public static ASN1ObjectIdentifier readDigest(final BCSphincs256PublicKey sphincs) {
+		/*
+		 * NASTY, but to determine the key, when need the digest.
+		 */
+		ASN1ObjectIdentifier digest = AccessController.doPrivileged(new PrivilegedAction<ASN1ObjectIdentifier>() {
+			public ASN1ObjectIdentifier run() {
+				try {
+					Field f = sphincs.getClass().getDeclaredField("treeDigest");
+					f.setAccessible(true);
+					return (ASN1ObjectIdentifier) f.get(sphincs);
+				} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+					throw new RuntimeException("BC SPHINCS-256 modified", e);
+				}
+			}
+		});
+		return digest;
+	}
+
+	/**
+	 * Get the digest from the BCSphincs256PrivateKey
+	 * 
+	 * @param sphincs The BCSphincs256PrivateKey
+	 * @return The digest ASN1 object id.
+	 */
+	public static ASN1ObjectIdentifier readDigest(final BCSphincs256PrivateKey sphincs) {
+		/*
+		 * NASTY, but to determine the key, when need the digest.
+		 */
+		ASN1ObjectIdentifier digest = AccessController.doPrivileged(new PrivilegedAction<ASN1ObjectIdentifier>() {
+			public ASN1ObjectIdentifier run() {
+				try {
+					Field f = sphincs.getClass().getDeclaredField("treeDigest");
+					f.setAccessible(true);
+					return (ASN1ObjectIdentifier) f.get(sphincs);
+				} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+					throw new RuntimeException("BC SPHINCS-256 modified", e);
+				}
+			}
+		});
+		return digest;
+	}
+
+	/**
+	 * Get the key parameters from the BCXMSSPublicKey
+	 * 
+	 * @param xmss The BCXMSSPublicKey
+	 * @return The public key parameters
+	 */
+	public static XMSSPublicKeyParameters readParameters(final BCXMSSPublicKey xmss) {
+		/*
+		 * NASTY, but to determine the key, when need the digest.
+		 */
+		XMSSPublicKeyParameters digest = AccessController.doPrivileged(new PrivilegedAction<XMSSPublicKeyParameters>() {
+			public XMSSPublicKeyParameters run() {
+				try {
+					Field f = xmss.getClass().getDeclaredField("keyParams");
+					f.setAccessible(true);
+					return (XMSSPublicKeyParameters) f.get(xmss);
+				} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+					throw new RuntimeException("XMSS modified", e);
+				}
+			}
+		});
+		return digest;
+	}
+	
+	/**
+	 * Get the key parameters from the BCXMSSMTPublicKey
+	 * 
+	 * @param xmss The BCXMSSMTPublicKey
+	 * @return The public key parameters
+	 */
+	public static XMSSMTPublicKeyParameters readParameters(final BCXMSSMTPublicKey xmss) {
+		/*
+		 * NASTY, but to determine the key, when need the digest.
+		 */
+		XMSSMTPublicKeyParameters digest = AccessController.doPrivileged(new PrivilegedAction<XMSSMTPublicKeyParameters>() {
+			public XMSSMTPublicKeyParameters run() {
+				try {
+					Field f = xmss.getClass().getDeclaredField("keyParams");
+					f.setAccessible(true);
+					return (XMSSMTPublicKeyParameters) f.get(xmss);
+				} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+					throw new RuntimeException("XMSSMT modified", e);
+				}
+			}
+		});
+		return digest;
+	}
+	
+	/**
+	 * Get the key parameters from the BCqTESLAPublicKey
+	 * 
+	 * @param qtesla The BCqTESLAPublicKey
+	 * @return The public key parameters
+	 */
+	public static QTESLAPublicKeyParameters readParameters(final BCqTESLAPublicKey qtesla) {
+		/*
+		 * NASTY, but to determine the key, when need the digest.
+		 */
+		QTESLAPublicKeyParameters digest = AccessController.doPrivileged(new PrivilegedAction<QTESLAPublicKeyParameters>() {
+			public QTESLAPublicKeyParameters run() {
+				try {
+					Field f = qtesla.getClass().getDeclaredField("keyParams");
+					f.setAccessible(true);
+					return (QTESLAPublicKeyParameters) f.get(qtesla);
+				} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+					throw new RuntimeException("XMSSMT modified", e);
+				}
+			}
+		});
+		return digest;
 	}
 
 }

@@ -26,14 +26,20 @@ import org.eclipse.swt.layout.GridData;
 
 public class JobStatusComposite extends Composite {
 
+	/**
+	 * The label with the textual status
+	 */
 	private final Label lblStatus;
+	/**
+	 * The progress bar.
+	 */
 	private final ProgressBar progressBar;
 
 	/**
 	 * Create the composite.
 	 * 
-	 * @param parent
-	 * @param style
+	 * @param parent The parent composite
+	 * @param style The style to use.
 	 */
 	public JobStatusComposite(Composite parent, int style) {
 		super(parent, style);
@@ -65,6 +71,7 @@ public class JobStatusComposite extends Composite {
 
 	/**
 	 * Get the progress bar
+	 * 
 	 * @return The progress bar.
 	 */
 	public ProgressBar getProgressBar() {

@@ -121,7 +121,7 @@ public class PassphraseDialog extends Dialog {
 
 		text = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.PASSWORD);
 		text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-		text.addModifyListener(o1 -> value = text.getText());
+		text.addModifyListener(o1 -> value = text != null ? text.getText() : "");
 
 		if (errorMessage != null) {
 			Label errorLabel = new Label(composite, SWT.WRAP);

@@ -40,6 +40,8 @@ import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSMTPublicKey;
 import org.bouncycastle.pqc.jcajce.provider.xmss.BCXMSSPublicKey;
 import org.bouncycastle.util.encoders.Hex;
 
+import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
+
 public class Strings {
 
 	/**
@@ -299,12 +301,7 @@ public class Strings {
 			BCSphincs256PublicKey sphincs = (BCSphincs256PublicKey)pkey;
 			StringBuilder sb = new StringBuilder();
 			try {
-				/*
-				 * NASTY, but to determine the key, when need the digest.
-				 */
-				Field f = pkey.getClass().getDeclaredField("treeDigest");
-				f.setAccessible(true);
-				ASN1ObjectIdentifier digest = (ASN1ObjectIdentifier) f.get(pkey);
+				ASN1ObjectIdentifier digest = KeyType.readDigest(sphincs);
 				if(digest.equals(NISTObjectIdentifiers.id_sha512_256)){
 					sb.append("Tree Digest: SHA512-256");
 				}
@@ -312,7 +309,7 @@ public class Strings {
 					sb.append("Tree Digest: SHA3-256");
 				}
 				sb.append(System.lineSeparator());
-			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			} catch ( IllegalArgumentException  e) {
 				//throw new RuntimeException("BC SPHINCS-256 modified", e);
 				// Ignore here...
 			}
@@ -329,19 +326,15 @@ public class Strings {
 			sb.append("Height: ");
 			sb.append(xmss.getHeight());
 			try {
-				/*
-				 * NASTY, but to determine the key, when need the digest.
-				 */
-				Field f = xmss.getClass().getDeclaredField("keyParams");
-				f.setAccessible(true);
-				XMSSPublicKeyParameters keyParams = (XMSSPublicKeyParameters) f.get(xmss);
+				XMSSPublicKeyParameters keyParams = KeyType.readParameters(xmss);
+
 				sb.append(System.lineSeparator());
 				sb.append("Seed: ");
 				sb.append(toHexString(keyParams.getPublicSeed(), " ", WRAP, "     "));
 				sb.append(System.lineSeparator());
 				sb.append("Root: ");
 				sb.append(toHexString(keyParams.getRoot(), " ", WRAP, "     "));
-			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			} catch (IllegalArgumentException e) {
 				// Ignore here...
 			}
 			return sb.toString();
@@ -358,19 +351,14 @@ public class Strings {
 			sb.append("Layers: ");
 			sb.append(xmssmt.getLayers());
 			try {
-				/*
-				 * NASTY, but to determine the key, when need the digest.
-				 */
-				Field f = xmssmt.getClass().getDeclaredField("keyParams");
-				f.setAccessible(true);
-				XMSSMTPublicKeyParameters keyParams = (XMSSMTPublicKeyParameters) f.get(xmssmt);
+				XMSSMTPublicKeyParameters keyParams = KeyType.readParameters(xmssmt);
 				sb.append(System.lineSeparator());
 				sb.append("Seed: ");
 				sb.append(toHexString(keyParams.getPublicSeed(), " ", WRAP, "      "));
 				sb.append(System.lineSeparator());
 				sb.append("Root: ");
 				sb.append(toHexString(keyParams.getRoot(), " ", WRAP, "      "));
-			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			} catch (IllegalArgumentException e) {
 				// Ignore here...
 			}
 			return sb.toString();
@@ -379,15 +367,10 @@ public class Strings {
 			BCqTESLAPublicKey qtesla = (BCqTESLAPublicKey) pkey;
 			StringBuilder sb = new StringBuilder();
 			try {
-				/*
-				 * NASTY, but to determine the key, when need the keyParams.
-				 */
-				Field f = qtesla.getClass().getDeclaredField("keyParams");
-				f.setAccessible(true);
-				QTESLAPublicKeyParameters keyParams = (QTESLAPublicKeyParameters) f.get(qtesla);
+				QTESLAPublicKeyParameters keyParams = KeyType.readParameters(qtesla);
 				sb.append("Key Data: ");
 				sb.append(toHexString(keyParams.getPublicData(), " ", WRAP, "          "));
-			} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			} catch (IllegalArgumentException e) {
 				// Ignore here...
 			}
 			return sb.toString();
@@ -416,7 +399,7 @@ public class Strings {
 		if (value.length() > wrap) {
 			value = value.substring(0, wrap) + "...";
 		}
-		if (value.indexOf(System.lineSeparator()) > 0) {
+		if (value.contains(System.lineSeparator())) {
 			value = value.substring(0, value.indexOf(System.lineSeparator())) + "...";
 		}
 		return value;

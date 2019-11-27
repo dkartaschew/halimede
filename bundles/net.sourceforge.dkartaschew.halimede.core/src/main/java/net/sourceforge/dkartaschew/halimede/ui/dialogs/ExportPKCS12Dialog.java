@@ -111,17 +111,15 @@ public class ExportPKCS12Dialog extends Dialog {
 
 		Button buttonLocation = new Button(container, SWT.NONE);
 		buttonLocation.setText("...");
-		buttonLocation.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				FileDialog dlg = new FileDialog(getShell(), SWT.SAVE);
-				dlg.setText("File to save Certificate information");
-				dlg.setOverwrite(true);
-				dlg.setFilterExtensions(new String[] { "*.p12", "*.*" });
-				dlg.setFilterNames(new String[] { "PKCS#12 (*.p12)", "All Files (*.*)" });
-				String dir = dlg.open();
-				if (dir != null) {
-					textBaseLocation.setText(dir);
-				}
+		buttonLocation.addListener(SWT.Selection, e -> {
+			FileDialog dlg = new FileDialog(getShell(), SWT.SAVE);
+			dlg.setText("File to save Certificate information");
+			dlg.setOverwrite(true);
+			dlg.setFilterExtensions(new String[] { "*.p12", "*.*" });
+			dlg.setFilterNames(new String[] { "PKCS#12 (*.p12)", "All Files (*.*)" });
+			String dir = dlg.open();
+			if (dir != null) {
+				textBaseLocation.setText(dir);
 			}
 		});
 
