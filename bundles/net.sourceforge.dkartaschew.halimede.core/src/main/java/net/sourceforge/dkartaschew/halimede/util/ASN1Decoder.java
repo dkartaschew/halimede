@@ -28,7 +28,11 @@ import java.util.Objects;
 import org.bouncycastle.asn1.ASN1InputStream;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.util.ASN1Dump;
+import org.bouncycastle.cert.X509CRLHolder;
+import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.pkcs.PKCS10CertificationRequest;
+import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 
 import net.sourceforge.dkartaschew.halimede.data.render.ICertificateOutputRenderer;
 
@@ -81,6 +85,16 @@ public class ASN1Decoder {
 				return decodeDER();
 			}
 			while (object != null) {
+				// Some PEM Objects don't directly implement ASN1Primitive or ASN1Encodable so massage
+				if (object instanceof X509CRLHolder) {
+					object = ASN1Primitive.fromByteArray(((X509CRLHolder) object).getEncoded());
+				} else if (object instanceof X509CertificateHolder) {
+					object = ASN1Primitive.fromByteArray(((X509CertificateHolder) object).getEncoded());
+				} else if (object instanceof PKCS10CertificationRequest) {
+					object = ASN1Primitive.fromByteArray(((PKCS10CertificationRequest) object).getEncoded());
+				} else if (object instanceof PKCS8EncryptedPrivateKeyInfo) {
+					object = ASN1Primitive.fromByteArray(((PKCS8EncryptedPrivateKeyInfo) object).getEncoded());
+				}
 				sb.append(ASN1Dump.dumpAsString(object, true));
 				object = parser.readObject();
 			}
