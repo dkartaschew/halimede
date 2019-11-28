@@ -42,6 +42,10 @@ public class ASN1Decoder {
 	 * The filename to read to decode as ASN1
 	 */
 	private final Path file;
+	/**
+	 * The cached decoded version.
+	 */
+	private String decoded;
 
 	/**
 	 * Create a ASN1 decoder
@@ -76,7 +80,10 @@ public class ASN1Decoder {
 	 * @return The file decoded
 	 * @throws IOException If decoding fails.
 	 */
-	public String decode() throws IOException {
+	public synchronized String decode() throws IOException {
+		if (decoded != null) {
+			return decoded;
+		}
 		StringBuilder sb = new StringBuilder();
 		try (PEMParser parser = new PEMParser(Files.newBufferedReader(file, StandardCharsets.UTF_8))) {
 			Object object = parser.readObject();
@@ -102,7 +109,8 @@ public class ASN1Decoder {
 			// May be plain DER without enough info for PEMParser
 			return decodeDER();
 		}
-		return sb.toString();
+		decoded = sb.toString();
+		return decoded;
 	}
 
 	/**
@@ -120,7 +128,8 @@ public class ASN1Decoder {
 				sb.append(ASN1Dump.dumpAsString(p, true));
 			}
 		}
-		return sb.toString();
+		decoded = sb.toString();
+		return decoded;
 	}
 
 	/**
@@ -136,5 +145,14 @@ public class ASN1Decoder {
 		} catch (IOException e) {
 			renderer.addContentLine("Failed to decode: " + ExceptionUtil.getMessage(e));
 		}
+	}
+
+	/**
+	 * Get the filename
+	 * 
+	 * @return The filename of the file to decode.
+	 */
+	public Path getFile() {
+		return file;
 	}
 }
