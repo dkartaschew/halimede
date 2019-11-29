@@ -6,10 +6,10 @@
    <bundle id="net.sourceforge.dkartaschew.halimede.e4ide" version="1.0.0.qualifier">
       <category name="net.sourceforge.dkartaschew.halimede.update"/>
    </bundle>
-   <bundle id="bcpkix" version="1.62.0">
+   <bundle id="bcpkix" version="1.64.0">
       <category name="org.bouncycastle"/>
    </bundle>
-   <bundle id="bcprov" version="1.62.0">
+   <bundle id="bcprov" version="1.64.0">
       <category name="org.bouncycastle"/>
    </bundle>
    <category-def name="net.sourceforge.dkartaschew.halimede.update" label="Halimede CA Manager">

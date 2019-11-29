@@ -34,6 +34,7 @@ import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
 import org.bouncycastle.asn1.teletrust.TeleTrusTObjectIdentifiers;
 import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
+import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
@@ -162,9 +163,9 @@ public enum SignatureAlgorithm {
 	/*
 	 * qTELSA PQC
 	 */
-	qTESLA_I("QTESLA-I", PQCObjectIdentifiers.qTESLA_I, true),
-	qTESLA_III_speed("QTESLA-III-SPEED", PQCObjectIdentifiers.qTESLA_III_speed, true),
-	qTESLA_III_size("QTESLA-III-SIZE", PQCObjectIdentifiers.qTESLA_III_size, true),
+	qTESLA_I("QTESLA-I", BCObjectIdentifiers.qTESLA_Rnd1_I, true),
+	qTESLA_III_speed("QTESLA-III-SPEED", BCObjectIdentifiers.qTESLA_Rnd1_III_speed, true),
+	qTESLA_III_size("QTESLA-III-SIZE", BCObjectIdentifiers.qTESLA_Rnd1_III_size, true),
 	qTESLA_P_I("QTESLA-P-I", PQCObjectIdentifiers.qTESLA_p_I, true),
 	qTESLA_P_III("QTESLA-P-III", PQCObjectIdentifiers.qTESLA_p_III, true);
 
