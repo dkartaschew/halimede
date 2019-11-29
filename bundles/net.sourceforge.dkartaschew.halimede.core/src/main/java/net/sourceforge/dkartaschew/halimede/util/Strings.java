@@ -17,7 +17,6 @@
 
 package net.sourceforge.dkartaschew.halimede.util;
 
-import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.security.PublicKey;
 import java.security.interfaces.DSAPublicKey;
