@@ -474,19 +474,7 @@ public class TestSignatureAlgorithms {
 	
 	@Test
 	public void testSignatureForSig_qTELSA() {
-		Collection<SignatureAlgorithm> alg = SignatureAlgorithm.forType(SignatureAlgorithm.qTESLA_I);
-		assertTrue(alg.contains(SignatureAlgorithm.qTESLA_I));
-		assertEquals(1, alg.size());
-		
-		alg = SignatureAlgorithm.forType(SignatureAlgorithm.qTESLA_III_size);
-		assertTrue(alg.contains(SignatureAlgorithm.qTESLA_III_size));
-		assertEquals(1, alg.size());
-		
-		alg = SignatureAlgorithm.forType(SignatureAlgorithm.qTESLA_III_speed);
-		assertTrue(alg.contains(SignatureAlgorithm.qTESLA_III_speed));
-		assertEquals(1, alg.size());
-		
-		alg = SignatureAlgorithm.forType(SignatureAlgorithm.qTESLA_P_I);
+		Collection<SignatureAlgorithm> alg = SignatureAlgorithm.forType(SignatureAlgorithm.qTESLA_P_I);
 		assertTrue(alg.contains(SignatureAlgorithm.qTESLA_P_I));
 		assertEquals(1, alg.size());
 		
@@ -506,7 +494,7 @@ public class TestSignatureAlgorithms {
 		assertEquals(BouncyCastlePQCProvider.PROVIDER_NAME, SignatureAlgorithm.XMSSMTwithSHA256.getProvider());
 		assertEquals(BouncyCastlePQCProvider.PROVIDER_NAME, SignatureAlgorithm.XMSSwithSHA256.getProvider());
 		assertEquals(BouncyCastlePQCProvider.PROVIDER_NAME, SignatureAlgorithm.RAINBOWwithSHA224.getProvider());
-		assertEquals(BouncyCastlePQCProvider.PROVIDER_NAME, SignatureAlgorithm.qTESLA_I.getProvider());
+		assertEquals(BouncyCastlePQCProvider.PROVIDER_NAME, SignatureAlgorithm.qTESLA_P_I.getProvider());
 		assertEquals(BouncyCastlePQCProvider.PROVIDER_NAME, SignatureAlgorithm.SPHICS256withSHA512.getProvider());
 	}
 	

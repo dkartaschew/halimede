@@ -34,7 +34,6 @@ import org.bouncycastle.asn1.rosstandart.RosstandartObjectIdentifiers;
 import org.bouncycastle.asn1.teletrust.TeleTrusTObjectIdentifiers;
 import org.bouncycastle.asn1.ua.UAObjectIdentifiers;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
-import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.pqc.asn1.PQCObjectIdentifiers;
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider;
@@ -163,9 +162,9 @@ public enum SignatureAlgorithm {
 	/*
 	 * qTELSA PQC
 	 */
-	qTESLA_I("QTESLA-I", BCObjectIdentifiers.qTESLA_Rnd1_I, true),
-	qTESLA_III_speed("QTESLA-III-SPEED", BCObjectIdentifiers.qTESLA_Rnd1_III_speed, true),
-	qTESLA_III_size("QTESLA-III-SIZE", BCObjectIdentifiers.qTESLA_Rnd1_III_size, true),
+//	qTESLA_I("QTESLA-I", BCObjectIdentifiers.qTESLA_Rnd1_I, true),
+//	qTESLA_III_speed("QTESLA-III-SPEED", BCObjectIdentifiers.qTESLA_Rnd1_III_speed, true),
+//	qTESLA_III_size("QTESLA-III-SIZE", BCObjectIdentifiers.qTESLA_Rnd1_III_size, true),
 	qTESLA_P_I("QTESLA-P-I", PQCObjectIdentifiers.qTESLA_p_I, true),
 	qTESLA_P_III("QTESLA-P-III", PQCObjectIdentifiers.qTESLA_p_III, true);
 
@@ -565,19 +564,19 @@ public enum SignatureAlgorithm {
 					XMSSMTwithSHA512, //
 					XMSSMTwithSHAKE128, //
 					XMSSMTwithSHAKE256 });
-		
-		case qTESLA_I:
-		return Arrays.asList(new SignatureAlgorithm[] { //
-				qTESLA_I, //
-		});
-		case qTESLA_III_size:
-		return Arrays.asList(new SignatureAlgorithm[] { //
-				qTESLA_III_size, //
-		});
-		case qTESLA_III_speed:
-		return Arrays.asList(new SignatureAlgorithm[] { //
-				qTESLA_III_speed, //
-		});
+//		
+//		case qTESLA_I:
+//		return Arrays.asList(new SignatureAlgorithm[] { //
+//				qTESLA_I, //
+//		});
+//		case qTESLA_III_size:
+//		return Arrays.asList(new SignatureAlgorithm[] { //
+//				qTESLA_III_size, //
+//		});
+//		case qTESLA_III_speed:
+//		return Arrays.asList(new SignatureAlgorithm[] { //
+//				qTESLA_III_speed, //
+//		});
 		case qTESLA_P_I:
 		return Arrays.asList(new SignatureAlgorithm[] { //
 				qTESLA_P_I, //
@@ -644,12 +643,12 @@ public enum SignatureAlgorithm {
 			return SignatureAlgorithm.XMSSwithSHA512;
 		case "XMSSMT":
 			return SignatureAlgorithm.XMSSMTwithSHA512;
-		case "qTESLA-I":
-			return SignatureAlgorithm.qTESLA_I;
-		case "qTESLA-III-size":
-			return SignatureAlgorithm.qTESLA_III_size;
-		case "qTESLA-III-speed":
-			return SignatureAlgorithm.qTESLA_III_speed;
+//		case "qTESLA-I":
+//			return SignatureAlgorithm.qTESLA_I;
+//		case "qTESLA-III-size":
+//			return SignatureAlgorithm.qTESLA_III_size;
+//		case "qTESLA-III-speed":
+//			return SignatureAlgorithm.qTESLA_III_speed;
 		case "qTESLA-p-I":
 			return SignatureAlgorithm.qTESLA_P_I;
 		case "qTESLA-p-III":

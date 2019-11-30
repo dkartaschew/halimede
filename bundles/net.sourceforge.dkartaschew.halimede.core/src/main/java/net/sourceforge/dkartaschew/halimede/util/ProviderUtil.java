@@ -21,7 +21,6 @@ import java.security.Provider;
 import java.security.Security;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.bc.BCObjectIdentifiers;
 import org.bouncycastle.jcajce.provider.config.ConfigurableProvider;
 import org.bouncycastle.jcajce.provider.util.AsymmetricKeyInfoConverter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -52,22 +51,13 @@ public class ProviderUtil {
 
 			final String PREFIX = "org.bouncycastle.pqc.jcajce.provider.qtesla.";
 
-			cp.addAlgorithm("KeyFactory.QTESLA-I", PREFIX + "QTESLAKeyFactorySpi");
-			cp.addAlgorithm("KeyFactory.QTESLA-III-SIZE", PREFIX + "QTESLAKeyFactorySpi");
-			cp.addAlgorithm("KeyFactory.QTESLA-III-SPEED", PREFIX + "QTESLAKeyFactorySpi");
 			cp.addAlgorithm("KeyFactory.QTESLA-P-I", PREFIX + "QTESLAKeyFactorySpi");
 			cp.addAlgorithm("KeyFactory.QTESLA-P-III", PREFIX + "QTESLAKeyFactorySpi");
 
-			cp.addAlgorithm("KeyPairGenerator.QTESLA-I", PREFIX + "KeyPairGeneratorSpi");
-			cp.addAlgorithm("KeyPairGenerator.QTESLA-III-SIZE", PREFIX + "KeyPairGeneratorSpi");
-			cp.addAlgorithm("KeyPairGenerator.QTESLA-III-SPEED", PREFIX + "KeyPairGeneratorSpi");
 			cp.addAlgorithm("KeyPairGenerator.QTESLA-P-I", PREFIX + "KeyPairGeneratorSpi");
 			cp.addAlgorithm("KeyPairGenerator.QTESLA-P-III", PREFIX + "KeyPairGeneratorSpi");
 
 			registerOid(cp, PQCObjectIdentifiers.qTESLA, "QTESLA", keyFact);
-			registerOid(cp, BCObjectIdentifiers.qTESLA_Rnd1_I, "QTESLA-I", keyFact);
-			registerOid(cp, BCObjectIdentifiers.qTESLA_Rnd1_III_size, "QTESLA-III-SIZE", keyFact);
-			registerOid(cp, BCObjectIdentifiers.qTESLA_Rnd1_III_speed, "QTESLA-III-SPEED", keyFact);
 			registerOid(cp, PQCObjectIdentifiers.qTESLA_p_I, "QTESLA-P-I", keyFact);
 			registerOid(cp, PQCObjectIdentifiers.qTESLA_p_III, "QTESLA-P-III", keyFact);
 		}
