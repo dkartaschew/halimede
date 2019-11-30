@@ -281,21 +281,21 @@ public enum SignatureAlgorithm {
 					ED448, //
 			});
 		}
-		if (key == KeyType.qTESLA_I) {
-			return Arrays.asList(new SignatureAlgorithm[] { //
-					qTESLA_I, //
-			});
-		}
-		if (key == KeyType.qTESLA_III_speed) {
-			return Arrays.asList(new SignatureAlgorithm[] { //
-					qTESLA_III_speed, //
-			});
-		}
-		if (key == KeyType.qTESLA_III_size) {
-			return Arrays.asList(new SignatureAlgorithm[] { //
-					qTESLA_III_size, //
-			});
-		}
+//		if (key == KeyType.qTESLA_I) {
+//			return Arrays.asList(new SignatureAlgorithm[] { //
+//					qTESLA_I, //
+//			});
+//		}
+//		if (key == KeyType.qTESLA_III_speed) {
+//			return Arrays.asList(new SignatureAlgorithm[] { //
+//					qTESLA_III_speed, //
+//			});
+//		}
+//		if (key == KeyType.qTESLA_III_size) {
+//			return Arrays.asList(new SignatureAlgorithm[] { //
+//					qTESLA_III_size, //
+//			});
+//		}
 		if (key == KeyType.qTESLA_P_I) {
 			return Arrays.asList(new SignatureAlgorithm[] { //
 					qTESLA_P_I, //

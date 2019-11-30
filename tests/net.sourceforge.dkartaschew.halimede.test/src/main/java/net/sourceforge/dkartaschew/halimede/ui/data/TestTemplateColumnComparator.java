@@ -219,7 +219,7 @@ public class TestTemplateColumnComparator {
 		Mockito.when(prop3.getKeyType()).thenReturn(KeyType.EC_c2pnb176w1);
 
 		CertificateKeyPairTemplate prop4 = Mockito.mock(CertificateKeyPairTemplate.class);
-		Mockito.when(prop4.getKeyType()).thenReturn(KeyType.qTESLA_I);
+		Mockito.when(prop4.getKeyType()).thenReturn(KeyType.qTESLA_P_I);
 		
 		CertificateKeyPairTemplate prop5 = Mockito.mock(CertificateKeyPairTemplate.class);
 		Mockito.when(prop5.getKeyType()).thenReturn(KeyType.XMSSMT_SHA2_20_2_256);

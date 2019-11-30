@@ -230,7 +230,7 @@ public class TestRevokedColumnComparator {
 		Mockito.when(prop3.getProperty(Key.keyType)).thenReturn(KeyType.EC_c2pnb176w1.name());
 
 		IssuedCertificateProperties prop4 = Mockito.mock(IssuedCertificateProperties.class);
-		Mockito.when(prop4.getProperty(Key.keyType)).thenReturn(KeyType.qTESLA_I.name());
+		Mockito.when(prop4.getProperty(Key.keyType)).thenReturn(KeyType.qTESLA_P_I.name());
 
 		IssuedCertificateProperties prop5 = Mockito.mock(IssuedCertificateProperties.class);
 		Mockito.when(prop5.getProperty(Key.keyType)).thenReturn(KeyType.XMSSMT_SHA2_20_2_256.name());

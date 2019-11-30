@@ -251,12 +251,12 @@ public class KeyPairFactory {
 		if (publicKey instanceof BCqTESLAPublicKey) {
 			BCqTESLAPublicKey pkey = (BCqTESLAPublicKey) publicKey;
 			switch (pkey.getAlgorithm()) {
-			case "qTESLA-I":
-				return KeyType.qTESLA_I.getBitLength();
-			case "qTESLA-III-size":
-				return KeyType.qTESLA_III_size.getBitLength();
-			case "qTESLA-III-speed":
-				return KeyType.qTESLA_III_speed.getBitLength();
+//			case "qTESLA-I":
+//				return KeyType.qTESLA_I.getBitLength();
+//			case "qTESLA-III-size":
+//				return KeyType.qTESLA_III_size.getBitLength();
+//			case "qTESLA-III-speed":
+//				return KeyType.qTESLA_III_speed.getBitLength();
 			case "qTESLA-p-I":
 				return KeyType.qTESLA_P_I.getBitLength();
 			case "qTESLA-p-III":

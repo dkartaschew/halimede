@@ -755,18 +755,18 @@ public enum KeyType {
 	 * XMSSMT 60/12 SHAKE256
 	 */
 	XMSSMT_SHAKE_60_12_512("XMSSMT 60/12 SHAKE256", "XMSSMT", 512, "SHAKE256", 60, 12),
-	/**
-	 * qTELSA-I
-	 */
-	qTESLA_I("qTELSA-I", "qTESLA", 1216 * 8, "qTESLA-I"),
-	/**
-	 * qTELSA-III Size
-	 */
-	qTESLA_III_size("qTESLA-III-Size", "qTESLA", 2368 * 8, "qTESLA-III-size"),
-	/**
-	 * qTELSA-III Speed
-	 */
-	qTESLA_III_speed("qTESLA-III-Speed", "qTESLA", 2368 * 8, "qTESLA-III-speed"),
+//	/**
+//	 * qTELSA-I
+//	 */
+//	qTESLA_I("qTELSA-I", "qTESLA", 1216 * 8, "qTESLA-I"),
+//	/**
+//	 * qTELSA-III Size
+//	 */
+//	qTESLA_III_size("qTESLA-III-Size", "qTESLA", 2368 * 8, "qTESLA-III-size"),
+//	/**
+//	 * qTELSA-III Speed
+//	 */
+//	qTESLA_III_speed("qTESLA-III-Speed", "qTESLA", 2368 * 8, "qTESLA-III-speed"),
 	/**
 	 * qTELSA-p-I
 	 */
@@ -1169,12 +1169,12 @@ public enum KeyType {
 				}
 			}
 			break;
-		case "qTESLA-I":
-			return KeyType.qTESLA_I;
-		case "qTESLA-III-size":
-			return KeyType.qTESLA_III_size;
-		case "qTESLA-III-speed":
-			return KeyType.qTESLA_III_speed;
+//		case "qTESLA-I":
+//			return KeyType.qTESLA_I;
+//		case "qTESLA-III-size":
+//			return KeyType.qTESLA_III_size;
+//		case "qTESLA-III-speed":
+//			return KeyType.qTESLA_III_speed;
 		case "qTESLA-p-I":
 			return KeyType.qTESLA_P_I;
 		case "qTESLA-p-III":

@@ -336,46 +336,46 @@ public class TestTextHTMLExport {
 		 * Request 11 - qTESLA-1
 		 */
 
-		CertificateRequest req11 = createRequest(KeyType.qTESLA_I);
-
-		IssuedCertificateProperties c11 = ca.signAndStoreCertificateRequest(req11, ZonedDateTime.now().plusSeconds(10),
-				ZonedDateTime.now().plusSeconds(360), PASSWORD);
-
-		assertNotNull(c11);
-
-		c11.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(), BouncyCastleProvider.PROVIDER_NAME);
-
-		/*
-		 * Request 12 - qTESLA-III
-		 */
-
-		CertificateRequest req12 = createRequest(KeyType.qTESLA_III_size);
-
-		IssuedCertificateProperties c12 = ca.signAndStoreCertificateRequest(req12, ZonedDateTime.now().plusSeconds(10),
-				ZonedDateTime.now().plusSeconds(360), PASSWORD);
-
-		assertNotNull(c12);
-
-		c12.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(), BouncyCastleProvider.PROVIDER_NAME);
-
-		/*
-		 * Request 12 - qTESLA-1
-		 */
-
-		CertificateRequest req13 = createRequest(KeyType.qTESLA_III_speed);
-
-		IssuedCertificateProperties c13 = ca.signAndStoreCertificateRequest(req13, ZonedDateTime.now().plusSeconds(10),
-				ZonedDateTime.now().plusSeconds(360), PASSWORD);
-
-		assertNotNull(c13);
-
-		c13.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(), BouncyCastleProvider.PROVIDER_NAME);
+//		CertificateRequest req11 = createRequest(KeyType.qTESLA_I);
+//
+//		IssuedCertificateProperties c11 = ca.signAndStoreCertificateRequest(req11, ZonedDateTime.now().plusSeconds(10),
+//				ZonedDateTime.now().plusSeconds(360), PASSWORD);
+//
+//		assertNotNull(c11);
+//
+//		c11.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(), BouncyCastleProvider.PROVIDER_NAME);
+//
+//		/*
+//		 * Request 12 - qTESLA-III
+//		 */
+//
+//		CertificateRequest req12 = createRequest(KeyType.qTESLA_III_size);
+//
+//		IssuedCertificateProperties c12 = ca.signAndStoreCertificateRequest(req12, ZonedDateTime.now().plusSeconds(10),
+//				ZonedDateTime.now().plusSeconds(360), PASSWORD);
+//
+//		assertNotNull(c12);
+//
+//		c12.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(), BouncyCastleProvider.PROVIDER_NAME);
+//
+//		/*
+//		 * Request 12 - qTESLA-1
+//		 */
+//
+//		CertificateRequest req13 = createRequest(KeyType.qTESLA_III_speed);
+//
+//		IssuedCertificateProperties c13 = ca.signAndStoreCertificateRequest(req13, ZonedDateTime.now().plusSeconds(10),
+//				ZonedDateTime.now().plusSeconds(360), PASSWORD);
+//
+//		assertNotNull(c13);
+//
+//		c13.loadIssuedCertificate(PASSWORD).getCertificateChain()[0].verify(key.getPublic(), BouncyCastleProvider.PROVIDER_NAME);
 
 		/*
 		 * Request 14 - qTESLA-1
 		 */
 
-		CertificateRequest req14 = createRequest(KeyType.qTESLA_I);
+		CertificateRequest req14 = createRequest(KeyType.qTESLA_P_I);
 
 		IssuedCertificateProperties c14 = ca.signAndStoreCertificateRequest(req14, ZonedDateTime.now().plusSeconds(10),
 				ZonedDateTime.now().plusSeconds(360), PASSWORD);
@@ -388,7 +388,7 @@ public class TestTextHTMLExport {
 		 * Request 11 - qTESLA-1
 		 */
 
-		CertificateRequest req15 = createRequest(KeyType.qTESLA_I);
+		CertificateRequest req15 = createRequest(KeyType.qTESLA_P_III);
 
 		IssuedCertificateProperties c15 = ca.signAndStoreCertificateRequest(req15, ZonedDateTime.now().plusSeconds(10),
 				ZonedDateTime.now().plusSeconds(360), PASSWORD);
@@ -420,9 +420,9 @@ public class TestTextHTMLExport {
 		render(c8);
 		render(c9);
 		render(c10);
-		render(c11);
-		render(c12);
-		render(c13);
+//		render(c11);
+//		render(c12);
+//		render(c13);
 		render(c14);
 		render(c15);
 		
