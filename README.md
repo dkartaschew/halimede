@@ -36,9 +36,12 @@ can be integrated with any other Eclipse e4 RCP based application.
 
 ## Standalone Installation
 
-* Windows - MSI installer will be available shortly, or extract the application from the zip file.
-* macOS - PKG installer will be available shortly, or extract the App from the zip file and copy to Applications.
+* Windows - Use the MSI installer, or extract the application from the zip file.
+* macOS - Use the PKG installer, or extract the App from the zip file and copy to Applications.
 * GNU/Linux - Download the *.tar.gz file and extract to /opt/halimede
+
+Stable downloads are available from <https://sourceforge.net/projects/halimede/files/1.0.0-20191217/>
+
 
 ## Eclipse IDE Plugin Requirements
 
@@ -46,6 +49,10 @@ can be integrated with any other Eclipse e4 RCP based application.
 * OpenJDK8 or Java 8 with the JCE Installed
 
 Oracle Java 8 JCE: [Java JCE Download](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
+
+Eclipse plugin can be used from within Eclipse via "Install New Software" with
+the update site: <https://halimede.sourceforge.io/release/1.0.0>
+
 
 ## Eclipse IDE Plugin Installation
 
