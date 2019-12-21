@@ -1,0 +1,2 @@
+instructions.configure=org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(location:http${#58}//download.eclipse.org/nebula/releases/latest/,type:0,enabled:true); \
+  org.eclipse.equinox.p2.touchpoint.eclipse.addRepository(location:http${#58}//download.eclipse.org/nebula/releases/latest/,type:1,enabled:true);
