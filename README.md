@@ -53,6 +53,13 @@ Oracle Java 8 JCE: [Java JCE Download](http://www.oracle.com/technetwork/java/ja
 Eclipse plugin can be used from within Eclipse via "Install New Software" with
 the update site: <https://halimede.sourceforge.io/release/1.0.0>
 
+**Missing Certificate**
+
+On installation Eclipse IDE may indicate the Halimede plugins are not signed.
+The Halimede plugins are signed using ECDSA NIST P-521 keys/signatures. 
+However as of writing, Eclipse IDE currently ignores any signatures that are
+not RSA based. The signature of the bundles can be verified with 
+`$ jarsigner -verify` from the JDK.
 
 ## Eclipse IDE Plugin Installation
 
