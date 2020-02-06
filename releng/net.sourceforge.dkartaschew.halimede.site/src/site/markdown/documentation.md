@@ -86,7 +86,7 @@ manager.
 ### Eclipse IDE Plugin
 
 Eclipse plugin can be used from within Eclipse via "Install New Software" with
-the update site: <https://halimede.sourceforge.io/release/1.0.0>
+the update site: <https://halimede.sourceforge.io/release/1.1.0>
 
 Alternatively, Download the \*.zip of the P2 Update Site, and Use the 
 "`Install new software`" dialog, and select the update site ZIP file as the 

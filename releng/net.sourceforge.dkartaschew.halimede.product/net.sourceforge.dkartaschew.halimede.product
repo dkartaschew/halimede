@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="net.sourceforge.dkartaschew.halimede" uid="Halimede CA" id="net.sourceforge.dkartaschew.halimede.e4rcp.CAManager" application="net.sourceforge.dkartaschew.halimede.startup.E4Application" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="net.sourceforge.dkartaschew.halimede" uid="Halimede CA" id="net.sourceforge.dkartaschew.halimede.e4rcp.CAManager" application="net.sourceforge.dkartaschew.halimede.startup.E4Application" version="1.1.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -54,7 +54,7 @@
    </plugins>
 
    <features>
-      <feature id="net.sourceforge.dkartaschew.halimede.application" version="1.0.0.qualifier"/>
+      <feature id="net.sourceforge.dkartaschew.halimede.application" version="1.1.0.qualifier"/>
       <feature id="org.eclipse.e4.rcp"/>
    </features>
 

@@ -7,7 +7,7 @@ Halimede can be installed from a ZIP archive, or direct from the update p2 site.
 ### Update Site
 
 Eclipse plugin can be used from within Eclipse via "Install New Software" with
-the update site: <https://halimede.sourceforge.io/release/1.0.0>
+the update site: <https://halimede.sourceforge.io/release/1.1.0>
 
 ### ZIP Archive
 

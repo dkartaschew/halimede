@@ -22,7 +22,7 @@ mv jre "Halimede CA.app/"
 # Code sign application
 # TODO:
 
-/usr/local/bin/packagesbuild -v --package-version "1.0.0.$_BUILD" "Halimede CA.pkgproj"
+/usr/local/bin/packagesbuild -v --package-version "1.1.0.$_BUILD" "Halimede CA.pkgproj"
 
 # Code sign installation package
 # TODO:

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <bundle id="net.sourceforge.dkartaschew.halimede.core" version="1.0.0.qualifier">
+   <bundle id="net.sourceforge.dkartaschew.halimede.core" version="1.1.0.qualifier">
       <category name="net.sourceforge.dkartaschew.halimede.update"/>
    </bundle>
-   <bundle id="net.sourceforge.dkartaschew.halimede.e4ide" version="1.0.0.qualifier">
+   <bundle id="net.sourceforge.dkartaschew.halimede.e4ide" version="1.1.0.qualifier">
       <category name="net.sourceforge.dkartaschew.halimede.update"/>
    </bundle>
    <bundle id="bcpkix" version="1.64.0">
