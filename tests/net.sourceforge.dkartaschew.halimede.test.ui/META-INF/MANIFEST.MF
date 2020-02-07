@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: TestUI
 Bundle-SymbolicName: net.sourceforge.dkartaschew.halimede.test.ui
-Bundle-Version: 1.0.0.qualifier
-Fragment-Host: net.sourceforge.dkartaschew.halimede.e4rcp;bundle-version="1.0.0"
+Bundle-Version: 1.1.0.qualifier
+Fragment-Host: net.sourceforge.dkartaschew.halimede.e4rcp;bundle-version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.mockito;bundle-version="2.23.0",
  org.hamcrest;bundle-version="[1.0.0,2.0.0)",

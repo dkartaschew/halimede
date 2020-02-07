@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Halimede CA Manager Eclipse IDE Integration
 Bundle-SymbolicName: net.sourceforge.dkartaschew.halimede.e4ide;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Require-Bundle: net.sourceforge.dkartaschew.halimede.core,
  org.eclipse.core.runtime,
  org.eclipse.ui,

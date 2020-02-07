@@ -77,12 +77,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "D.Kartaschew"
             VALUE "FileDescription", "Halimede Certificate Authority"
-            VALUE "FileVersion", "1.0.0.$BUILD"
+            VALUE "FileVersion", "1.1.0.$BUILD"
             VALUE "InternalName", "halimede.exe"
             VALUE "LegalCopyright", "Copyright (C) 2019"
             VALUE "OriginalFilename", "halimede.exe"
             VALUE "ProductName", "Halimede CA"
-            VALUE "ProductVersion", "1.0.0.$BUILD"
+            VALUE "ProductVersion", "1.1.0.$BUILD"
         END
     END
     BLOCK "VarFileInfo"
@@ -112,7 +112,7 @@ signtool sign /f "$HOME/.keystore/halimede.p12" /p "$PASSWORD" /fd sha256 /tr ht
 
 # Build the MSI installer.
 heat dir "$buildFolder" -cg HalimedeCAFiles -dr INSTALLDIR -var var.HalimedeFilesDir -o obj\ProductFiles.wxs -sreg -sfrag -ag -srd -ke | Out-Default
-candle Product.wxs -arch x64 -o obj\ -ext WixUIExtension -dVersionNumber="1.0.0.$BUILD" | Out-Default
+candle Product.wxs -arch x64 -o obj\ -ext WixUIExtension -dVersionNumber="1.1.0.$BUILD" | Out-Default
 candle obj\ProductFiles.wxs -arch x64 -o obj\ -ext WixUIExtension -dHalimedeFilesDir="$buildFolder" | Out-Default
 light obj\Product.wixobj obj\ProductFiles.wixobj -o "Halimede CA.msi" -cultures:en-us -loc Product_en-us.wxl -ext WixUIExtension -sice:ICE61 | Out-Default
 

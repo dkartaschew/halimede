@@ -40,7 +40,7 @@ can be integrated with any other Eclipse e4 RCP based application.
 * macOS - Use the PKG installer, or extract the App from the zip file and copy to Applications.
 * GNU/Linux - Download the *.tar.gz file and extract to /opt/halimede
 
-Stable downloads are available from <https://sourceforge.net/projects/halimede/files/1.0.0-20191217/>
+Stable downloads are available from <https://sourceforge.net/projects/halimede/files/1.1.0-20191217/>
 
 
 ## Eclipse IDE Plugin Requirements
@@ -51,7 +51,7 @@ Stable downloads are available from <https://sourceforge.net/projects/halimede/f
 Oracle Java 8 JCE: [Java JCE Download](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
 
 Eclipse plugin can be used from within Eclipse via "Install New Software" with
-the update site: <https://halimede.sourceforge.io/release/1.0.0>
+the update site: <https://halimede.sourceforge.io/release/1.1.0>
 
 **Missing Certificate**
 
