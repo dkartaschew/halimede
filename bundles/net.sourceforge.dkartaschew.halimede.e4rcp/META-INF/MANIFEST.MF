@@ -25,7 +25,10 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.osgi.services,
  org.eclipse.equinox.event,
  net.sourceforge.dkartaschew.halimede.core;bundle-version="1.0.0",
- javax.annotation;bundle-version="1.2.0"
+ javax.annotation;bundle-version="1.2.0",
+ org.eclipse.e4.ui.css.swt.theme,
+ org.eclipse.ui.themes,
+ org.eclipse.e4.ui.workbench.swt;bundle-version="0.14.800"
 Automatic-Module-Name: net.sourceforge.dkartaschew.halimede.e4rcp
 Export-Package: net.sourceforge.dkartaschew.halimede.e4rcp,
  net.sourceforge.dkartaschew.halimede.e4rcp.command,

@@ -14,7 +14,7 @@
          </property>
          <property
                name="applicationCSS"
-               value="platform:/plugin/net.sourceforge.dkartaschew.halimede.e4rcp/default.css">
+               value="platform:/plugin/net.sourceforge.dkartaschew.halimede.e4rcp/css/light.css">
          </property>
          <property
 	           name="applicationXMI"
@@ -26,4 +26,16 @@
          </property>
       </product>
     </extension>
+    <extension point="org.eclipse.e4.ui.css.swt.theme">
+      <theme
+            basestylesheeturi="css/light.css"
+            id="net.sourceforge.dkartaschew.halimede.e4rcp.css.light"
+            label="Light">
+      </theme>
+      <theme
+            basestylesheeturi="css/moonrise-ui-standalone_WIN.css"
+            id="net.sourceforge.dkartaschew.halimede.e4rcp.css.dark"
+            label="Dark">
+      </theme>
+   </extension>
 </plugin>
