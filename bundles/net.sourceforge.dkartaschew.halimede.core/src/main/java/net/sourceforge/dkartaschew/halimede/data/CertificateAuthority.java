@@ -1278,7 +1278,7 @@ public class CertificateAuthority {
 	 * 
 	 * @return The next serial number
 	 */
-	public BigInteger peekNextSerialCRLNumber() {
+	public synchronized BigInteger peekNextSerialCRLNumber() {
 		return settings.getCRLSerial();
 	}
 
