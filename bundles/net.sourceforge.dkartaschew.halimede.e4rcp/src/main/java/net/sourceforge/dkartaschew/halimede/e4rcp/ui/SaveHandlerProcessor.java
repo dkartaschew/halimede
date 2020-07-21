@@ -26,47 +26,30 @@ import org.eclipse.e4.ui.workbench.lifecycle.PostContextCreate;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
 import org.eclipse.e4.ui.workbench.modeling.IWindowCloseHandler;
-import org.eclipse.swt.widgets.Display;
-
-import net.sourceforge.dkartaschew.halimede.e4rcp.Activator;
-
-import org.eclipse.e4.ui.internal.workbench.E4Workbench;
-import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 
 /**
- * Register a ISaveHandler and IWindowCloseHandler for the application.
+ * Register a ISaveHandler  and IWindowCloseHandler for the application.
  */
 public class SaveHandlerProcessor {
-
+	
 	@PostContextCreate
-	public void execute(final IEventBroker eventBroker, final IEclipseContext context, final Display display) {
+	public void execute(final IEventBroker eventBroker, final IEclipseContext context) {
 
-		/*
-		 * Set Application theme based on Display properties.
-		 */
-		String cssURI;
-		if (Display.isSystemDarkTheme() || true) {
-			cssURI = "platform:/plugin/" + Activator.PLUGIN_ID + "/css/moonrise-ui-standalone_WIN.css";
-		} else {
-			cssURI = "platform:/plugin/" + Activator.PLUGIN_ID + "/css/light.css";
-		}
-		context.set(E4Workbench.CSS_URI_ARG, cssURI);
-		PartRenderingEngine.initializeStyling(display, context);
 
 		eventBroker.subscribe(UIEvents.UILifeCycle.APP_STARTUP_COMPLETE, event -> {
 			/**
 			 * Register the save handler
 			 */
 			final MApplication app = context.get(MApplication.class);
-			final EModelService modelService = context.get(EModelService.class);
+		    final EModelService modelService = context.get(EModelService.class);
 			final MWindow window = (MWindow) modelService.find("net.sourceforge.dkartaschew.halimede.e4rcp.window", app);
 			window.getContext().set(ISaveHandler.class, new HalimedeSaveHandler());
-
+			
 			/*
 			 * Register window close handler.
 			 */
 			window.getContext().set(IWindowCloseHandler.class, new HalimedeCloseHandler(context));
-
+			
 		});
 	}
 
