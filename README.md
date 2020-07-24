@@ -80,7 +80,7 @@ Deployment artefacts will be located in:
 Note: This project will utilise the required Bouncy Castle Bundles directly 
 from the local maven repository. If the required JARs are not available, build
 errors may occur. To download the required JARs/Dependencies use:
-`$ mvn dependency:get -DgroupId=org.bouncycastle -DartifactId=bcpkix-jdk15on -Dversion=1.64`
+`$ mvn dependency:get -DgroupId=org.bouncycastle -DartifactId=bcpkix-jdk15on -Dversion=1.66`
 
 This is done, as while Eclipse Orbit has the required bundles, these tend to lag 3+ months behind releases made by The Legion of the Bouncy Castle.
 
