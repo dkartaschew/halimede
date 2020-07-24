@@ -548,7 +548,7 @@ public class CertificateAuthority {
 	 * 
 	 * @return The CA's UUID.
 	 */
-	public UUID getCertificateAuthorityID() {
+	public synchronized UUID getCertificateAuthorityID() {
 		return settings.getUuid();
 	}
 

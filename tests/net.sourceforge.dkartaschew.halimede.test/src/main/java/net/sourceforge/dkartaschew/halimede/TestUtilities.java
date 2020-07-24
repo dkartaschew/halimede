@@ -30,18 +30,32 @@ import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.KeyPair;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Comparator;
+import java.util.UUID;
 
 public class TestUtilities {
 
-	public final static String TMP = System.getProperty("java.io.tmpdir");
+	public final static String TMP = System.getProperty("java.io.tmpdir") + File.separator + "halimede.unit.tests-" + UUID.randomUUID().toString();
 
 	public final static int TEST_MAX_KEY_LENGTH = 2048;
+	
+	static {
+		Path tmp = Paths.get(TMP);
+		try {
+			if (!Files.exists(tmp)) {
+				Files.createDirectories(tmp);
+			}
+		} catch (IOException e) {
+			System.err.println(e);
+			e.printStackTrace(System.err);
+		}
+	}
 
 	public static class NullOutputStream extends OutputStream {
 		@Override
@@ -142,8 +156,8 @@ public class TestUtilities {
 	}
 
 	public static class CopyDir extends SimpleFileVisitor<Path> {
-		private Path sourceDir;
-		private Path targetDir;
+		private final Path sourceDir;
+		private final Path targetDir;
 
 		public CopyDir(Path sourceDir, Path targetDir) {
 			this.sourceDir = sourceDir;
@@ -165,7 +179,9 @@ public class TestUtilities {
 		public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attributes) {
 			try {
 				Path newDir = targetDir.resolve(sourceDir.relativize(dir));
-				Files.createDirectory(newDir);
+				if (!Files.exists(newDir)) {
+					Files.createDirectory(newDir);
+				}
 			} catch (IOException ex) {
 				System.err.println(ex);
 			}
@@ -174,6 +190,9 @@ public class TestUtilities {
 	}
 
 	public static void copyFolder(Path sourceDir, Path targetDir) throws IOException {
+		if (!Files.exists(targetDir)) {
+			Files.createDirectories(targetDir);
+		}
 		Files.walkFileTree(sourceDir, new CopyDir(sourceDir, targetDir));
 	}
 

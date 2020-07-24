@@ -87,12 +87,12 @@ public class TestPropertiesStore {
 	public void equals() throws Throwable {
 		IssuedCertificateProperties p = new IssuedCertificateProperties(null);
 		p.setProperty(Key.description, "description");
-		p.setProperty(Key.filename, fn.toString());
+		p.setProperty(Key.filename, "/tmp/store.properties");
 		p.setProperty(Key.comments, "Line 1\nLine 2\nLine 3");
 
 		IssuedCertificateProperties p2 = new IssuedCertificateProperties(null);
 		p2.setProperty(Key.description, "description2");
-		p2.setProperty(Key.filename, fn.toString());
+		p2.setProperty(Key.filename, "/tmp/store.properties");
 		p2.setProperty(Key.comments, "Line 1\nLine 2\nLine 3");
 
 		assertNotEquals(p, p2);

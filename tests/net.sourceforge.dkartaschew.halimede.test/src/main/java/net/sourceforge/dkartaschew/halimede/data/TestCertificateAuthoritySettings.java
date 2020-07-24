@@ -169,7 +169,7 @@ public class TestCertificateAuthoritySettings {
 		assertEquals(BigInteger.valueOf(3l), settings.getAndIncrementSerial());
 		assertEquals(BigInteger.valueOf(4l), settings.getAndIncrementSerial());
 
-		long next = Math.abs(rnd.nextLong());
+		long next = Math.abs(Math.max(rnd.nextLong(), Long.MIN_VALUE + 1));
 		settings.setSerial(next);
 		assertEquals(BigInteger.valueOf(next), settings.getAndIncrementSerial());
 		assertEquals(BigInteger.valueOf(next + 1), settings.getAndIncrementSerial());
@@ -222,8 +222,8 @@ public class TestCertificateAuthoritySettings {
 		assertEquals(BigInteger.valueOf(3l), settings.getAndIncrementSerial());
 		assertEquals(BigInteger.valueOf(4l), settings.getAndIncrementSerial());
 
-		long next = Math.abs(rnd.nextLong());
-		while(next > System.currentTimeMillis()) {
+		long next = Math.abs(Math.max(rnd.nextLong(), Long.MIN_VALUE + 1));
+		while (next > System.currentTimeMillis()) {
 			next = next / 2;
 		}
 		settings.setSerial(next);
