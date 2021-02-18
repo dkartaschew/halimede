@@ -21,8 +21,6 @@ import static org.junit.Assert.assertEquals;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.junit.Test;
 
-import net.sourceforge.dkartaschew.halimede.ui.model.X500NameModel;
-
 public class TestX500NameModel {
 
 	private String subject = "C=AU,ST=Queensland,L=Gold Coast,STREET=1 Nowhere Pl,O=Internet Widgits Pty Ltd,OU=Development,CN=CA Manager,E=d@a.com";

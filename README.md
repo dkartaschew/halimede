@@ -45,10 +45,8 @@ Stable downloads are available from <https://sourceforge.net/projects/halimede/f
 
 ## Eclipse IDE Plugin Requirements
 
-* Eclipse Oxygen
-* OpenJDK8 or Java 8 with the JCE Installed
-
-Oracle Java 8 JCE: [Java JCE Download](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html)
+* Eclipse 2020-12
+* OpenJDK11 or Java 11 with the JCE Installed
 
 Eclipse plugin can be used from within Eclipse via "Install New Software" with
 the update site: <https://halimede.sourceforge.io/release/1.1.0>
@@ -80,13 +78,7 @@ Deployment artefacts will be located in:
 Note: This project will utilise the required Bouncy Castle Bundles directly 
 from the local maven repository. If the required JARs are not available, build
 errors may occur. To download the required JARs/Dependencies use:
-`$ mvn dependency:get -DgroupId=org.bouncycastle -DartifactId=bcpkix-jdk15on -Dversion=1.66`
+`$ mvn dependency:get -DgroupId=org.bouncycastle -DartifactId=bcpkix-jdk15on -Dversion=1.68`
 
 This is done, as while Eclipse Orbit has the required bundles, these tend to lag 3+ months behind releases made by The Legion of the Bouncy Castle.
 
-## Java 9+
-
-The plugin works fine with Java 9 (both Oracle Java 9 and OpenJDK-9), however the 
-'java.se.ee' module needs to be available. (This is true for any Eclipse plugin running with Java 9). 
-
-For Java 11+, the required bundles are automatically included in the build.

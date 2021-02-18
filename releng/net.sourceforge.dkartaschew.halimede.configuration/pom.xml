@@ -9,12 +9,12 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<eclipse-repo.url>https://download.eclipse.org/releases/2020-06</eclipse-repo.url>
+		<eclipse-repo.url>https://download.eclipse.org/releases/2020-12</eclipse-repo.url>
 		<nebula-repo.url>https://download.eclipse.org/nebula/releases/latest</nebula-repo.url>
-		<orbit-repo.url>https://download.eclipse.org/tools/orbit/downloads/drops/R20200529191137/repository</orbit-repo.url>
+		<orbit-repo.url>https://download.eclipse.org/tools/orbit/downloads/drops/R20201130205003/repository</orbit-repo.url>
 		<swtbot-repo.url>https://download.eclipse.org/technology/swtbot/releases/latest/</swtbot-repo.url>
 
-		<tycho.version>1.7.0</tycho.version>
+		<tycho.version>2.2.0</tycho.version>
 		<compiler.plugin.version>3.8.0</compiler.plugin.version>
 		<dependency.plugin.version>3.1.1</dependency.plugin.version>
 		<jarsigner.plugin.version>3.0.0</jarsigner.plugin.version>
@@ -51,8 +51,8 @@
 				<artifactId>tycho-compiler-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>15</source>
+					<target>15</target>
 					<compilerArgument>-g:none</compilerArgument>
 					<debug>false</debug>
       				<debuglevel>none</debuglevel>
@@ -153,12 +153,12 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.66</version>
+			<version>1.68</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>
-			<version>1.66</version>
+			<version>1.68</version>
 		</dependency>
 	</dependencies>
 

@@ -28,6 +28,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.interfaces.DSAPublicKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.interfaces.EdECPublicKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Objects;
 
@@ -203,6 +204,16 @@ public class KeyPairFactory {
 			GOST3410PublicKey gost = (GOST3410PublicKey) publicKey;
 			int length = gost.getY().bitLength();
 			return ((length + 127) / 128) * 128;
+		}
+		if (publicKey instanceof EdECPublicKey) {
+			EdECPublicKey eddsa = (EdECPublicKey) publicKey;
+			String n = eddsa.getParams().getName();
+			switch (n) {
+			case "Ed25519":
+				return 256;
+			case "Ed448":
+				return 448;
+			}
 		}
 		if (publicKey instanceof BCEdDSAPublicKey) {
 			BCEdDSAPublicKey eddsa = (BCEdDSAPublicKey) publicKey;

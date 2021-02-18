@@ -1121,6 +1121,14 @@ public enum KeyType {
 			}
 			break;
 
+		case "EdDSA":
+			if(length == 256) {
+				return KeyType.ED25519;
+			} else if (length == 448) {
+				return KeyType.ED448;
+			}
+			break;
+			
 		case "Ed25519":
 			return KeyType.ED25519;
 			

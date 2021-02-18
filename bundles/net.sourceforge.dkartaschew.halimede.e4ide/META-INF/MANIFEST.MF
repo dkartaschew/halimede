@@ -16,7 +16,7 @@ Require-Bundle: net.sourceforge.dkartaschew.halimede.core,
  org.eclipse.e4.core.commands,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.core.di
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ClassPath: .
 Bundle-Vendor: net.sourceforge.dkartaschew.halimede
 Automatic-Module-Name: net.sourceforge.dkartaschew.halimede.e4ide

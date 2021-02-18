@@ -4,7 +4,7 @@ Bundle-Name: Halimede CA Manager e4 Application
 Bundle-SymbolicName: net.sourceforge.dkartaschew.halimede.e4rcp;singleton:=true
 Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: net.sourceforge.dkartaschew.halimede
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.e4.core.di.annotations,
