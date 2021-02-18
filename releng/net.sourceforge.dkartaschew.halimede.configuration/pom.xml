@@ -51,8 +51,8 @@
 				<artifactId>tycho-compiler-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
-					<source>15</source>
-					<target>15</target>
+					<source>11</source>
+					<target>11</target>
 					<compilerArgument>-g:none</compilerArgument>
 					<debug>false</debug>
       				<debuglevel>none</debuglevel>
