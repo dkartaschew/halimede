@@ -714,7 +714,7 @@ public class CertificateTemplateComposite extends Composite {
 		/*
 		 * The following only apply if this is a full certificate request.
 		 */
-		if (!model.isRepresentsTemplateOnly() && model.getCa() != null) {
+		if (!model.isRepresentsTemplateOnly()) {
 
 			/*
 			 * Start Date and End Date
@@ -745,7 +745,7 @@ public class CertificateTemplateComposite extends Composite {
 				X509Certificate cert = (X509Certificate) model.getCa().getCertificate();
 				notBefore = DateTimeUtil.toZonedDateTime(cert.getNotBefore());
 				notAfter = DateTimeUtil.toZonedDateTime(cert.getNotAfter());
-			} catch (DatastoreLockedException e) {
+			} catch (DatastoreLockedException | NullPointerException e) {
 				// Ignore...
 			}
 			final MultiValidator validator = new DatePeriodValidator(middleField1, middleField2, notBefore, notAfter);
@@ -757,7 +757,8 @@ public class CertificateTemplateComposite extends Composite {
 			// And tie the decorator on the validator and widgets being watched.
 			ControlDecorationSupport.create(validator.getValidationStatus(), SWT.TOP | SWT.LEFT, startDateWidget);
 			ControlDecorationSupport.create(validator.getValidationStatus(), SWT.TOP | SWT.LEFT, expiryDateWidget);
-
+		}
+		if (!model.isRepresentsTemplateOnly() && model.getCa() != null) {
 			/*
 			 * Use CA Password field
 			 */
