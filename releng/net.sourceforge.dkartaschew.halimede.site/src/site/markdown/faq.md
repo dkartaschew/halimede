@@ -69,8 +69,7 @@ and easily.
 
 **Q. Supported Java Versions?**
 
-A. Halimede is built/tested against OpenJDK 8, 9 and 10, and tested with Oracle 
-Java 8 (w/JCE installed if applicable).
+A. Halimede is built/tested against OpenJDK 11.
 
 -----------------
 

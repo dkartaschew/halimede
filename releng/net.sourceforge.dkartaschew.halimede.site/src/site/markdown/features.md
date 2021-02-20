@@ -51,16 +51,9 @@ The following list of features are planned for future versions of Halimede.
 ### Runtime Requirements
 
 Halimede operates as a e4 RCP plugin designed to be operated in an Eclipse 
-Oxygen environment.
+2020-12 environment.
 
-Halimede requires a minimum of a Java 8 environment and is tested with Oracle 
-Java 8 and OpenJDK 8, 9, 10 and 11.
-
-Note: For Oracle Java 8, the
-[JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html) 
-may be required for some ciphers to be available. Oracle Java 8u161 includes
-and activates the JCE by default, therefore it is recommended at least this
-version is installed and made available.
+Halimede requires a minimum of a Java 11 environment and is tested with OpenJDK 11.
 
 ### Design Rational
 
