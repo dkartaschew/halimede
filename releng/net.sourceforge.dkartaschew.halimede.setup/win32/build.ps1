@@ -15,7 +15,7 @@
 # available at https://www.gnu.org/software/classpath/license.html.
 
 $halimede = "Halimede CA-win32.win32.x86_64.zip" 
-$zulu = "zulu11.45.27-ca-jdk11.0.10-win_x64"
+$zulu = "zulu11.45.27-ca-jre11.0.10-win_x64"
 $PASSWORD = $args[0]
 # Build is the number of days from 1/Jan/2000, following Visual Studios  
 # automatic assignment for build/revision.
