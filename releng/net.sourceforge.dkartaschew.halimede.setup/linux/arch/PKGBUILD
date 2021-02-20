@@ -5,7 +5,7 @@ pkgdesc="Halimede Certificate Authority"
 license=(EPL)
 arch=(x86_64)
 url="https://halimede.sourceforge.io/"
-depends=("java-environment>=8")
+depends=("java-environment>=11")
 source=("https://sourceforge.net/projects/halimede/files/1.1.0-20191008-rc1/Halimede%20CA-linux.gtk.x86_64.tar.gz")
 noextract=("Halimede%20CA-linux.gtk.x86_64.tar.gz")
 sha256sums=('a1981f704a96fe0bad024662f88bfc4f81e0145e0199bca2aa13e0e132fea4f7')
