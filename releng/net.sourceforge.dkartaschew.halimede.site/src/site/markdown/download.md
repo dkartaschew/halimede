@@ -23,14 +23,8 @@ Minimum hardware requirements:
 
 All systems:
 
-* [Oracle Java 8u171+](https://java.com/en/download/) or
-* [OpenJDK 8u171+](https://www.azul.com/downloads/zulu/)
-* Java 9, 10 and 11 are supported as well.
-
-Notes: Older versions of Oracle Java 8 are supported, however the 
-[JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html) 
-may be required to be installed to use some ciphers. It is therefore
-recommended that the latest version is installed and available.
+* [Oracle Java 11+](https://java.com/en/download/) or
+* [OpenJDK 11+](https://www.azul.com/downloads/zulu/)
 
 ## Download
 

@@ -32,9 +32,3 @@ made available via Eclipse Orbit. (These have different Bundle IDs).
 to the application's model on shutdown. This is due to these additional parts
 potentially containing passwords and/or decrypted materials.
 
-### Java 9+
-
-The plugin works fine with Java 9 (both Oracle Java 9 and OpenJDK-9), however the 
-'java.se.ee' module needs to be available. (This is true for any Eclipse plugin running with Java 9).
-
-For Java 11+, the required bundles are automatically included with Eclipse RCP.

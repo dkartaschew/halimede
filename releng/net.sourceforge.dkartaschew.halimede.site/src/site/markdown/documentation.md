@@ -45,14 +45,8 @@ Minimum hardware requirements:
 
 All systems:
 
-* [Oracle Java 8u171+](https://java.com/en/download/) or
-* [OpenJDK 8u171+](https://www.azul.com/downloads/zulu/)
-* Java 9, 10 and 11 are supported as well.
-
-Notes: Older versions of Oracle Java 8 are supported, however the 
-[JCE](http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html) 
-may be required to be installed to use some ciphers. It is therefore
-recommended that the latest version is installed and available.
+* [Oracle Java 11+](https://java.com/en/download/) or
+* [OpenJDK 11+](https://www.azul.com/downloads/zulu/)
 
 Notes: Java 11 direct from Oracle requires a support agreement when used in
 production environments. If you are to utilise Oracle Java 11, please you 
@@ -80,7 +74,7 @@ Download the \*.tar.gz file, and extract to `/opt/halimede`. Copy the
 available from your DE application menu.
 
 The \*.tar.gz file does **not** include a Java runtime environment. It is 
-recommended to install OpenJDK 8 or OpenJDK 11 via your distributions package 
+recommended to install OpenJDK 11 via your distributions package 
 manager.
 
 ### Eclipse IDE Plugin
