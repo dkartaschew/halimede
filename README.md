@@ -40,7 +40,7 @@ can be integrated with any other Eclipse e4 RCP based application.
 * macOS - Use the PKG installer, or extract the App from the zip file and copy to Applications.
 * GNU/Linux - Download the *.tar.gz file and extract to /opt/halimede
 
-Stable downloads are available from <https://sourceforge.net/projects/halimede/files/1.1.0-20191217/>
+Stable downloads are available from <https://sourceforge.net/projects/halimede/files/1.1.0-20210220/>
 
 
 ## Eclipse IDE Plugin Requirements
