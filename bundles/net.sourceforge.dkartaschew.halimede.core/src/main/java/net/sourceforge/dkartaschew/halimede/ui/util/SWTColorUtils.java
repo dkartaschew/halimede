@@ -4,7 +4,7 @@
  */
 /*-
  * Halimede Certificate Manager Plugin for Eclipse 
- * Copyright (C) 2017-2020 Darran Kartaschew 
+ * Copyright (C) 2017-2021 Darran Kartaschew 
  *
  * All rights reserved. This program and the accompanying materials are
  * made available under the terms of the Eclipse Public License v2.0 which

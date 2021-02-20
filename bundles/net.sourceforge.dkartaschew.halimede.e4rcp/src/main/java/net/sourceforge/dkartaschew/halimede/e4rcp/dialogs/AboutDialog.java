@@ -1,6 +1,6 @@
 /*-
  * Halimede Certificate Manager Plugin for Eclipse 
- * Copyright (C) 2017-2020 Darran Kartaschew 
+ * Copyright (C) 2017-2021 Darran Kartaschew 
  *
  * All rights reserved. This program and the accompanying materials are
  * made available under the terms of the Eclipse Public License v2.0 which
@@ -124,7 +124,7 @@ public class AboutDialog extends Dialog {
 
 		Label lblCopyright = new Label(container, SWT.NONE);
 		lblCopyright.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-		lblCopyright.setText("Copyright 2017-2020");
+		lblCopyright.setText("Copyright 2017-2021");
 
 		Label lblAuthor = new Label(container, SWT.NONE);
 		lblAuthor.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
