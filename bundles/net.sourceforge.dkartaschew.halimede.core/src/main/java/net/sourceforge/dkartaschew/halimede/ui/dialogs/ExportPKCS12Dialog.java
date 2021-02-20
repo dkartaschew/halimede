@@ -21,7 +21,8 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.ValidationStatusProvider;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -31,7 +32,7 @@ import org.eclipse.core.databinding.validation.MultiValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -70,7 +71,7 @@ public class ExportPKCS12Dialog extends Dialog {
 	 * Create the dialog.
 	 * 
 	 * @param parentShell The parent shell
-	 * @param model The model to populate.
+	 * @param model       The model to populate.
 	 */
 	public ExportPKCS12Dialog(Shell parentShell, ExportInformationModel model) {
 		super(parentShell);
@@ -188,7 +189,6 @@ public class ExportPKCS12Dialog extends Dialog {
 	 * 
 	 * @return The databinding holder.
 	 */
-	@SuppressWarnings("unchecked")
 	protected DataBindingContext initDataBindings() {
 
 		DataBindingContext bindingContext = new DataBindingContext();
@@ -196,42 +196,43 @@ public class ExportPKCS12Dialog extends Dialog {
 		/*
 		 * Base Location
 		 */
-		IObservableValue<?> locationWidget = WidgetProperties.text(SWT.Modify).observe(textBaseLocation);
-		IObservableValue<?> locationModel = PojoProperties.value("filename").observe(model);
-		UpdateValueStrategy s = new UpdateValueStrategy().setAfterGetValidator(value -> {
-			String o = (String) value;
-			if (o.isEmpty()) {
-				return ValidationStatus.error("Location cannot be empty");
-			}
-			return ValidationStatus.ok();
-		});
+		IObservableValue<String> locationWidget = WidgetProperties.text(SWT.Modify).observe(textBaseLocation);
+		IObservableValue<String> locationModel = PojoProperties.value("filename", String.class).observe(model);
+		UpdateValueStrategy<String, String> s = new UpdateValueStrategy<String, String>()
+				.setAfterGetValidator(value -> {
+					if (value.isEmpty()) {
+						return ValidationStatus.error("Location cannot be empty");
+					}
+					return ValidationStatus.ok();
+				});
 		Binding b = bindingContext.bindValue(locationWidget, locationModel, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
 		/*
 		 * Cipher Type
 		 */
-		IObservableValue<?> cipherTypeWidget = WidgetProperties.selection().observe(comboCipherType);
-		IObservableValue<?> cipherTypeModel = PojoProperties.value("pkcs12Cipher").observe(model);
-		IConverter convertStringToPKCS12CipherType = IConverter.create(String.class, PKCS12Cipher.class,
-				(o1) -> PKCS12Cipher.valueOf((String) o1));
-		s = UpdateValueStrategy.create(convertStringToPKCS12CipherType).setAfterConvertValidator(value -> {
-			PKCS12Cipher cipher = (PKCS12Cipher) value;
-			if (cipher != PKCS12Cipher.DES3) {
-				return ValidationStatus.warning("PKCS#12 with AES encryption is not widely supported. "
-						+ "Please check your tools to ensure that they support this configuration.");
-			}
-			return ValidationStatus.ok();
-		});
+		IObservableValue<String> cipherTypeWidget = WidgetProperties.comboSelection().observe(comboCipherType);
+		IObservableValue<PKCS12Cipher> cipherTypeModel = PojoProperties.value("pkcs12Cipher", PKCS12Cipher.class)
+				.observe(model);
+		IConverter<String, PKCS12Cipher> convertStringToPKCS12CipherType = IConverter.create(String.class,
+				PKCS12Cipher.class, (o1) -> PKCS12Cipher.valueOf(o1));
+		UpdateValueStrategy<String, PKCS12Cipher> s1 = UpdateValueStrategy.create(convertStringToPKCS12CipherType)
+				.setAfterConvertValidator(value -> {
+					if (value != PKCS12Cipher.DES3) {
+						return ValidationStatus.warning("PKCS#12 with AES encryption is not widely supported. "
+								+ "Please check your tools to ensure that they support this configuration.");
+					}
+					return ValidationStatus.ok();
+				});
 
-		b = bindingContext.bindValue(cipherTypeWidget, cipherTypeModel, s, null);
+		b = bindingContext.bindValue(cipherTypeWidget, cipherTypeModel, s1, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
 		/*
 		 * Password field
 		 */
-		IObservableValue<?> password1Widget = WidgetProperties.text(SWT.Modify).observe(textPassword1);
-		IObservableValue<?> password2Widget = WidgetProperties.text(SWT.Modify).observe(textPassword2);
+		IObservableValue<String> password1Widget = WidgetProperties.text(SWT.Modify).observe(textPassword1);
+		IObservableValue<String> password2Widget = WidgetProperties.text(SWT.Modify).observe(textPassword2);
 
 		final IObservableValue<String> pmiddleField1 = new WritableValue<String>(model.getPassword(), String.class);
 		final IObservableValue<String> pmiddleField2 = new WritableValue<String>(model.getPassword(), String.class);
@@ -242,7 +243,7 @@ public class ExportPKCS12Dialog extends Dialog {
 		MultiValidator v = new PassphraseValidator(pmiddleField1, pmiddleField2, PluginDefaults.MIN_PASSWORD_LENGTH);
 		bindingContext.addValidationStatusProvider(v);
 
-		IObservableValue<?> passwordModel = PojoProperties.value("password").observe(model);
+		IObservableValue<String> passwordModel = PojoProperties.value("password", String.class).observe(model);
 		bindingContext.bindValue(v.observeValidatedValue(pmiddleField1), passwordModel);
 
 		ControlDecorationSupport.create(v.getValidationStatus(), SWT.TOP | SWT.LEFT, password1Widget);
@@ -254,17 +255,18 @@ public class ExportPKCS12Dialog extends Dialog {
 		 */
 		Button okButton = getButton(IDialogConstants.OK_ID);
 
-		IObservableValue<?> buttonEnable = WidgetProperties.enabled().observe(okButton);
-		// Create a list of all validators made available via bindings and global validators.
-		IObservableList list = new WritableList<>(bindingContext.getValidationRealm());
+		IObservableValue<Boolean> buttonEnable = WidgetProperties.enabled().observe(okButton);
+		// Create a list of all validators made available via bindings and global
+		// validators.
+		IObservableList<ValidationStatusProvider> list = new WritableList<>(bindingContext.getValidationRealm());
 		list.addAll(bindingContext.getBindings());
 		list.addAll(bindingContext.getValidationStatusProviders());
-		IObservableValue<?> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
+		IObservableValue<IStatus> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
 				AggregateValidationStatus.MAX_SEVERITY);
 
 		bindingContext.bindValue(buttonEnable, validationStatus,
-				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-				new UpdateValueStrategy().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
+				new UpdateValueStrategy<Boolean, IStatus>(UpdateValueStrategy.POLICY_NEVER),
+				new UpdateValueStrategy<IStatus, Boolean>().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
 					return Boolean.valueOf(((IStatus) o).isOK() || ((IStatus) o).matches(IStatus.WARNING));
 				})));
 		return bindingContext;

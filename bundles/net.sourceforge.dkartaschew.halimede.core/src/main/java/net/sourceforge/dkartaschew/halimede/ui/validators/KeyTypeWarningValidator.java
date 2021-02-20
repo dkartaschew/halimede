@@ -26,11 +26,10 @@ import net.sourceforge.dkartaschew.halimede.enumeration.KeyType;
 /**
  * Key Type size warning, to inform the user that the keying material may take time to generate.
  */
-public class KeyTypeWarningValidator implements IValidator {
+public class KeyTypeWarningValidator implements IValidator<KeyType> {
 
 	@Override
-	public IStatus validate(Object value) {
-		KeyType key = (KeyType) value;
+	public IStatus validate(KeyType key) {
 		if (key.getType().equals("DSA") && key.getBitLength() >= 1024) {
 			return ValidationStatus.warning("DSA Keys may take time to generate.");
 		}

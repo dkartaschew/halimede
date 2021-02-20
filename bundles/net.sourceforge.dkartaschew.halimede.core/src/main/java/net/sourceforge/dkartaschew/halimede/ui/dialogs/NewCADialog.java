@@ -26,7 +26,8 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.ValidationStatusProvider;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -36,7 +37,7 @@ import org.eclipse.core.databinding.validation.MultiValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
@@ -312,11 +313,10 @@ public class NewCADialog extends Dialog {
 		/*
 		 * CA Description
 		 */
-		IObservableValue<?> caDescriptionWidget = WidgetProperties.text(SWT.Modify).observe(textCADescription);
-		IObservableValue<?> caDescriptionModel = PojoProperties.value("cADescription").observe(model);
-		UpdateValueStrategy s = new UpdateValueStrategy().setAfterGetValidator(value -> {
-			String o = (String) value;
-			if (o.isEmpty() || o.trim().isEmpty()) {
+		IObservableValue<String> caDescriptionWidget = WidgetProperties.text(SWT.Modify).observe(textCADescription);
+		IObservableValue<String> caDescriptionModel = PojoProperties.value("cADescription", String.class).observe(model);
+		UpdateValueStrategy<String, String> s = new UpdateValueStrategy<String, String>().setAfterGetValidator(value -> {
+			if (value.isEmpty() || value.trim().isEmpty()) {
 				return ValidationStatus.error("CA Description cannot be empty");
 			}
 			return ValidationStatus.ok();
@@ -327,9 +327,9 @@ public class NewCADialog extends Dialog {
 		/*
 		 * Base Location
 		 */
-		IObservableValue<?> locationWidget = WidgetProperties.text(SWT.Modify).observe(textBaseLocation);
-		IObservableValue<?> locationModel = PojoProperties.value("baseLocation").observe(model);
-		s = new UpdateValueStrategy().setAfterGetValidator(new PathValidator());
+		IObservableValue<String> locationWidget = WidgetProperties.text(SWT.Modify).observe(textBaseLocation);
+		IObservableValue<String> locationModel = PojoProperties.value("baseLocation", String.class).observe(model);
+		s = new UpdateValueStrategy<String, String>().setAfterGetValidator(new PathValidator());
 		b = bindingContext.bindValue(locationWidget, locationModel, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 		
@@ -343,58 +343,57 @@ public class NewCADialog extends Dialog {
 		/*
 		 * X500 Name
 		 */
-		IObservableValue<?> x500NameWidget = WidgetProperties.text(SWT.Modify).observe(textX500Name);
-		IObservableValue<?> x500NameModel = PojoProperties.value("x500Name").observe(model);
-		s = new UpdateValueStrategy().setAfterGetValidator(new X500NameValidator(null));
+		IObservableValue<String> x500NameWidget = WidgetProperties.text(SWT.Modify).observe(textX500Name);
+		IObservableValue<String> x500NameModel = PojoProperties.value("x500Name", String.class).observe(model);
+		s = new UpdateValueStrategy<String, String>().setAfterGetValidator(new X500NameValidator(null));
 		b = bindingContext.bindValue(x500NameWidget, x500NameModel, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
 		/*
 		 * Key Type
 		 */
-		IObservableValue<?> keyTypeWidget = WidgetProperties.selection().observe(comboKeyType);
-		IObservableValue<?> keyTypeModel = PojoProperties.value("keyType").observe(model);
-		IConverter convertStringToKeyType = IConverter.create(String.class, KeyType.class,
+		IObservableValue<String> keyTypeWidget = WidgetProperties.comboSelection().observe(comboKeyType);
+		IObservableValue<KeyType> keyTypeModel = PojoProperties.value("keyType", KeyType.class).observe(model);
+		IConverter<String, KeyType> convertStringToKeyType = IConverter.create(String.class, KeyType.class,
 				(o1) -> KeyType.forDescription((String) o1));
-		s = UpdateValueStrategy.create(convertStringToKeyType)//
+		UpdateValueStrategy<String, KeyType> s1 = UpdateValueStrategy.create(convertStringToKeyType)//
 				.setAfterConvertValidator(new KeyTypeWarningValidator());
 
-		b = bindingContext.bindValue(keyTypeWidget, keyTypeModel, s, null);
+		b = bindingContext.bindValue(keyTypeWidget, keyTypeModel, s1, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
 		/*
 		 * CRL Location
 		 */
-		IObservableValue<?> crlLocationWidget = WidgetProperties.text(SWT.Modify).observe(textCRLLocation);
-		IObservableValue<?> cRLLocationModel = PojoProperties.value("cRLLocation").observe(model);
-		s = new UpdateValueStrategy().setAfterGetValidator(new URIValidator());
+		IObservableValue<String> crlLocationWidget = WidgetProperties.text(SWT.Modify).observe(textCRLLocation);
+		IObservableValue<String> cRLLocationModel = PojoProperties.value("cRLLocation", String.class).observe(model);
+		s = new UpdateValueStrategy<String, String>().setAfterGetValidator(new URIValidator());
 		b = bindingContext.bindValue(crlLocationWidget, cRLLocationModel, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
 		/*
 		 * Start Date and End Date
 		 */
-		IObservableValue<?> startDateWidget = new SWTObservableValueDecorator(new CDateTimeObservableValue(startDate),
-				startDate);
-		IObservableValue<?> startDateModel = PojoProperties.value("startDate").observe(model);
+		IObservableValue<Date> startDateWidget = new SWTObservableValueDecorator<Date>(new CDateTimeObservableValue(startDate), startDate);
+		IObservableValue<ZonedDateTime> startDateModel = PojoProperties.value("startDate", ZonedDateTime.class).observe(model);
 
-		IObservableValue<?> expiryDateWidget = new SWTObservableValueDecorator(new CDateTimeObservableValue(expiryDate),
-				expiryDate);
-		IObservableValue<?> expiryDateModel = PojoProperties.value("expiryDate").observe(model);
+		IObservableValue<Date>  expiryDateWidget = new SWTObservableValueDecorator<Date>(new CDateTimeObservableValue(expiryDate), expiryDate);
+		IObservableValue<ZonedDateTime> expiryDateModel = PojoProperties.value("expiryDate", ZonedDateTime.class).observe(model);
 
 		// Multi or cross validation requires the use of an intermediate value to work.
 		final IObservableValue<ZonedDateTime> middleField1 = new WritableValue<ZonedDateTime>(model.getStartDate(),
 				ZonedDateTime.class);
 		final IObservableValue<ZonedDateTime> middleField2 = new WritableValue<ZonedDateTime>(model.getExpiryDate(),
 				ZonedDateTime.class);
-		s = new UpdateValueStrategy().setConverter(IConverter.create(Date.class, ZonedDateTime.class,
+		UpdateValueStrategy<Date, ZonedDateTime> s3 = new UpdateValueStrategy<Date, ZonedDateTime>()
+				.setConverter(IConverter.create(Date.class, ZonedDateTime.class,
 				(date) -> DateTimeUtil.toZonedDateTime((Date) date)));
-		UpdateValueStrategy s2 = new UpdateValueStrategy()
+		UpdateValueStrategy< ZonedDateTime, Date> s2 = new UpdateValueStrategy<ZonedDateTime, Date>()
 				.setConverter(IConverter.create(ZonedDateTime.class, Date.class, (date) -> {
 					return date == null ? null : Date.from(((ZonedDateTime) date).toInstant());
 				}));
-		bindingContext.bindValue(startDateWidget, middleField1, s, s2);
-		bindingContext.bindValue(expiryDateWidget, middleField2, s, s2);
+		bindingContext.bindValue(startDateWidget, middleField1, s3, s2);
+		bindingContext.bindValue(expiryDateWidget, middleField2, s3, s2);
 
 		// We simple set a validator on the intermediate values.
 		final MultiValidator validator = new DatePeriodValidator(middleField1, middleField2, null, null);
@@ -410,8 +409,8 @@ public class NewCADialog extends Dialog {
 		/*
 		 * Password field
 		 */
-		IObservableValue<?> password1Widget = WidgetProperties.text(SWT.Modify).observe(textPassword1);
-		IObservableValue<?> password2Widget = WidgetProperties.text(SWT.Modify).observe(textPassword2);
+		IObservableValue<String> password1Widget = WidgetProperties.text(SWT.Modify).observe(textPassword1);
+		IObservableValue<String> password2Widget = WidgetProperties.text(SWT.Modify).observe(textPassword2);
 
 		final IObservableValue<String> pmiddleField1 = new WritableValue<String>(model.getPassword(), String.class);
 		final IObservableValue<String> pmiddleField2 = new WritableValue<String>(model.getPassword(), String.class);
@@ -422,7 +421,7 @@ public class NewCADialog extends Dialog {
 		MultiValidator v = new PassphraseValidator(pmiddleField1, pmiddleField2, PluginDefaults.MIN_PASSWORD_LENGTH);
 		bindingContext.addValidationStatusProvider(v);
 
-		IObservableValue<?> passwordModel = PojoProperties.value("password").observe(model);
+		IObservableValue<String> passwordModel = PojoProperties.value("password", String.class).observe(model);
 		bindingContext.bindValue(v.observeValidatedValue(pmiddleField1), passwordModel);
 
 		ControlDecorationSupport.create(v.getValidationStatus(), SWT.TOP | SWT.LEFT, password1Widget);
@@ -434,17 +433,17 @@ public class NewCADialog extends Dialog {
 		 */
 		Button okButton = getButton(IDialogConstants.OK_ID);
 
-		IObservableValue<?> buttonEnable = WidgetProperties.enabled().observe(okButton);
+		IObservableValue<Boolean> buttonEnable = WidgetProperties.enabled().observe(okButton);
 		// Create a list of all validators made available via bindings and global validators.
-		IObservableList list = new WritableList<>(bindingContext.getValidationRealm());
+		IObservableList<ValidationStatusProvider> list = new WritableList<>(bindingContext.getValidationRealm());
 		list.addAll(bindingContext.getBindings());
 		list.addAll(bindingContext.getValidationStatusProviders());
-		IObservableValue<?> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
+		IObservableValue<IStatus> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
 				AggregateValidationStatus.MAX_SEVERITY);
 
 		bindingContext.bindValue(buttonEnable, validationStatus,
-				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-				new UpdateValueStrategy().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
+				new UpdateValueStrategy<Boolean, IStatus>(UpdateValueStrategy.POLICY_NEVER),
+				new UpdateValueStrategy<IStatus, Boolean>().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
 					return Boolean.valueOf(((IStatus) o).isOK() || ((IStatus) o).matches(IStatus.WARNING));
 				})));
 		return bindingContext;

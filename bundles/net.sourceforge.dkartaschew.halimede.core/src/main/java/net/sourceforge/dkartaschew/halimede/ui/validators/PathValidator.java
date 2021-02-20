@@ -25,18 +25,17 @@ import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 
-public class PathValidator implements IValidator {
+public class PathValidator implements IValidator<String> {
 
 	@Override
-	public IStatus validate(Object value) {
+	public IStatus validate(String value) {
 		if (value == null) {
 			return ValidationStatus.error("Location cannot be empty");
 		}
-		String o = (String) value;
-		if (o.isEmpty()) {
+		if (value.isEmpty()) {
 			return ValidationStatus.error("Location cannot be empty");
 		}
-		Path p = Paths.get(o);
+		Path p = Paths.get(value);
 		if (!p.isAbsolute()) {
 			return ValidationStatus.error("Location field must contain an absolute path.");
 		}

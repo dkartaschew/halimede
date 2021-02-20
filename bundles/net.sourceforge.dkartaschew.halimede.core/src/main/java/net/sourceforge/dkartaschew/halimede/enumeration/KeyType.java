@@ -924,7 +924,7 @@ public enum KeyType {
 	 * @throws NoSuchElementException The description doesn't match a known element.
 	 * @throws NullPointerException   The description was null.
 	 */
-	public static Object forDescription(String value) {
+	public static KeyType forDescription(String value) {
 		Objects.requireNonNull(value, "Description was null");
 		return Arrays.stream(KeyType.values()).filter(i -> i.description.equals(value)).findFirst().get();
 	}

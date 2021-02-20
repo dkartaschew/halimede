@@ -20,7 +20,8 @@ package net.sourceforge.dkartaschew.halimede.ui.dialogs;
 import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.ValidationStatusProvider;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -29,7 +30,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.MultiValidator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -127,7 +128,6 @@ public class GeneralNameDialog extends Dialog {
 	 * 
 	 * @return The databinding holder.
 	 */
-	@SuppressWarnings("unchecked")
 	protected DataBindingContext initDataBindings() {
 
 		DataBindingContext bindingContext = new DataBindingContext();
@@ -135,19 +135,19 @@ public class GeneralNameDialog extends Dialog {
 		/*
 		 * Name text and tag
 		 */
-		IObservableValue<?> tagWidget = WidgetProperties.selection().observe(comboTag);
-		IObservableValue<?> tagModel = PojoProperties.value("tag").observe(model);
+		IObservableValue<String> tagWidget = WidgetProperties.comboSelection().observe(comboTag);
+		IObservableValue<GeneralNameTag> tagModel = PojoProperties.value("tag", GeneralNameTag.class).observe(model);
 
-		IObservableValue<?> nameWidget = WidgetProperties.text(SWT.Modify).observe(text);
-		IObservableValue<?> nameModel = PojoProperties.value("value").observe(model);
+		IObservableValue<String> nameWidget = WidgetProperties.text(SWT.Modify).observe(text);
+		IObservableValue<String> nameModel = PojoProperties.value("value", String.class).observe(model);
 
 		// Multi or cross validation requires the use of an intermediate value to work.
 		final IObservableValue<GeneralNameTag> middleField1 = new WritableValue<GeneralNameTag>(model.getTag(),	GeneralNameTag.class);
 		final IObservableValue<String> middleField2 = new WritableValue<String>(model.getValue(), String.class);
 
-		IConverter convertStringToKeyType = IConverter.create(String.class, GeneralNameTag.class,
+		IConverter<String, GeneralNameTag> convertStringToKeyType = IConverter.create(String.class, GeneralNameTag.class,
 				(o1) -> GeneralNameTag.forDescription((String) o1));
-		UpdateValueStrategy s = UpdateValueStrategy.create(convertStringToKeyType);
+		UpdateValueStrategy<String, GeneralNameTag> s = UpdateValueStrategy.create(convertStringToKeyType);
 		bindingContext.bindValue(tagWidget, middleField1, s, null);
 		bindingContext.bindValue(nameWidget, middleField2);
 
@@ -166,17 +166,17 @@ public class GeneralNameDialog extends Dialog {
 		 */
 		Button okButton = getButton(IDialogConstants.OK_ID);
 
-		IObservableValue<?> buttonEnable = WidgetProperties.enabled().observe(okButton);
+		IObservableValue<Boolean> buttonEnable = WidgetProperties.enabled().observe(okButton);
 		// Create a list of all validators made available via bindings and global validators.
-		IObservableList list = new WritableList<>(bindingContext.getValidationRealm());
+		IObservableList<ValidationStatusProvider> list = new WritableList<>(bindingContext.getValidationRealm());
 		list.addAll(bindingContext.getBindings());
 		list.addAll(bindingContext.getValidationStatusProviders());
-		IObservableValue<?> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
+		IObservableValue<IStatus> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
 				AggregateValidationStatus.MAX_SEVERITY);
 
 		bindingContext.bindValue(buttonEnable, validationStatus,
-				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-				new UpdateValueStrategy().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
+				new UpdateValueStrategy<Boolean, IStatus>(UpdateValueStrategy.POLICY_NEVER),
+				new UpdateValueStrategy<IStatus, Boolean>().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
 					return Boolean.valueOf(((IStatus) o).isOK() || ((IStatus) o).matches(IStatus.WARNING));
 				})));
 		return bindingContext;

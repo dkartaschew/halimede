@@ -31,7 +31,7 @@ import net.sourceforge.dkartaschew.halimede.ui.data.RevokedCertificateComparator
 import net.sourceforge.dkartaschew.halimede.ui.labelproviders.RevokedCertificateColumnLabelProvider;
 import net.sourceforge.dkartaschew.halimede.ui.node.ElementType;
 
-public class RevokedCertificatesPane extends AbstractDetailsPane {
+public class RevokedCertificatesPane extends AbstractDetailsPane<IssuedCertificateProperties> {
 
 	public static final int COLUMN_DESCRIPTION = 0;
 	public static final int COLUMN_SUBJECT = 1;
@@ -88,7 +88,7 @@ public class RevokedCertificatesPane extends AbstractDetailsPane {
 	}
 
 	@Override
-	public CADetailsComparator<?> getTableComparator() {
+	public CADetailsComparator<IssuedCertificateProperties> getTableComparator() {
 		return comparator;
 	}
 

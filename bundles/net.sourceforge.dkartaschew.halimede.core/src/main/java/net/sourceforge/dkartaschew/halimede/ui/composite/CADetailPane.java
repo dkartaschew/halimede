@@ -61,7 +61,7 @@ public class CADetailPane extends Composite implements ISelectionChangedListener
 	/**
 	 * The table view
 	 */
-	private final EnumMap<ElementType, AbstractDetailsPane> tableViewerElements;
+	private final EnumMap<ElementType, AbstractDetailsPane<?>> tableViewerElements;
 	/**
 	 * Stack layout for tables.
 	 */

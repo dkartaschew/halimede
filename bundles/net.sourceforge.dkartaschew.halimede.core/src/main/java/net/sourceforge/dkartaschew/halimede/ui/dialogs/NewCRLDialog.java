@@ -25,7 +25,8 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.ValidationStatusProvider;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -33,7 +34,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
@@ -158,7 +159,6 @@ public class NewCRLDialog extends Dialog {
 	 * 
 	 * @return The databinding holder.
 	 */
-	@SuppressWarnings({ "unchecked" })
 	protected DataBindingContext initDataBindings() {
 
 		DataBindingContext bindingContext = new DataBindingContext();
@@ -166,10 +166,12 @@ public class NewCRLDialog extends Dialog {
 		/*
 		 * Next Update
 		 */
-		IObservableValue<?> nextDateWidget = new SWTObservableValueDecorator(new CDateTimeObservableValue(CANextUpdate),
-				CANextUpdate);
-		IObservableValue<?> nextDateModel = PojoProperties.value("nextDate").observe(model);
-		UpdateValueStrategy s = new UpdateValueStrategy().setConverter(
+		@SuppressWarnings("unchecked")
+		IObservableValue<Date> nextDateWidget = new SWTObservableValueDecorator<Date>(
+				new CDateTimeObservableValue(CANextUpdate), CANextUpdate);
+		IObservableValue<ZonedDateTime> nextDateModel = PojoProperties.value("nextDate", ZonedDateTime.class)
+				.observe(model);
+		UpdateValueStrategy<Date, ZonedDateTime> s = new UpdateValueStrategy<Date, ZonedDateTime>().setConverter(
 				IConverter.create(Date.class, ZonedDateTime.class, (date) -> DateTimeUtil.toZonedDateTime((Date) date)))
 				.setBeforeSetValidator(value -> {
 					ZonedDateTime o = (ZonedDateTime) value;
@@ -178,7 +180,7 @@ public class NewCRLDialog extends Dialog {
 					}
 					return ValidationStatus.ok();
 				});
-		UpdateValueStrategy s2 = new UpdateValueStrategy()
+		UpdateValueStrategy<ZonedDateTime, Date> s2 = new UpdateValueStrategy<ZonedDateTime, Date>()
 				.setConverter(IConverter.create(ZonedDateTime.class, Date.class, (date) -> {
 					return date == null ? null : Date.from(((ZonedDateTime) date).toInstant());
 				}));
@@ -190,17 +192,18 @@ public class NewCRLDialog extends Dialog {
 		 */
 		Button okButton = getButton(IDialogConstants.OK_ID);
 
-		IObservableValue<?> buttonEnable = WidgetProperties.enabled().observe(okButton);
-		// Create a list of all validators made available via bindings and global validators.
-		IObservableList list = new WritableList<>(bindingContext.getValidationRealm());
+		IObservableValue<Boolean> buttonEnable = WidgetProperties.enabled().observe(okButton);
+		// Create a list of all validators made available via bindings and global
+		// validators.
+		IObservableList<ValidationStatusProvider> list = new WritableList<>(bindingContext.getValidationRealm());
 		list.addAll(bindingContext.getBindings());
 		list.addAll(bindingContext.getValidationStatusProviders());
-		IObservableValue<?> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
+		IObservableValue<IStatus> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
 				AggregateValidationStatus.MAX_SEVERITY);
 
 		bindingContext.bindValue(buttonEnable, validationStatus,
-				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-				new UpdateValueStrategy().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
+				new UpdateValueStrategy<Boolean, IStatus>(UpdateValueStrategy.POLICY_NEVER),
+				new UpdateValueStrategy<IStatus, Boolean>().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
 					return Boolean.valueOf(((IStatus) o).isOK() || ((IStatus) o).matches(IStatus.WARNING));
 				})));
 		return bindingContext;

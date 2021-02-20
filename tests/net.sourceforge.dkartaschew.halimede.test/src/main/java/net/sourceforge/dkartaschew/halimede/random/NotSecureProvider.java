@@ -26,7 +26,7 @@ public class NotSecureProvider extends Provider {
 	private static final long serialVersionUID = 4208236320579929452L;
 
 	protected NotSecureProvider() {
-		super("NotSecure_XORShift_PRNG", 1.0, "Not A Secure Random Provider");
+		super("NotSecure_XORShift_PRNG", "1.0", "Not A Secure Random Provider");
 	}
 
 }

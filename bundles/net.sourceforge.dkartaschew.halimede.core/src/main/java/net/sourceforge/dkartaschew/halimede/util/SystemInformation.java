@@ -240,7 +240,7 @@ public class SystemInformation {
 			java.security.Provider p[] = Security.getProviders();
 			for (int i = 0; i < p.length; i++) {
 				java.security.Provider p0 = p[i];
-				r.addContentLine(p0.toString() + " (\"" + p0.getName() + "\" " + p0.getVersion() + ")");
+				r.addContentLine(p0.toString() + " (\"" + p0.getName() + "\" " + p0.getVersionStr() + ")");
 				List<String> items = new ArrayList<>();
 				for (Enumeration<Object> e = p0.keys(); e.hasMoreElements();) {
 					items.add(e.nextElement().toString());

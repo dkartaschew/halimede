@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IStatus;
 import net.sourceforge.dkartaschew.halimede.enumeration.GeneralNameTag;
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
-public class URIValidator implements IValidator {
+public class URIValidator implements IValidator<String> {
 
 	private final IObservableValue<Boolean> validate;
 
@@ -40,7 +40,7 @@ public class URIValidator implements IValidator {
 	}
 
 	@Override
-	public IStatus validate(Object value) {
+	public IStatus validate(String value) {
 		if (validate != null) {
 			boolean v = validate.getValue();
 			if (!v) {
@@ -50,12 +50,11 @@ public class URIValidator implements IValidator {
 		if (value == null) {
 			return ValidationStatus.warning("Location URI is empty");
 		}
-		String o = (String) value;
-		if (o.isEmpty()) {
+		if (value.isEmpty()) {
 			return ValidationStatus.warning("Location URI is empty");
 		}
 		try {
-			URI uri = new URI(o);
+			URI uri = new URI(value);
 			// attempt to constuct a general name (URI) from the URI.
 			GeneralNameTag.uniformResourceIdentifier.asGeneralName(uri.toString());
 			return ValidationStatus.ok();

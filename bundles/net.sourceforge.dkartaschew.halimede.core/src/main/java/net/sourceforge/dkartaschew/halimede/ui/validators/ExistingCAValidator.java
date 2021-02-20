@@ -13,8 +13,8 @@ import org.eclipse.core.runtime.IStatus;
 
 public class ExistingCAValidator extends MultiValidator {
 
-	private final IObservableValue<?> nameField;
-	private final IObservableValue<?> locationField;
+	private final IObservableValue<String> nameField;
+	private final IObservableValue<String> locationField;
 
 	/**
 	 * Create a validator to ensure the location doesn't already contain a folder
@@ -23,7 +23,7 @@ public class ExistingCAValidator extends MultiValidator {
 	 * @param nameField     The name field
 	 * @param locationField The location field.
 	 */
-	public ExistingCAValidator(IObservableValue<?> nameField, IObservableValue<?> locationField) {
+	public ExistingCAValidator(IObservableValue<String> nameField, IObservableValue<String> locationField) {
 		Objects.requireNonNull(nameField, "Name field is null");
 		Objects.requireNonNull(locationField, "Location field is null");
 		this.nameField = nameField;
@@ -37,7 +37,7 @@ public class ExistingCAValidator extends MultiValidator {
 			return ValidationStatus.ok();
 		}
 		try {
-			Path p = Paths.get((String) locationField.getValue(), (String) nameField.getValue());
+			Path p = Paths.get(locationField.getValue(), nameField.getValue());
 			if (Files.exists(p)) {
 				return ValidationStatus.error("Location appears to have a location with the Name already defined.");
 			}

@@ -21,7 +21,8 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.ValidationStatusProvider;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -29,7 +30,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -156,7 +157,6 @@ public class ExportInformationDialog extends Dialog {
 	 * 
 	 * @return The databinding holder.
 	 */
-	@SuppressWarnings("unchecked")
 	protected DataBindingContext initDataBindings() {
 
 		DataBindingContext bindingContext = new DataBindingContext();
@@ -164,11 +164,10 @@ public class ExportInformationDialog extends Dialog {
 		/*
 		 * Base Location
 		 */
-		IObservableValue<?> locationWidget = WidgetProperties.text(SWT.Modify).observe(textBaseLocation);
-		IObservableValue<?> locationModel = PojoProperties.value("filename").observe(model);
-		UpdateValueStrategy s = new UpdateValueStrategy().setAfterGetValidator(value -> {
-			String o = (String) value;
-			if (o.isEmpty()) {
+		IObservableValue<String> locationWidget = WidgetProperties.text(SWT.Modify).observe(textBaseLocation);
+		IObservableValue <String>locationModel = PojoProperties.value("filename", String.class).observe(model);
+		UpdateValueStrategy<String, String> s = new UpdateValueStrategy<String, String>().setAfterGetValidator(value -> {
+			if (value.isEmpty()) {
 				return ValidationStatus.error("Location cannot be empty");
 			}
 			return ValidationStatus.ok();
@@ -179,13 +178,13 @@ public class ExportInformationDialog extends Dialog {
 		/*
 		 * Encoding Type
 		 */
-		IObservableValue<?> keyTypeWidget = WidgetProperties.selection().observe(comboKeyType);
-		IObservableValue<?> keyTypeModel = PojoProperties.value("encoding").observe(model);
-		IConverter convertStringToKeyType = IConverter.create(String.class, EncodingType.class,
+		IObservableValue<String> keyTypeWidget = WidgetProperties.comboSelection().observe(comboKeyType);
+		IObservableValue<EncodingType> keyTypeModel = PojoProperties.value("encoding", EncodingType.class).observe(model);
+		IConverter<String, EncodingType> convertStringToKeyType = IConverter.create(String.class, EncodingType.class,
 				(o1) -> EncodingType.valueOf((String) o1));
-		s = UpdateValueStrategy.create(convertStringToKeyType);
+		UpdateValueStrategy<String, EncodingType> s1 = UpdateValueStrategy.create(convertStringToKeyType);
 
-		b = bindingContext.bindValue(keyTypeWidget, keyTypeModel, s, null);
+		b = bindingContext.bindValue(keyTypeWidget, keyTypeModel, s1, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
 		/*
@@ -193,17 +192,17 @@ public class ExportInformationDialog extends Dialog {
 		 */
 		Button okButton = getButton(IDialogConstants.OK_ID);
 
-		IObservableValue<?> buttonEnable = WidgetProperties.enabled().observe(okButton);
+		IObservableValue<Boolean> buttonEnable = WidgetProperties.enabled().observe(okButton);
 		// Create a list of all validators made available via bindings and global validators.
-		IObservableList list = new WritableList<>(bindingContext.getValidationRealm());
+		IObservableList<ValidationStatusProvider> list = new WritableList<>(bindingContext.getValidationRealm());
 		list.addAll(bindingContext.getBindings());
 		list.addAll(bindingContext.getValidationStatusProviders());
-		IObservableValue<?> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
+		IObservableValue<IStatus> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
 				AggregateValidationStatus.MAX_SEVERITY);
 
 		bindingContext.bindValue(buttonEnable, validationStatus,
-				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-				new UpdateValueStrategy().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
+				new UpdateValueStrategy<Boolean, IStatus>(UpdateValueStrategy.POLICY_NEVER),
+				new UpdateValueStrategy<IStatus, Boolean>().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
 					return Boolean.valueOf(((IStatus) o).isOK() || ((IStatus) o).matches(IStatus.WARNING));
 				})));
 		return bindingContext;

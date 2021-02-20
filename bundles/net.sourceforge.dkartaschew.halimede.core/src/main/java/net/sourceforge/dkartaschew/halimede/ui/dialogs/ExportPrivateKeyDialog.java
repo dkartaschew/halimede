@@ -21,7 +21,8 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.ValidationStatusProvider;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -31,7 +32,7 @@ import org.eclipse.core.databinding.validation.MultiValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -73,7 +74,7 @@ public class ExportPrivateKeyDialog extends Dialog {
 	 * Create the dialog.
 	 * 
 	 * @param parentShell The parent shell
-	 * @param model The model to populate.
+	 * @param model       The model to populate.
 	 */
 	public ExportPrivateKeyDialog(Shell parentShell, ExportInformationModel model) {
 		super(parentShell);
@@ -141,10 +142,10 @@ public class ExportPrivateKeyDialog extends Dialog {
 		comboKeyType.select(0);
 
 		new Label(container, SWT.NONE);
-		
+
 		Label lblEncryptionCipher = new Label(container, SWT.NONE);
 		lblEncryptionCipher.setText("Encryption Cipher:");
-		
+
 		comboViewerCipherType = new ComboViewer(container, SWT.READ_ONLY);
 		comboCipherType = comboViewerCipherType.getCombo();
 		comboCipherType.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -156,9 +157,9 @@ public class ExportPrivateKeyDialog extends Dialog {
 		// Set default value.
 		model.setPkcs8Cipher(PKCS8Cipher.AES_256_CBC);
 		comboCipherType.select(3);
-		
+
 		new Label(container, SWT.NONE);
-		
+
 		Label lblPassword = new Label(container, SWT.NONE);
 		lblPassword.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		lblPassword.setText("Passphrase:");
@@ -209,7 +210,6 @@ public class ExportPrivateKeyDialog extends Dialog {
 	 * 
 	 * @return The databinding holder.
 	 */
-	@SuppressWarnings("unchecked")
 	protected DataBindingContext initDataBindings() {
 
 		DataBindingContext bindingContext = new DataBindingContext();
@@ -217,47 +217,48 @@ public class ExportPrivateKeyDialog extends Dialog {
 		/*
 		 * Base Location
 		 */
-		IObservableValue<?> locationWidget = WidgetProperties.text(SWT.Modify).observe(textBaseLocation);
-		IObservableValue<?> locationModel = PojoProperties.value("filename").observe(model);
-		UpdateValueStrategy s = new UpdateValueStrategy().setAfterGetValidator(value -> {
-			String o = (String) value;
-			if (o.isEmpty()) {
-				return ValidationStatus.error("Location cannot be empty");
-			}
-			return ValidationStatus.ok();
-		});
+		IObservableValue<String> locationWidget = WidgetProperties.text(SWT.Modify).observe(textBaseLocation);
+		IObservableValue<String> locationModel = PojoProperties.value("filename", String.class).observe(model);
+		UpdateValueStrategy<String, String> s = new UpdateValueStrategy<String, String>()
+				.setAfterGetValidator(value -> {
+					if (value.isEmpty()) {
+						return ValidationStatus.error("Location cannot be empty");
+					}
+					return ValidationStatus.ok();
+				});
 		Binding b = bindingContext.bindValue(locationWidget, locationModel, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
 		/*
 		 * Encoding Type
 		 */
-		IObservableValue<?> keyTypeWidget = WidgetProperties.selection().observe(comboKeyType);
-		IObservableValue<?> keyTypeModel = PojoProperties.value("encoding").observe(model);
-		IConverter convertStringToKeyType = IConverter.create(String.class, EncodingType.class,
-				(o1) -> EncodingType.valueOf((String) o1));
-		s = UpdateValueStrategy.create(convertStringToKeyType);
+		IObservableValue<String> keyTypeWidget = WidgetProperties.comboSelection().observe(comboKeyType);
+		IObservableValue<EncodingType> keyTypeModel = PojoProperties.value("encoding", EncodingType.class)
+				.observe(model);
+		IConverter<String, EncodingType> convertStringToKeyType = IConverter.create(String.class, EncodingType.class,
+				EncodingType::valueOf);
+		UpdateValueStrategy<String, EncodingType> s1 = UpdateValueStrategy.create(convertStringToKeyType);
 
-		b = bindingContext.bindValue(keyTypeWidget, keyTypeModel, s, null);
+		b = bindingContext.bindValue(keyTypeWidget, keyTypeModel, s1, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
-		
+
 		/*
 		 * Cipher Type
 		 */
-		IObservableValue<?> cipherTypeWidget = WidgetProperties.selection().observe(comboCipherType);
-		IObservableValue<?> cipherTypeModel = PojoProperties.value("pkcs8Cipher").observe(model);
-		IConverter convertStringToPKCS8CipherType = IConverter.create(String.class, PKCS8Cipher.class,
-				(o1) -> PKCS8Cipher.valueOf((String) o1));
-		s = UpdateValueStrategy.create(convertStringToPKCS8CipherType);
-
-		b = bindingContext.bindValue(cipherTypeWidget, cipherTypeModel, s, null);
+		IObservableValue<String> cipherTypeWidget = WidgetProperties.comboSelection().observe(comboCipherType);
+		IObservableValue<PKCS8Cipher> cipherTypeModel = PojoProperties.value("pkcs8Cipher", PKCS8Cipher.class)
+				.observe(model);
+		IConverter<String, PKCS8Cipher> convertStringToPKCS8CipherType = IConverter.create(String.class,
+				PKCS8Cipher.class, PKCS8Cipher::valueOf);
+		UpdateValueStrategy<String, PKCS8Cipher> s2 = UpdateValueStrategy.create(convertStringToPKCS8CipherType);
+		b = bindingContext.bindValue(cipherTypeWidget, cipherTypeModel, s2, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
 		/*
 		 * Password field
 		 */
-		IObservableValue<?> password1Widget = WidgetProperties.text(SWT.Modify).observe(textPassword1);
-		IObservableValue<?> password2Widget = WidgetProperties.text(SWT.Modify).observe(textPassword2);
+		IObservableValue<String> password1Widget = WidgetProperties.text(SWT.Modify).observe(textPassword1);
+		IObservableValue<String> password2Widget = WidgetProperties.text(SWT.Modify).observe(textPassword2);
 
 		final IObservableValue<String> pmiddleField1 = new WritableValue<String>(model.getPassword(), String.class);
 		final IObservableValue<String> pmiddleField2 = new WritableValue<String>(model.getPassword(), String.class);
@@ -268,29 +269,30 @@ public class ExportPrivateKeyDialog extends Dialog {
 		MultiValidator v = new PassphraseValidator(pmiddleField1, pmiddleField2, PluginDefaults.MIN_PASSWORD_LENGTH);
 		bindingContext.addValidationStatusProvider(v);
 
-		IObservableValue<?> passwordModel = PojoProperties.value("password").observe(model);
+		IObservableValue<String> passwordModel = PojoProperties.value("password", String.class).observe(model);
 		bindingContext.bindValue(v.observeValidatedValue(pmiddleField1), passwordModel);
 
 		ControlDecorationSupport.create(v.getValidationStatus(), SWT.TOP | SWT.LEFT, password1Widget);
 		ControlDecorationSupport.create(v.getValidationStatus(), SWT.TOP | SWT.LEFT, password2Widget);
 		//
-		
+
 		/*
 		 * Bind the OK button for enablement.
 		 */
 		Button okButton = getButton(IDialogConstants.OK_ID);
 
-		IObservableValue<?> buttonEnable = WidgetProperties.enabled().observe(okButton);
-		// Create a list of all validators made available via bindings and global validators.
-		IObservableList list = new WritableList<>(bindingContext.getValidationRealm());
+		IObservableValue<Boolean> buttonEnable = WidgetProperties.enabled().observe(okButton);
+		// Create a list of all validators made available via bindings and global
+		// validators.
+		IObservableList<ValidationStatusProvider> list = new WritableList<>(bindingContext.getValidationRealm());
 		list.addAll(bindingContext.getBindings());
 		list.addAll(bindingContext.getValidationStatusProviders());
-		IObservableValue<?> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
+		IObservableValue<IStatus> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
 				AggregateValidationStatus.MAX_SEVERITY);
 
 		bindingContext.bindValue(buttonEnable, validationStatus,
-				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-				new UpdateValueStrategy().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
+				new UpdateValueStrategy<Boolean, IStatus>(UpdateValueStrategy.POLICY_NEVER),
+				new UpdateValueStrategy<IStatus, Boolean>().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
 					return Boolean.valueOf(((IStatus) o).isOK() || ((IStatus) o).matches(IStatus.WARNING));
 				})));
 		return bindingContext;

@@ -34,7 +34,7 @@ import net.sourceforge.dkartaschew.halimede.ui.node.ElementType;
 /**
  * Pane for Issued Certificates.
  */
-public class IssuedCertificatesPane extends AbstractDetailsPane {
+public class IssuedCertificatesPane extends AbstractDetailsPane<IssuedCertificateProperties> {
 
 	public static final int COLUMN_DESCRIPTION = 0;
 	public static final int COLUMN_SUBJECT = 1;
@@ -94,7 +94,7 @@ public class IssuedCertificatesPane extends AbstractDetailsPane {
 	}
 
 	@Override
-	public CADetailsComparator<?> getTableComparator() {
+	public CADetailsComparator<IssuedCertificateProperties> getTableComparator() {
 		return comparator;
 	}
 }

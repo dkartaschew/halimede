@@ -37,13 +37,13 @@ import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.MultiValidator;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -651,7 +651,7 @@ public class CertificateTemplateComposite extends Composite {
 	 * 
 	 * @return The databinding holder.
 	 */
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings("unchecked")
 	protected DataBindingContext initDataBindings() {
 
 		DataBindingContext bindingContext = new DataBindingContext();
@@ -660,21 +660,20 @@ public class CertificateTemplateComposite extends Composite {
 		 * Description
 		 */
 		if (textCertDescription != null) {
-			IObservableValue<?> descriptionWidget = WidgetProperties.text(SWT.Modify).observe(textCertDescription);
-			IObservableValue<?> descriptionModel = PojoProperties.value("description").observe(model);
+			IObservableValue<String> descriptionWidget = WidgetProperties.text(SWT.Modify).observe(textCertDescription);
+			IObservableValue<String> descriptionModel = PojoProperties.value("description", String.class).observe(model);
 			Binding b = bindingContext.bindValue(descriptionWidget, descriptionModel, null, null);
 			ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 		}
-		UpdateValueStrategy s = null;
 		/*
 		 * X500 Name
 		 */
 		if (!model.isCertificateRequest()) {
-			IObservableValue<?> x500NameWidget = WidgetProperties.text(SWT.Modify).observe(textX500Name);
-			IObservableValue<?> x500NameModel = PojoProperties.value("subject").observe(model);
-			IConverter convertStringToX500 = IConverter.create(String.class, X500Name.class,
-					(o1) -> new X500Name((String) o1));
-			s = new UpdateValueStrategy()//
+			IObservableValue<String> x500NameWidget = WidgetProperties.text(SWT.Modify).observe(textX500Name);
+			IObservableValue<X500Name> x500NameModel = PojoProperties.value("subject", X500Name.class).observe(model);
+			IConverter<String, X500Name> convertStringToX500 = IConverter.create(String.class, X500Name.class,
+					(o1) -> new X500Name(o1));
+			UpdateValueStrategy<String, X500Name> s = new UpdateValueStrategy<String, X500Name>()//
 					.setAfterGetValidator(new X500NameValidator(CertificateUtil.getIssuers(model.getCa())))//
 					.setConverter(convertStringToX500);
 			Binding b = bindingContext.bindValue(x500NameWidget, x500NameModel, s, null);
@@ -685,11 +684,11 @@ public class CertificateTemplateComposite extends Composite {
 		 */
 		if (comboKeyType != null) {
 			// This will be NULL if this is a CSR.
-			IObservableValue<?> keyTypeWidget = WidgetProperties.selection().observe(comboKeyType);
-			IObservableValue<?> keyTypeModel = PojoProperties.value("keyType").observe(model);
-			IConverter convertStringToKeyType = IConverter.create(String.class, KeyType.class,
+			IObservableValue<String> keyTypeWidget = WidgetProperties.comboSelection().observe(comboKeyType);
+			IObservableValue<KeyType> keyTypeModel = PojoProperties.value("keyType", KeyType.class).observe(model);
+			IConverter<String, KeyType> convertStringToKeyType = IConverter.create(String.class, KeyType.class,
 					(o1) -> KeyType.forDescription((String) o1));
-			s = UpdateValueStrategy.create(convertStringToKeyType)//
+			UpdateValueStrategy<String, KeyType> s = UpdateValueStrategy.create(convertStringToKeyType)//
 					.setAfterConvertValidator(new KeyTypeWarningValidator());
 
 			Binding b = bindingContext.bindValue(keyTypeWidget, keyTypeModel, s, null);
@@ -699,16 +698,16 @@ public class CertificateTemplateComposite extends Composite {
 		/*
 		 * is CA field
 		 */
-		IObservableValue<?> caWidget = WidgetProperties.selection().observe(btnIsCertAuthority);
-		IObservableValue<Boolean> caModel = PojoProperties.value("cARequest").observe(model);
+		IObservableValue<Boolean> caWidget = WidgetProperties.buttonSelection().observe(btnIsCertAuthority);
+		IObservableValue<Boolean> caModel = PojoProperties.value("cARequest", Boolean.class).observe(model);
 		Binding b = bindingContext.bindValue(caWidget, caModel, null, null);
 
 		/*
 		 * CRL Location
 		 */
-		IObservableValue<?> crlLocationWidget = WidgetProperties.text(SWT.Modify).observe(textCRLLocation);
-		IObservableValue<?> cRLLocationModel = PojoProperties.value("crlLocation").observe(model);
-		s = new UpdateValueStrategy().setAfterGetValidator(new URIValidator(caModel));
+		IObservableValue<String> crlLocationWidget = WidgetProperties.text(SWT.Modify).observe(textCRLLocation);
+		IObservableValue<String> cRLLocationModel = PojoProperties.value("crlLocation", String.class).observe(model);
+		UpdateValueStrategy<String, String> s = new UpdateValueStrategy<String, String>().setAfterGetValidator(new URIValidator(caModel));
 		b = bindingContext.bindValue(crlLocationWidget, cRLLocationModel, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
@@ -720,27 +719,24 @@ public class CertificateTemplateComposite extends Composite {
 			/*
 			 * Start Date and End Date
 			 */
-			IObservableValue<?> startDateWidget = new SWTObservableValueDecorator(
-					new CDateTimeObservableValue(startDate), startDate);
-			IObservableValue<?> startDateModel = PojoProperties.value("startDate").observe(model);
+			IObservableValue<Date> startDateWidget = new SWTObservableValueDecorator<Date>(new CDateTimeObservableValue(startDate), startDate);
+			IObservableValue<ZonedDateTime> startDateModel = PojoProperties.value("startDate", ZonedDateTime.class).observe(model);
 
-			IObservableValue<?> expiryDateWidget = new SWTObservableValueDecorator(
-					new CDateTimeObservableValue(expiryDate), expiryDate);
-			IObservableValue<?> expiryDateModel = PojoProperties.value("expiryDate").observe(model);
+			IObservableValue<Date> expiryDateWidget = new SWTObservableValueDecorator<Date>(new CDateTimeObservableValue(expiryDate), expiryDate);
+			IObservableValue<ZonedDateTime> expiryDateModel = PojoProperties.value("expiryDate", ZonedDateTime.class).observe(model);
 
 			// Multi or cross validation requires the use of an intermediate value to work.
-			final IObservableValue<ZonedDateTime> middleField1 = new WritableValue<ZonedDateTime>(model.getStartDate(),
-					ZonedDateTime.class);
-			final IObservableValue<ZonedDateTime> middleField2 = new WritableValue<ZonedDateTime>(model.getExpiryDate(),
-					ZonedDateTime.class);
-			s = new UpdateValueStrategy().setConverter(IConverter.create(Date.class, ZonedDateTime.class,
+			final IObservableValue<ZonedDateTime> middleField1 = new WritableValue<ZonedDateTime>(model.getStartDate(), ZonedDateTime.class);
+			final IObservableValue<ZonedDateTime> middleField2 = new WritableValue<ZonedDateTime>(model.getExpiryDate(), ZonedDateTime.class);
+			UpdateValueStrategy<Date, ZonedDateTime> s1 = new UpdateValueStrategy<Date, ZonedDateTime>()
+					.setConverter(IConverter.create(Date.class, ZonedDateTime.class,
 					(date) -> DateTimeUtil.toZonedDateTime((Date) date)));
-			UpdateValueStrategy s2 = new UpdateValueStrategy()
+			UpdateValueStrategy<ZonedDateTime, Date>  s2 = new UpdateValueStrategy<ZonedDateTime, Date>()
 					.setConverter(IConverter.create(ZonedDateTime.class, Date.class, (date) -> {
 						return date == null ? null : Date.from(((ZonedDateTime) date).toInstant());
 					}));
-			bindingContext.bindValue(startDateWidget, middleField1, s, s2);
-			bindingContext.bindValue(expiryDateWidget, middleField2, s, s2);
+			bindingContext.bindValue(startDateWidget, middleField1, s1, s2);
+			bindingContext.bindValue(expiryDateWidget, middleField2, s1, s2);
 
 			// We simple set a validator on the intermediate values.
 			ZonedDateTime notBefore = null;
@@ -765,15 +761,15 @@ public class CertificateTemplateComposite extends Composite {
 			/*
 			 * Use CA Password field
 			 */
-			IObservableValue<?> capasswordWidget = WidgetProperties.selection().observe(btnUseCAPassword);
-			IObservableValue<Boolean> capasswordModel = PojoProperties.value("useCAPassword").observe(model);
+			IObservableValue<Boolean> capasswordWidget = WidgetProperties.buttonSelection().observe(btnUseCAPassword);
+			IObservableValue<Boolean> capasswordModel = PojoProperties.value("useCAPassword", Boolean.class).observe(model);
 			bindingContext.bindValue(capasswordWidget, capasswordModel, null, null);
 
 			/*
 			 * Password field
 			 */
-			IObservableValue<?> password1Widget = WidgetProperties.text(SWT.Modify).observe(textPassword1);
-			IObservableValue<?> password2Widget = WidgetProperties.text(SWT.Modify).observe(textPassword2);
+			IObservableValue<String> password1Widget = WidgetProperties.text(SWT.Modify).observe(textPassword1);
+			IObservableValue<String> password2Widget = WidgetProperties.text(SWT.Modify).observe(textPassword2);
 
 			final IObservableValue<String> pmiddleField1 = new WritableValue<String>(model.getPassword(), String.class);
 			final IObservableValue<String> pmiddleField2 = new WritableValue<String>(model.getPassword(), String.class);
@@ -781,11 +777,10 @@ public class CertificateTemplateComposite extends Composite {
 			bindingContext.bindValue(password1Widget, pmiddleField1);
 			bindingContext.bindValue(password2Widget, pmiddleField2);
 
-			MultiValidator v = new PassphraseValidator(pmiddleField1, pmiddleField2, PluginDefaults.MIN_PASSWORD_LENGTH,
-					capasswordModel);
+			MultiValidator v = new PassphraseValidator(pmiddleField1, pmiddleField2, PluginDefaults.MIN_PASSWORD_LENGTH, capasswordModel);
 			bindingContext.addValidationStatusProvider(v);
 
-			IObservableValue<?> passwordModel = PojoProperties.value("password").observe(model);
+			IObservableValue<String> passwordModel = PojoProperties.value("password", String.class).observe(model);
 			bindingContext.bindValue(v.observeValidatedValue(pmiddleField1), passwordModel);
 
 			ControlDecorationSupport.create(v.getValidationStatus(), SWT.TOP | SWT.LEFT, password1Widget);

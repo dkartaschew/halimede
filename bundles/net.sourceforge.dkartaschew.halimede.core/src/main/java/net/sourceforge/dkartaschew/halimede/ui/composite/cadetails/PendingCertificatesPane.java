@@ -31,7 +31,7 @@ import net.sourceforge.dkartaschew.halimede.ui.data.CSRColumnComparator;
 import net.sourceforge.dkartaschew.halimede.ui.labelproviders.CSRColumnLabelProvider;
 import net.sourceforge.dkartaschew.halimede.ui.node.ElementType;
 
-public class PendingCertificatesPane extends AbstractDetailsPane {
+public class PendingCertificatesPane extends AbstractDetailsPane<CertificateRequestProperties> {
 
 	public static final int COLUMN_SUBJECT = 0;
 	public static final int COLUMN_KEY_TYPE = 1;
@@ -82,7 +82,7 @@ public class PendingCertificatesPane extends AbstractDetailsPane {
 	}
 
 	@Override
-	public CADetailsComparator<?> getTableComparator() {
+	public CADetailsComparator<CertificateRequestProperties> getTableComparator() {
 		return comparator;
 	}
 

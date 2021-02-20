@@ -21,14 +21,15 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.ValidationStatusProvider;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -175,7 +176,6 @@ public class RestoreCADialog extends Dialog {
 	 * 
 	 * @return The databinding holder.
 	 */
-	@SuppressWarnings("unchecked")
 	protected DataBindingContext initDataBindings() {
 
 		DataBindingContext bindingContext = new DataBindingContext();
@@ -183,26 +183,26 @@ public class RestoreCADialog extends Dialog {
 		/*
 		 * Filename
 		 */
-		IObservableValue<?> filenameWidget = WidgetProperties.text(SWT.Modify).observe(textFilename);
-		IObservableValue<?> filenameModel = PojoProperties.value("filename").observe(model);
-		UpdateValueStrategy s = new UpdateValueStrategy().setAfterGetValidator(new FileValidator());
+		IObservableValue<String> filenameWidget = WidgetProperties.text(SWT.Modify).observe(textFilename);
+		IObservableValue<String> filenameModel = PojoProperties.value("filename", String.class).observe(model);
+		UpdateValueStrategy<String, String> s = new UpdateValueStrategy<String, String>().setAfterGetValidator(new FileValidator());
 		Binding b = bindingContext.bindValue(filenameWidget, filenameModel, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
 		/*
 		 * BaseLocation
 		 */
-		IObservableValue<?> locationWidget = WidgetProperties.text(SWT.Modify).observe(textBaseLocation);
-		IObservableValue<?> locationModel = PojoProperties.value("baseLocation").observe(model);
-		s = new UpdateValueStrategy().setAfterGetValidator(new PathValidator());
-		b = bindingContext.bindValue(locationWidget, locationModel, s, null);
+		IObservableValue<String> locationWidget = WidgetProperties.text(SWT.Modify).observe(textBaseLocation);
+		IObservableValue<String> locationModel = PojoProperties.value("baseLocation", String.class).observe(model);
+		UpdateValueStrategy<String, String> s1 = new UpdateValueStrategy<String, String>().setAfterGetValidator(new PathValidator());
+		b = bindingContext.bindValue(locationWidget, locationModel, s1, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
 		/*
 		 * Add to Manager
 		 */
-		IObservableValue<?> addManagerWidget = WidgetProperties.selection().observe(buttonAddToManager);
-		IObservableValue<?> addManagerModel = PojoProperties.value("addToManager").observe(model);
+		IObservableValue<Boolean> addManagerWidget = WidgetProperties.buttonSelection().observe(buttonAddToManager);
+		IObservableValue<Boolean> addManagerModel = PojoProperties.value("addToManager", Boolean.class).observe(model);
 		bindingContext.bindValue(addManagerWidget, addManagerModel);
 
 		/*
@@ -210,17 +210,17 @@ public class RestoreCADialog extends Dialog {
 		 */
 		Button okButton = getButton(IDialogConstants.OK_ID);
 
-		IObservableValue<?> buttonEnable = WidgetProperties.enabled().observe(okButton);
+		IObservableValue<Boolean> buttonEnable = WidgetProperties.enabled().observe(okButton);
 		// Create a list of all validators made available via bindings and global validators.
-		IObservableList list = new WritableList<>(bindingContext.getValidationRealm());
+		IObservableList<ValidationStatusProvider> list = new WritableList<>(bindingContext.getValidationRealm());
 		list.addAll(bindingContext.getBindings());
 		list.addAll(bindingContext.getValidationStatusProviders());
-		IObservableValue<?> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
+		IObservableValue<IStatus> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
 				AggregateValidationStatus.MAX_SEVERITY);
 
 		bindingContext.bindValue(buttonEnable, validationStatus,
-				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-				new UpdateValueStrategy().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
+				new UpdateValueStrategy<Boolean, IStatus>(UpdateValueStrategy.POLICY_NEVER),
+				new UpdateValueStrategy<IStatus, Boolean>().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
 					return Boolean.valueOf(((IStatus) o).isOK() || ((IStatus) o).matches(IStatus.WARNING));
 				})));
 		return bindingContext;

@@ -24,6 +24,7 @@ import javax.inject.Named;
 
 import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -90,10 +91,9 @@ public class CreateSelfSignedCertificateListener implements SelectionListener {
 		this.editor = editor;
 	}
 
-	@SuppressWarnings("unchecked")
 	public void setBindingContext(DataBindingContext context) {
 		// Create a list of all validators made available via bindings and global validators.
-		IObservableList list = new WritableList<>(context.getValidationRealm());
+		IObservableList<ValidationStatusProvider> list = new WritableList<>(context.getValidationRealm());
 		list.addAll(context.getBindings());
 		list.addAll(context.getValidationStatusProviders());
 		validationStatus = new AggregateValidationStatus(context.getValidationRealm(), list,

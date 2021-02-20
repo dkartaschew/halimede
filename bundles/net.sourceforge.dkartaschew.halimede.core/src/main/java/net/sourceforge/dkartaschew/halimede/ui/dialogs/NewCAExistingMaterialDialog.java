@@ -21,7 +21,8 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.ValidationStatusProvider;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -31,7 +32,7 @@ import org.eclipse.core.databinding.validation.MultiValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -84,7 +85,7 @@ public class NewCAExistingMaterialDialog extends Dialog {
 	 * Create the dialog.
 	 * 
 	 * @param parentShell The parent shell
-	 * @param model The data for the new CA.
+	 * @param model       The data for the new CA.
 	 */
 	public NewCAExistingMaterialDialog(Shell parentShell, NewCAModel model) {
 		super(parentShell);
@@ -307,34 +308,36 @@ public class NewCAExistingMaterialDialog extends Dialog {
 	 * 
 	 * @return The databinding holder.
 	 */
-	@SuppressWarnings("unchecked")
 	protected DataBindingContext initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
 		/*
 		 * CA Description
 		 */
-		IObservableValue<?> caDescriptionWidget = WidgetProperties.text(SWT.Modify).observe(textCADescription);
-		IObservableValue<?> caDescriptionModel = PojoProperties.value("cADescription").observe(model);
-		UpdateValueStrategy s = new UpdateValueStrategy().setAfterGetValidator(value -> {
-			String o = (String) value;
-			if (o.isEmpty() || o.trim().isEmpty()) {
-				return ValidationStatus.error("CA Description cannot be empty");
-			}
-			return ValidationStatus.ok();
-		});
+		IObservableValue<String> caDescriptionWidget = WidgetProperties.text(SWT.Modify).observe(textCADescription);
+		IObservableValue<String> caDescriptionModel = PojoProperties.value("cADescription", String.class)
+				.observe(model);
+		UpdateValueStrategy<String, String> s = new UpdateValueStrategy<String, String>()
+				.setAfterGetValidator(value -> {
+					String o = (String) value;
+					if (o.isEmpty() || o.trim().isEmpty()) {
+						return ValidationStatus.error("CA Description cannot be empty");
+					}
+					return ValidationStatus.ok();
+				});
 		Binding b = bindingContext.bindValue(caDescriptionWidget, caDescriptionModel, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
 		/*
 		 * Base Location
 		 */
-		IObservableValue<?> locationWidget = WidgetProperties.text(SWT.Modify).observe(textBaseLocation);
-		IObservableValue<?> locationModel = PojoProperties.value("baseLocation").observe(model);
-		s = new UpdateValueStrategy().setAfterGetValidator(new PathValidator());
+		IObservableValue<String> locationWidget = WidgetProperties.text(SWT.Modify).observe(textBaseLocation);
+		IObservableValue<String> locationModel = PojoProperties.value("baseLocation", String.class).observe(model);
+		s = new UpdateValueStrategy<String, String>().setAfterGetValidator(new PathValidator());
 		b = bindingContext.bindValue(locationWidget, locationModel, s, null);
 		ControlDecorationSupport.create(b, SWT.TOP | SWT.LEFT);
 
-		// Ensure CA Description and Base Location don't make up something already in use...
+		// Ensure CA Description and Base Location don't make up something already in
+		// use...
 		MultiValidator locCAValidator = new ExistingCAValidator(caDescriptionModel, locationModel);
 		bindingContext.addValidationStatusProvider(locCAValidator);
 		ControlDecorationSupport.create(locCAValidator.getValidationStatus(), SWT.TOP | SWT.LEFT, caDescriptionWidget);
@@ -343,8 +346,8 @@ public class NewCAExistingMaterialDialog extends Dialog {
 		/*
 		 * PKCS12 Enable
 		 */
-		IObservableValue<?> PKCS12EnableWidget = WidgetProperties.selection().observe(btnPKCS12);
-		IObservableValue<?> PKCS12EnableModel = PojoProperties.value("pkcs12").observe(model);
+		IObservableValue<Boolean> PKCS12EnableWidget = WidgetProperties.buttonSelection().observe(btnPKCS12);
+		IObservableValue<Boolean> PKCS12EnableModel = PojoProperties.value("pkcs12", Boolean.class).observe(model);
 		b = bindingContext.bindValue(PKCS12EnableWidget, PKCS12EnableModel, null, null);
 
 		final FileValidator fv = new FileValidator();
@@ -352,9 +355,9 @@ public class NewCAExistingMaterialDialog extends Dialog {
 		/*
 		 * PKCS12 Location
 		 */
-		IObservableValue<?> PKCS12Widget = WidgetProperties.text(SWT.Modify).observe(textPKCS12Filename);
-		IObservableValue<?> PKCS12Model = PojoProperties.value("pkcs12Filename").observe(model);
-		s = new UpdateValueStrategy().setAfterGetValidator(value -> {
+		IObservableValue<String> PKCS12Widget = WidgetProperties.text(SWT.Modify).observe(textPKCS12Filename);
+		IObservableValue<String> PKCS12Model = PojoProperties.value("pkcs12Filename", String.class).observe(model);
+		s = new UpdateValueStrategy<String, String>().setAfterGetValidator(value -> {
 			if (btnPKCS12.getSelection()) {
 				return fv.validate(value);
 			}
@@ -366,16 +369,17 @@ public class NewCAExistingMaterialDialog extends Dialog {
 		/*
 		 * Cert/KeyPair Enable
 		 */
-		IObservableValue<?> CertEnableWidget = WidgetProperties.selection().observe(btnCertKeyPair);
-		IObservableValue<?> CertEnableModel = PojoProperties.value("certPrivateKey").observe(model);
+		IObservableValue<Boolean> CertEnableWidget = WidgetProperties.buttonSelection().observe(btnCertKeyPair);
+		IObservableValue<Boolean> CertEnableModel = PojoProperties.value("certPrivateKey", Boolean.class)
+				.observe(model);
 		b = bindingContext.bindValue(CertEnableWidget, CertEnableModel, null, null);
 
 		/*
 		 * Certificate Location
 		 */
-		IObservableValue<?> CertificateWidget = WidgetProperties.text(SWT.Modify).observe(textCertificateFilename);
-		IObservableValue<?> CertificateModel = PojoProperties.value("certFilename").observe(model);
-		s = new UpdateValueStrategy().setAfterGetValidator(value -> {
+		IObservableValue<String> CertificateWidget = WidgetProperties.text(SWT.Modify).observe(textCertificateFilename);
+		IObservableValue<String> CertificateModel = PojoProperties.value("certFilename", String.class).observe(model);
+		s = new UpdateValueStrategy<String, String>().setAfterGetValidator(value -> {
 			if (btnCertKeyPair.getSelection()) {
 				return fv.validate(value);
 			}
@@ -387,9 +391,10 @@ public class NewCAExistingMaterialDialog extends Dialog {
 		/*
 		 * Private Key Location
 		 */
-		IObservableValue<?> PrivateKeyWidget = WidgetProperties.text(SWT.Modify).observe(textPrivateKeyFilename);
-		IObservableValue<?> PrivateKeyModel = PojoProperties.value("privateKeyFilename").observe(model);
-		s = new UpdateValueStrategy().setAfterGetValidator(value -> {
+		IObservableValue<String> PrivateKeyWidget = WidgetProperties.text(SWT.Modify).observe(textPrivateKeyFilename);
+		IObservableValue<String> PrivateKeyModel = PojoProperties.value("privateKeyFilename", String.class)
+				.observe(model);
+		s = new UpdateValueStrategy<String, String>().setAfterGetValidator(value -> {
 			if (btnCertKeyPair.getSelection()) {
 				return fv.validate(value);
 			}
@@ -402,8 +407,8 @@ public class NewCAExistingMaterialDialog extends Dialog {
 		/*
 		 * Password field
 		 */
-		IObservableValue<?> password1Widget = WidgetProperties.text(SWT.Modify).observe(textPassword1);
-		IObservableValue<?> password2Widget = WidgetProperties.text(SWT.Modify).observe(textPassword2);
+		IObservableValue<String> password1Widget = WidgetProperties.text(SWT.Modify).observe(textPassword1);
+		IObservableValue<String> password2Widget = WidgetProperties.text(SWT.Modify).observe(textPassword2);
 
 		final IObservableValue<String> pmiddleField1 = new WritableValue<String>(model.getPassword(), String.class);
 		final IObservableValue<String> pmiddleField2 = new WritableValue<String>(model.getPassword(), String.class);
@@ -414,7 +419,7 @@ public class NewCAExistingMaterialDialog extends Dialog {
 		MultiValidator v = new PassphraseValidator(pmiddleField1, pmiddleField2, PluginDefaults.MIN_PASSWORD_LENGTH);
 		bindingContext.addValidationStatusProvider(v);
 
-		IObservableValue<?> passwordModel = PojoProperties.value("password").observe(model);
+		IObservableValue<String> passwordModel = PojoProperties.value("password", String.class).observe(model);
 		bindingContext.bindValue(v.observeValidatedValue(pmiddleField1), passwordModel);
 
 		ControlDecorationSupport.create(v.getValidationStatus(), SWT.TOP | SWT.LEFT, password1Widget);
@@ -426,26 +431,29 @@ public class NewCAExistingMaterialDialog extends Dialog {
 		 */
 		Button okButton = getButton(IDialogConstants.OK_ID);
 
-		IObservableValue<?> buttonEnable = WidgetProperties.enabled().observe(okButton);
-		// Create a list of all validators made available via bindings and global validators.
-		IObservableList list = new WritableList<>(bindingContext.getValidationRealm());
+		IObservableValue<Boolean> buttonEnable = WidgetProperties.enabled().observe(okButton);
+		// Create a list of all validators made available via bindings and global
+		// validators.
+		IObservableList<ValidationStatusProvider> list = new WritableList<>(bindingContext.getValidationRealm());
 		list.addAll(bindingContext.getBindings());
 		list.addAll(bindingContext.getValidationStatusProviders());
-		IObservableValue<?> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
-				AggregateValidationStatus.MAX_SEVERITY);
+		IObservableValue<IStatus> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(),
+				list, AggregateValidationStatus.MAX_SEVERITY);
 
 		bindingContext.bindValue(buttonEnable, validationStatus,
-				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-				new UpdateValueStrategy().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
-					return Boolean.valueOf(((IStatus) o).isOK() || ((IStatus) o).matches(IStatus.WARNING));
-				})));
+				new UpdateValueStrategy<Boolean, IStatus>(UpdateValueStrategy.POLICY_NEVER),
+				new UpdateValueStrategy<IStatus, Boolean>()
+						.setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
+							return Boolean.valueOf(((IStatus) o).isOK() || ((IStatus) o).matches(IStatus.WARNING));
+						})));
 		return bindingContext;
 	}
 
 	/**
 	 * Set the PKCS12 fields to be in an enabled state.
 	 * 
-	 * @param enable TRUE to enable the PKCS12 fields, or FALSE to enable the cert/key pair fields.
+	 * @param enable TRUE to enable the PKCS12 fields, or FALSE to enable the
+	 *               cert/key pair fields.
 	 */
 	private void setPKCS12FieldsEnabled(boolean enable) {
 		textPKCS12Filename.setEnabled(enable);

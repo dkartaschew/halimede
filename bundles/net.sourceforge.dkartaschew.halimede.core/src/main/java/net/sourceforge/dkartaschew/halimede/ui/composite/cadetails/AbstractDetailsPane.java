@@ -36,7 +36,7 @@ import net.sourceforge.dkartaschew.halimede.ui.node.ElementType;
 /**
  * Common implementation components for CA Details Pane stack items.
  */
-public abstract class AbstractDetailsPane {
+public abstract class AbstractDetailsPane<T> {
 
 	/**
 	 * The type of element this pane is showing.
@@ -73,7 +73,7 @@ public abstract class AbstractDetailsPane {
 	 * 
 	 * @return The comparator instance for the table
 	 */
-	public abstract CADetailsComparator<?> getTableComparator();
+	public abstract CADetailsComparator<T> getTableComparator();
 
 	/**
 	 * Create the columns for the table

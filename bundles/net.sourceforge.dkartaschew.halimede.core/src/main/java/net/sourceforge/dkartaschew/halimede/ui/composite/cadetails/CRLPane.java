@@ -31,7 +31,7 @@ import net.sourceforge.dkartaschew.halimede.ui.data.CRLColumnComparator;
 import net.sourceforge.dkartaschew.halimede.ui.labelproviders.CRLColumnLabelProvider;
 import net.sourceforge.dkartaschew.halimede.ui.node.ElementType;
 
-public class CRLPane extends AbstractDetailsPane {
+public class CRLPane extends AbstractDetailsPane<CRLProperties> {
 
 	public static final int COLUMN_CRL_NUMBER = 0;
 	public static final int COLUMN_SUBJECT = 1;
@@ -82,7 +82,7 @@ public class CRLPane extends AbstractDetailsPane {
 	}
 
 	@Override
-	public CADetailsComparator<?> getTableComparator() {
+	public CADetailsComparator<CRLProperties> getTableComparator() {
 		return comparator;
 	}
 

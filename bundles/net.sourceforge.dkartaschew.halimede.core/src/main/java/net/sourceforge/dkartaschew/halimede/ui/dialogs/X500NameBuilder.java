@@ -21,7 +21,8 @@ import org.eclipse.core.databinding.AggregateValidationStatus;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.beans.PojoProperties;
+import org.eclipse.core.databinding.ValidationStatusProvider;
+import org.eclipse.core.databinding.beans.typed.PojoProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -29,7 +30,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
-import org.eclipse.jface.databinding.swt.WidgetProperties;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -176,13 +177,12 @@ public class X500NameBuilder extends Dialog {
 		initDataBindings();
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected DataBindingContext initDataBindings() {
 		DataBindingContext bindingContext = new DataBindingContext();
 		//
 		IObservableValue<String> observeTextTextCNObserveWidget = WidgetProperties.text(SWT.Modify).observe(textCN);
-		IObservableValue<String> commonNameModelObserveValue = PojoProperties.value("commonName").observe(model);
-		UpdateValueStrategy s = new UpdateValueStrategy().setAfterGetValidator(value -> {
+		IObservableValue<String> commonNameModelObserveValue = PojoProperties.value("commonName", String.class).observe(model);
+		UpdateValueStrategy<String, String> s = new UpdateValueStrategy<String, String>().setAfterGetValidator(value -> {
 			String o = (String) value;
 			if (o.trim().isEmpty()) {
 				return ValidationStatus.error("Common Name cannot be empty");
@@ -194,31 +194,31 @@ public class X500NameBuilder extends Dialog {
 
 		//
 		IObservableValue<String> observeTextTextEObserveWidget = WidgetProperties.text(SWT.Modify).observe(textE);
-		IObservableValue<String> emailAddressModelObserveValue = PojoProperties.value("emailAddress").observe(model);
+		IObservableValue<String> emailAddressModelObserveValue = PojoProperties.value("emailAddress", String.class).observe(model);
 		bindingContext.bindValue(observeTextTextEObserveWidget, emailAddressModelObserveValue, null, null);
 		//
 		IObservableValue<String> observeTextTextOUObserveWidget = WidgetProperties.text(SWT.Modify).observe(textOU);
-		IObservableValue<String> organisationUnitModelObserveValue = PojoProperties.value("organisationUnit").observe(model);
+		IObservableValue<String> organisationUnitModelObserveValue = PojoProperties.value("organisationUnit", String.class).observe(model);
 		bindingContext.bindValue(observeTextTextOUObserveWidget, organisationUnitModelObserveValue, null, null);
 		//
 		IObservableValue<String> observeTextTextOObserveWidget = WidgetProperties.text(SWT.Modify).observe(textO);
-		IObservableValue<String> organisationModelObserveValue = PojoProperties.value("organisation").observe(model);
+		IObservableValue<String> organisationModelObserveValue = PojoProperties.value("organisation", String.class).observe(model);
 		bindingContext.bindValue(observeTextTextOObserveWidget, organisationModelObserveValue, null, null);
 		//
 		IObservableValue<String> observeTextTextLObserveWidget = WidgetProperties.text(SWT.Modify).observe(textL);
-		IObservableValue<String> locationModelObserveValue = PojoProperties.value("location").observe(model);
+		IObservableValue<String> locationModelObserveValue = PojoProperties.value("location", String.class).observe(model);
 		bindingContext.bindValue(observeTextTextLObserveWidget, locationModelObserveValue, null, null);
 		//
 		IObservableValue<String> observeTextTextSTRObserveWidget = WidgetProperties.text(SWT.Modify).observe(textSTR);
-		IObservableValue<String> streetModelObserveValue = PojoProperties.value("street").observe(model);
+		IObservableValue<String> streetModelObserveValue = PojoProperties.value("street", String.class).observe(model);
 		bindingContext.bindValue(observeTextTextSTRObserveWidget, streetModelObserveValue, null, null);
 		//
 		IObservableValue<String> observeTextTextSTObserveWidget = WidgetProperties.text(SWT.Modify).observe(textST);
-		IObservableValue<String> stateModelObserveValue = PojoProperties.value("state").observe(model);
+		IObservableValue<String> stateModelObserveValue = PojoProperties.value("state", String.class).observe(model);
 		bindingContext.bindValue(observeTextTextSTObserveWidget, stateModelObserveValue, null, null);
 		//
 		IObservableValue<String> observeTextTextCObserveWidget = WidgetProperties.text(SWT.Modify).observe(textC);
-		IObservableValue<String> countryModelObserveValue = PojoProperties.value("country").observe(model);
+		IObservableValue<String> countryModelObserveValue = PojoProperties.value("country", String.class).observe(model);
 		bindingContext.bindValue(observeTextTextCObserveWidget, countryModelObserveValue, null, null);
 		//
 		
@@ -227,17 +227,17 @@ public class X500NameBuilder extends Dialog {
 		 */
 		Button okButton = getButton(IDialogConstants.OK_ID);
 
-		IObservableValue<?> buttonEnable = WidgetProperties.enabled().observe(okButton);
+		IObservableValue<Boolean> buttonEnable = WidgetProperties.enabled().observe(okButton);
 		// Create a list of all validators made available via bindings and global validators.
-		IObservableList list = new WritableList<>(bindingContext.getValidationRealm());
+		IObservableList<ValidationStatusProvider> list = new WritableList<>(bindingContext.getValidationRealm());
 		list.addAll(bindingContext.getBindings());
 		list.addAll(bindingContext.getValidationStatusProviders());
-		IObservableValue<?> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
+		IObservableValue<IStatus> validationStatus = new AggregateValidationStatus(bindingContext.getValidationRealm(), list,
 				AggregateValidationStatus.MAX_SEVERITY);
 
 		bindingContext.bindValue(buttonEnable, validationStatus,
-				new UpdateValueStrategy(UpdateValueStrategy.POLICY_NEVER),
-				new UpdateValueStrategy().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
+				new UpdateValueStrategy<Boolean, IStatus>(UpdateValueStrategy.POLICY_NEVER),
+				new UpdateValueStrategy<IStatus, Boolean>().setConverter(IConverter.create(IStatus.class, Boolean.TYPE, o -> {
 					return Boolean.valueOf(((IStatus) o).isOK() || ((IStatus) o).matches(IStatus.WARNING));
 				})));
 		return bindingContext;

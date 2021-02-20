@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.IStatus;
 
 import net.sourceforge.dkartaschew.halimede.util.ExceptionUtil;
 
-public class X500NameValidator implements IValidator {
+public class X500NameValidator implements IValidator<String> {
 
 	private final Collection<X500Name> issuers;
 
@@ -44,17 +44,16 @@ public class X500NameValidator implements IValidator {
 	}
 
 	@Override
-	public IStatus validate(Object value) {
+	public IStatus validate(String value) {
 		if (value == null) {
 			return ValidationStatus.error("X500 Name cannot be empty");
 		}
-		String o = (String) value;
-		if (o.isEmpty()) {
+		if (value.isEmpty()) {
 			return ValidationStatus.error("X500 Name cannot be empty");
 		}
 		// Attempt to convert to X500Name, and confirm it has a CN RDN.
 		try {
-			X500Name name = new X500Name(o);
+			X500Name name = new X500Name(value);
 			if (cannotBe(name)) {
 				return ValidationStatus.error("X500Name cannot be equal to an Issuers DN");
 			}

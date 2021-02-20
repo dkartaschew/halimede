@@ -239,7 +239,7 @@ public enum SignatureAlgorithm {
 	 * @throws NoSuchElementException The description given doesn't match a known element.
 	 * @throws NullPointerException The description was null.
 	 */
-	public static Object forAlgID(String value) {
+	public static SignatureAlgorithm forAlgID(String value) {
 		Objects.requireNonNull(value, "AlgorithmID was null");
 		return Arrays.stream(SignatureAlgorithm.values()).filter(i -> i.algID.equals(value)).findFirst().get();
 	}
@@ -252,7 +252,7 @@ public enum SignatureAlgorithm {
 	 * @throws NoSuchElementException The description given doesn't match a known element.
 	 * @throws NullPointerException The description was null.
 	 */
-	public static Object forOID(ASN1ObjectIdentifier value) {
+	public static SignatureAlgorithm forOID(ASN1ObjectIdentifier value) {
 		Objects.requireNonNull(value, "ASN1ObjectIdentifier was null");
 		return Arrays.stream(SignatureAlgorithm.values()).filter(i -> i.oid.equals(value)).findFirst().get();
 	}

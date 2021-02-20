@@ -31,7 +31,7 @@ import net.sourceforge.dkartaschew.halimede.ui.data.TemplateColumnComparator;
 import net.sourceforge.dkartaschew.halimede.ui.labelproviders.TemplateColumnLabelProvider;
 import net.sourceforge.dkartaschew.halimede.ui.node.ElementType;
 
-public class TemplatesPane extends AbstractDetailsPane {
+public class TemplatesPane extends AbstractDetailsPane<CertificateKeyPairTemplate> {
 
 	public static final int COLUMN_DESCRIPTION = 0;
 	public static final int COLUMN_SUBJECT = 1;
@@ -82,7 +82,7 @@ public class TemplatesPane extends AbstractDetailsPane {
 	}
 
 	@Override
-	public CADetailsComparator<?> getTableComparator() {
+	public CADetailsComparator<CertificateKeyPairTemplate> getTableComparator() {
 		return comparator;
 	}
 
