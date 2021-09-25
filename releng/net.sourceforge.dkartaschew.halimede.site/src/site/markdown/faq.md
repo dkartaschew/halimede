@@ -1,6 +1,6 @@
 # FAQ
 
-**Q. Haliemede**
+**Q. Halimede**
 
 A. Halimede is named after one of the moons of Neptune.
 
