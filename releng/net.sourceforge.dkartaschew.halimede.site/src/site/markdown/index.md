@@ -78,6 +78,3 @@ Halimede is distributed under the EPL 2.0 license with GPL v2+ w/Class Path
 Exception Secondary License. Please see [License](license.html) for full 
 details.
 
-Additionally, Haliemede is also available under a Commercial License with 
-support options available.
-

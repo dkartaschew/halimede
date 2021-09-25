@@ -1,9 +1,7 @@
 # License
 
 Halimede is distributed under the EPL 2.0 license with GPL v2+ w/Class Path Exception 
-Secondary License. Haliemede is also available under a Commercial License with support 
-options available. Please contact for various commercial license and support options
-tailored to your needs.  
+Secondary License.   
 
 Halimede includes additional 3rd-party libraries and art assets.
 
@@ -20,7 +18,7 @@ Halimede includes the following 3rd-party software libraries.
 Halimede includes the following 3rd-party art assets.
 
 
-| Asset            | Source                                                                                     | License |
+| Asset            | Source                                                                                     | License     |
 |------------------|--------------------------------------------------------------------------------------------|-------------|
 | Lock Icon        | [Eclipse Platform Images](https://git.eclipse.org/c/platform/eclipse.platform.images.git/) | EPL v1.0    |
 | Certificate Icon | [Adwaita Icon Theme](https://github.com/GNOME/adwaita-icon-theme)                          | CC-BY-SA / GNU LGPL v3 |

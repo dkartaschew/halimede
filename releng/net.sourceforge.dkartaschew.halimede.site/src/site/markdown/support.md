@@ -5,8 +5,3 @@ Halimede support is available via the
 
 Halimede Bug Tracker is available [here](https://sf.net/p/halimede/tickets).
 
-## Commerical Support
-
-Commercial support options are available when a Commercial License is
-purchased.
-

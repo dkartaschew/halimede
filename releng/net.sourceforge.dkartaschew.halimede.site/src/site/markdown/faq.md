@@ -12,49 +12,6 @@ A. Halimede is distributed under the EPL 2.0 license with GPL v2+ w/Class Path
 Exception Secondary License. Please see [License](license.html) for full 
 details.
 
-Additionally, Haliemede is also available under a Commercial License with 
-support options available.
-
------------------
-
-**Q. Commercial License pricing and options?**
-
-A. Please contact for pricing and support options available. In general pricing 
-is based on the number of applications you wish to integrate with, and support 
-pricing is based on your requirements. 
-
------------------
-
-**Q. Are there discounts for Academic Institutions or Government Agencies?**
-
-A. This will be considered on a case by case basis.
-
------------------
-
-**Q. Do I need a Commercial License if I wish to integrate Halimede in a 
-Commercial Application?**
-
-A. No, if you wish to abide by the conditions of the EPL 2.0 license which 
-Halimede is released under. This means that any changes you make to Halimede 
-as part of your integration with the Commercial application **must** be 
-available under the same conditions as which you are licensed under. That is
-you **must** make any modifications and changes available freely available 
-under the EPL 2.0 license to any and all parties which request access.
-
-It is recommended, that you if wish to integrate Halimede into your Commercial 
-application, that you purchase a Commercial License and one of the available 
-support options to avoid any potential issues.
-
-Additionally, there is **no** direct support provided for assisting in 
-integration if no support option has been purchased.
-
-If I am made aware of a failure to abide by the EPL 2.0 license (and you don't 
-have a Commercial License),  your rights to utilise Halimede will be 
-invalidated immediately, (Section 7 of the EPL 2.0 license), until either: a, 
-The you comply with the EPL 2.0 license and distribute the required source 
-code, or b, A Commercial License is purchased. (Note: A significant penality 
-may be applied to purchase a Commercial License in this instance). 
-
 -----------------
 
 **Q. You mention the GPL (GNU General Public License) as a secondary license?**
